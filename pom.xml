@@ -15,6 +15,7 @@
 	<description>EOSC Catalogue Project</description>
 	<properties>
 		<java.version>17</java.version>
+		<elasticsearch.version>7.4.2</elasticsearch.version> <!-- Spring-Boot override -->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -26,11 +27,45 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+
+<!--		<dependency>-->
+<!--			<groupId>gr.madgik</groupId>-->
+<!--			<artifactId>eosc-catalogue-provider</artifactId>-->
+<!--			<version>0.0.1-SNAPSHOT</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>gr.madgik</groupId>-->
+<!--			<artifactId>eosc-catalogue-resource</artifactId>-->
+<!--			<version>0.0.1-SNAPSHOT</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>gr.madgik</groupId>
-			<artifactId>eosc-catalogue-provider</artifactId>
+			<artifactId>catalogue-starter</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.einfracentral</groupId>
+			<artifactId>eic-registry-model</artifactId>
+			<version>4.0.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>eu.einfracentral</groupId>
+					<artifactId>eic-registry</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.28</version>
 		</dependency>
 	</dependencies>
 
