@@ -14,13 +14,13 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v3/resources")
-public class EOSCResourceController {
-    private static final Logger logger = LoggerFactory.getLogger(EOSCResourceController.class);
+@RequestMapping("/v3/services")
+public class EOSCServiceController {
+    private static final Logger logger = LoggerFactory.getLogger(EOSCServiceController.class);
 
     private final ServiceBundleService serviceBundleService;
 
-    public EOSCResourceController(ServiceBundleService serviceBundleService) {
+    public EOSCServiceController(ServiceBundleService serviceBundleService) {
         this.serviceBundleService = serviceBundleService;
     }
 

@@ -8,14 +8,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v3/bundles/resources")
-public class ResourceBundleController {
+@RequestMapping("/v3/bundles/datasources")
+public class DatasourceBundleController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceBundleController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatasourceBundleController.class);
 
     private final ServiceBundleService serviceBundleService;
 
-    public ResourceBundleController(ServiceBundleService serviceBundleService) {
+    public DatasourceBundleController(ServiceBundleService serviceBundleService) {
         this.serviceBundleService = serviceBundleService;
     }
 

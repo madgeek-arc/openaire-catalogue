@@ -6,12 +6,12 @@ import eu.einfracentral.domain.ProviderBundle;
 import eu.einfracentral.domain.User;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
+import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.SecurityService;
 import gr.madgik.catalogue.eosc.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.utils.PagingUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProviderService {
+public class ProviderService implements BundleResourceOperations<Provider, ProviderBundle, String> {
 
     private final Catalogue<ProviderBundle, String> catalogue;
     private final ProviderRepository repository;
@@ -37,37 +37,45 @@ public class ProviderService {
         this.securityService = securityService;
     }
 
-    public boolean validate(Object provider) {
+    @Override
+    public boolean validate(Object resource) {
         throw new UnsupportedOperationException("Not implemented yet");
-//        return null;
+//        return false;
     }
 
+    @Override
     public Provider register(Provider provider) {
         return catalogue.register(new ProviderBundle(provider)).getProvider();
     }
 
+    @Override
     public Provider update(String id, Provider provider) {
         ProviderBundle bundle = repository.get(id);
         bundle.setProvider(provider);
         return catalogue.update(id, bundle).getProvider();
     }
 
+    @Override
     public void delete(String id) {
         catalogue.delete(id);
     }
 
+    @Override
     public Provider get(String id) {
         return repository.get(id).getProvider();
     }
 
+    @Override
     public Paging<Provider> get(Pageable pageable) {
         return repository.get(PagingUtils.toFacetFilter(pageable, repository.getResourceTypeName())).map(ProviderBundle::getProvider);
     }
 
+    @Override
     public Paging<Provider> get(FacetFilter filter) {
         return repository.get(filter).map(ProviderBundle::getProvider);
     }
 
+    @Override
     public ProviderBundle verify(String id, String status, Boolean active) {
         ProviderBundle bundle = repository.get(id);
         bundle.setActive(active);
@@ -75,6 +83,7 @@ public class ProviderService {
         return catalogue.update(id, bundle);
     }
 
+    @Override
     public ProviderBundle activate(String id, Boolean active) {
         ProviderBundle bundle = repository.get(id);
         bundle.setActive(active);

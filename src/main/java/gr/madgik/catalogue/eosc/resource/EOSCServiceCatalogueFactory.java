@@ -5,7 +5,6 @@ import eu.einfracentral.domain.ServiceBundle;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
-import gr.madgik.catalogue.eosc.resource.repository.MongoServiceRepository;
 import gr.madgik.catalogue.eosc.resource.repository.ServiceRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -14,17 +13,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EOSCResourceCatalogueFactory {
+public class EOSCServiceCatalogueFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(EOSCResourceCatalogueFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(EOSCServiceCatalogueFactory.class);
     private final ServiceRepository resourceRepository;
 
-    public EOSCResourceCatalogueFactory(ServiceRepository resourceRepository) {
+    public EOSCServiceCatalogueFactory(ServiceRepository resourceRepository) {
         this.resourceRepository = resourceRepository;
     }
 
     @Bean
-    public Catalogue<ServiceBundle, String> getResourceCatalogue() {
+    public Catalogue<ServiceBundle, String> getServiceCatalogue() {
         Catalogue<ServiceBundle, String> catalogue = new Catalogue<>(resourceRepository);
 
         catalogue.registerHandler(Catalogue.Action.REGISTER, new ActionHandler<>() {
@@ -65,18 +64,18 @@ public class EOSCResourceCatalogueFactory {
         return catalogue;
     }
 
-    private String createId(Service service) {
-        if (service.getResourceOrganisation() == null || service.getResourceOrganisation().equals("")) {
+    private String createId(Service resource) {
+        if (resource.getResourceOrganisation() == null || resource.getResourceOrganisation().equals("")) {
 //            throw new ValidationException("Resource must have a Resource Organisation.");
             throw new RuntimeException("Resource must have a Resource Organisation.");
         }
-        if (service.getName() == null || service.getName().equals("")) {
+        if (resource.getName() == null || resource.getName().equals("")) {
 //            throw new ValidationException("Resource must have a Name.");
             throw new RuntimeException("Resource must have a Name.");
         }
-        String provider = service.getResourceOrganisation();
+        String provider = resource.getResourceOrganisation();
         return String.format("%s.%s", provider, StringUtils
-                .stripAccents(service.getName())
+                .stripAccents(resource.getName())
                 .replaceAll("[\n\t\\s]+", " ")
                 .replaceAll("\\s+$", "")
                 .replaceAll("[^a-zA-Z0-9\\s\\-\\_]+", "")
