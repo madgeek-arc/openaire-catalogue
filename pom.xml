@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>gr.madgik</groupId>
-	<artifactId>eosc-catalogue</artifactId>
+	<artifactId>openaire-catalogue</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>eosc-catalogue</name>
-	<description>EOSC Catalogue Project</description>
+	<name>openaire-catalogue</name>
+	<description>OpenAIRE Catalogue Project</description>
 	<properties>
 		<java.version>17</java.version>
 		<elasticsearch.version>7.4.2</elasticsearch.version> <!-- Spring-Boot override -->
@@ -32,18 +32,6 @@
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 
-<!--		<dependency>-->
-<!--			<groupId>gr.madgik</groupId>-->
-<!--			<artifactId>eosc-catalogue-provider</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
-
-<!--		<dependency>-->
-<!--			<groupId>gr.madgik</groupId>-->
-<!--			<artifactId>eosc-catalogue-resource</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
-
 		<dependency>
 			<groupId>gr.madgik</groupId>
 			<artifactId>catalogue-starter</artifactId>
@@ -60,6 +48,11 @@
 					<artifactId>eic-registry</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 
 		<dependency>
