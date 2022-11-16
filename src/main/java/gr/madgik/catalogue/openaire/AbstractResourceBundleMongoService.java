@@ -44,7 +44,7 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
     }
 
     @Override
-    public T update(ID id, T resource) {
+    public B update(ID id, B resource) {
         return null;
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
         return filteredResults.stream().map(Bundle::getPayload).collect(Collectors.toList());
     }
 
-    @Override
+//    @Override
     public FacetedPage<T> search(Map<String, Object> filters, Pageable pageable) {
         Query dynamicQuery = new Query().with(pageable);
         List<Criteria> criteriaList = new ArrayList<>();
@@ -82,8 +82,8 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
                 filteredResults,
                 pageable,
                 () -> mongoTemplate.count(dynamicQuery, bundleType));
-//        List<?> facetedResults = mongoTemplate.aggregate(newAggregation(match(where("payload.extras").exists(true)), facetUnwind), OpenAIREServiceBundle.class, Object.class).getMappedResults();
-//        mongoTemplate.aggregate(newAggregation(facet(match(where("payload.extras.portfolios").exists(true)), facetUnwind).as("portfolios")), OpenAIREServiceBundle.class, Object.class).getUniqueMappedResult();
+//        List<?> facetedResults = mongoTemplate.aggregate(newAggregation(match(where("payload.extras").exists(true)), facetUnwind), ServiceBundle.class, Object.class).getMappedResults();
+//        mongoTemplate.aggregate(newAggregation(facet(match(where("payload.extras.portfolios").exists(true)), facetUnwind).as("portfolios")), ServiceBundle.class, Object.class).getUniqueMappedResult();
         FacetedPage<T> page = new FacetedPage<>();
         page.setFacets(createFacets(filters, criteria));
         Page<T> p = bundlePage.map(Bundle::getPayload);
@@ -91,7 +91,7 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
         return page;
     }
 
-    @Override
+//    @Override
     public FacetedPage<T> searchSnippets(Map<String, Object> filters, String field, String keyword, Pageable pageable, String[] fields) {
         Query dynamicQuery = new Query();
         if (fields != null) {

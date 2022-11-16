@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProviderRepository extends MongoRepository<ProviderBundle, String>, gr.madgik.catalogue.repository.Repository<ProviderBundle, String> {
+public interface ProviderMongoRepository extends MongoRepository<ProviderBundle, String>, gr.madgik.catalogue.repository.Repository<ProviderBundle, String> {
 
     Page<ProviderBundle> findAll(Pageable pageable);
 

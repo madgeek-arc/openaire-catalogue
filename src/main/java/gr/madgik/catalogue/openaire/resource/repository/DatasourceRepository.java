@@ -1,5 +1,6 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
+import eu.einfracentral.domain.Datasource;
 import eu.einfracentral.domain.DatasourceBundle;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
@@ -8,7 +9,7 @@ import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DatasourceRepository extends RegistryCoreRepository<DatasourceBundle> implements ResourceRepository<DatasourceBundle, String> {
+public class DatasourceRepository extends RegistryCoreRepository<DatasourceBundle, String> implements ResourceRepository<Datasource, DatasourceBundle, String> {
 
 
     public DatasourceRepository(GenericItemService itemService) {

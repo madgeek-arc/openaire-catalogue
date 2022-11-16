@@ -6,7 +6,7 @@ import eu.einfracentral.domain.User;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
-import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
+import gr.madgik.catalogue.openaire.provider.repository.ProviderMongoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +24,12 @@ import java.util.List;
 public class ProviderCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ProviderCatalogueFactory.class);
-    private final ProviderRepository providerRepository;
+    private final ProviderMongoRepository providerRepository;
     private final ProviderService providerService;
     private final JmsTemplate jmsTopicTemplate;
     private final ProviderMailService registrationMailService;
 
-    public ProviderCatalogueFactory(ProviderRepository providerRepository,
+    public ProviderCatalogueFactory(ProviderMongoRepository providerRepository,
                                     @Lazy ProviderService providerService,
                                     JmsTemplate jmsTopicTemplate,
                                     ProviderMailService registrationMailService) {
@@ -89,6 +89,25 @@ public class ProviderCatalogueFactory {
                 logger.info("Inside Provider update handleError");
             }
         });
+
+        catalogue.registerHandler(Catalogue.Action.DELETE, new ActionHandler<>() {
+            @Override
+            public void preHandle(ProviderBundle providerBundle, Context ctx) {
+                logger.info("Inside Provider delete preHandle");
+                providerRepository.delete(providerBundle);
+            }
+
+            @Override
+            public void postHandle(ProviderBundle providerBundle, Context ctx) {
+                logger.info("Inside Provider delete postHandle");
+            }
+
+            @Override
+            public void handleError(ProviderBundle providerBundle, Throwable throwable, Context ctx) {
+                logger.info("Inside Provider delete handleError");
+            }
+        });
+
 
         return catalogue;
     }

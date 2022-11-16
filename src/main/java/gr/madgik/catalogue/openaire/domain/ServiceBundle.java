@@ -1,32 +1,36 @@
-package gr.madgik.catalogue.openaire;
+package gr.madgik.catalogue.openaire.domain;
 
 import eu.einfracentral.domain.Metadata;
 import eu.einfracentral.domain.ResourceBundle;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-public class OpenAIREServiceBundle extends ResourceBundle<OpenAIREService> {
+@XmlType
+@XmlRootElement(namespace = "http://openaire.eu")
+public class ServiceBundle extends ResourceBundle<Service> {
 
-    public OpenAIREServiceBundle() {
+    public ServiceBundle() {
         // No arg constructor
     }
 
-    public OpenAIREServiceBundle(OpenAIREService service) {
+    public ServiceBundle(Service service) {
         this.setService(service);
         this.setMetadata(null);
     }
 
-    public OpenAIREServiceBundle(OpenAIREService service, Metadata metadata) {
+    public ServiceBundle(Service service, Metadata metadata) {
         this.setService(service);
         this.setMetadata(metadata);
     }
 
     @XmlElement(name = "service")
-    public OpenAIREService getService() {
+    public Service getService() {
         return this.getPayload();
     }
 
-    public void setService(OpenAIREService service) {
+    public void setService(Service service) {
         this.setPayload(service);
     }
 
@@ -43,6 +47,6 @@ public class OpenAIREServiceBundle extends ResourceBundle<OpenAIREService> {
 
     @Override
     public String toString() {
-        return "OpenAIREServiceBundle{} " + super.toString();
+        return "ServiceBundle{} " + super.toString();
     }
 }

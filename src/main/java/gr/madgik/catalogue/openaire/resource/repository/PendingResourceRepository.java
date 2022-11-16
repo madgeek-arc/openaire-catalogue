@@ -6,7 +6,7 @@ import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PendingResourceRepository extends RegistryCoreRepository<ServiceBundle> {
+public class PendingResourceRepository extends RegistryCoreRepository<ServiceBundle, String> {
 
     public PendingResourceRepository(GenericItemService itemService) {
         super(itemService);

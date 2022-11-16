@@ -4,8 +4,9 @@ import eu.einfracentral.domain.Service;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
-import gr.madgik.catalogue.openaire.OpenAIREServiceBundle;
-import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
+import gr.madgik.catalogue.openaire.domain.ServiceBundle;
+import gr.madgik.catalogue.openaire.resource.repository.ServiceRegistryRepository;
+import gr.madgik.catalogue.service.sync.ServiceSync;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,50 +17,61 @@ import org.springframework.stereotype.Component;
 public class ServiceCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceCatalogueFactory.class);
-    private final ServiceRepository resourceRepository;
+    private final ServiceRegistryRepository resourceRepository;
+    private final ServiceSync serviceSync;
 
-    public ServiceCatalogueFactory(ServiceRepository resourceRepository) {
+    public ServiceCatalogueFactory(ServiceRegistryRepository resourceRepository, ServiceSync serviceSync) {
         this.resourceRepository = resourceRepository;
+        this.serviceSync = serviceSync;
     }
 
     @Bean
-    public Catalogue<OpenAIREServiceBundle, String> getServiceCatalogue() {
-        Catalogue<OpenAIREServiceBundle, String> catalogue = new Catalogue<>(resourceRepository);
+    public Catalogue<ServiceBundle, String> getServiceCatalogue() {
+        Catalogue<ServiceBundle, String> catalogue = new Catalogue<>(resourceRepository);
 
         catalogue.registerHandler(Catalogue.Action.REGISTER, new ActionHandler<>() {
             @Override
-            public void preHandle(OpenAIREServiceBundle serviceBundle, Context ctx) {
+            public void preHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service registration preHandle");
                 if (serviceBundle.getService().getResourceOrganisation() == null) {
                     serviceBundle.getService().setResourceOrganisation("openaire");
                 }
                 serviceBundle.setId(createId(serviceBundle.getPayload()));
+                serviceBundle.setStatus("approved resource");
+                serviceBundle.setActive(true);
+
+                // TODO: create logging info
+
+                // TODO: create metadata
             }
 
             @Override
-            public void postHandle(OpenAIREServiceBundle serviceBundle, Context ctx) {
+            public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service registration postHandle");
+                serviceSync.syncAdd(serviceBundle.getService());
             }
 
             @Override
-            public void handleError(OpenAIREServiceBundle serviceBundle, Throwable throwable, Context ctx) {
+            public void handleError(ServiceBundle serviceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Service registration handleError");
             }
         });
 
         catalogue.registerHandler(Catalogue.Action.UPDATE, new ActionHandler<>() {
             @Override
-            public void preHandle(OpenAIREServiceBundle serviceBundle, Context ctx) {
+            public void preHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service update preHandle");
+//                resourceRepository.update(serviceBundle.getId(), serviceBundle);
             }
 
             @Override
-            public void postHandle(OpenAIREServiceBundle serviceBundle, Context ctx) {
+            public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service update postHandle");
+                serviceSync.syncUpdate(serviceBundle.getService());
             }
 
             @Override
-            public void handleError(OpenAIREServiceBundle serviceBundle, Throwable throwable, Context ctx) {
+            public void handleError(ServiceBundle serviceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Service update handleError");
             }
         });

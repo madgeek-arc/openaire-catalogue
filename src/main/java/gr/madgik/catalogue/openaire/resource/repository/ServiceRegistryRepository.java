@@ -1,14 +1,15 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
-import eu.einfracentral.domain.ServiceBundle;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
 import gr.athenarc.catalogue.service.GenericItemService;
+import gr.madgik.catalogue.openaire.domain.Service;
+import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ServiceRegistryRepository extends RegistryCoreRepository<ServiceBundle> implements ResourceRepository<ServiceBundle, String> {
+public class ServiceRegistryRepository extends RegistryCoreRepository<ServiceBundle, String> implements ResourceRepository<Service, ServiceBundle, String> {
 
 
     public ServiceRegistryRepository(GenericItemService itemService) {

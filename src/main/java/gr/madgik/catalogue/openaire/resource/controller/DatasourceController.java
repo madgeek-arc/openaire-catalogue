@@ -1,7 +1,8 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
 import eu.einfracentral.domain.Datasource;
-import eu.einfracentral.domain.Provider;
+import eu.einfracentral.domain.DatasourceBundle;
+import eu.openminted.registry.core.domain.Paging;
 import gr.madgik.catalogue.dto.FacetedPage;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
 import gr.madgik.catalogue.utils.PagingUtils;
@@ -9,7 +10,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -39,7 +39,7 @@ public class DatasourceController {
 
     @PutMapping("{id}")
     public Datasource update(@PathVariable String id, @RequestBody Datasource datasource) {
-        return datasourceBundleService.update(id, datasource); // TODO: change this ??
+        return datasourceBundleService.update(id, new DatasourceBundle(datasource)).getDatasource(); // TODO: change this ??
     }
 
     @DeleteMapping("{id}")
@@ -55,22 +55,22 @@ public class DatasourceController {
             @ApiImplicitParam(name = "orderField", value = "Order field", dataType = "string", paramType = "query")
     })
     @GetMapping
-    public Page<Datasource> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams,
-                                   @RequestParam(defaultValue = "eosc", name = "catalogue_id") String catalogueIds) {
+    public Paging<Datasource> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams,
+                                     @RequestParam(defaultValue = "eosc", name = "catalogue_id") String catalogueIds) {
         allRequestParams.putIfAbsent("catalogue_id", catalogueIds);
         if (catalogueIds != null && catalogueIds.equals("all")) {
             allRequestParams.remove("catalogue_id");
         }
-        return datasourceBundleService.get(PagingUtils.createFacetFilter(allRequestParams));
+        return datasourceBundleService.get(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
     }
 
-    @PostMapping(path = "search")
-    public FacetedPage<Datasource> search(@RequestBody Map<String, Object> filters, @RequestParam(required = false, name = "catalogue_id") String catalogueIds, Pageable pageable) {
-        if (catalogueIds != null && !catalogueIds.equalsIgnoreCase("all")) {
-            filters.putIfAbsent("catalogueId", catalogueIds);
-        }
-        return datasourceBundleService.search(filters, pageable);
-    }
+//    @PostMapping(path = "search")
+//    public FacetedPage<Datasource> search(@RequestBody Map<String, Object> filters, @RequestParam(required = false, name = "catalogue_id") String catalogueIds, Pageable pageable) {
+//        if (catalogueIds != null && !catalogueIds.equalsIgnoreCase("all")) {
+//            filters.putIfAbsent("catalogueId", catalogueIds);
+//        }
+//        return datasourceBundleService.search(filters, pageable);
+//    }
 
     @PostMapping(path = "validate")
     public boolean validate(@RequestBody Datasource datasource) {

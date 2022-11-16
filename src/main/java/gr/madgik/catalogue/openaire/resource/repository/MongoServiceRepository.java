@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MongoServiceRepository extends MongoRepository<ServiceBundle, String>, ResourceRepository<ServiceBundle, String> {
+public interface MongoServiceRepository extends MongoRepository<ServiceBundle, String>, ResourceRepository<Service, ServiceBundle, String> {
 
     List<ResourceBundle<Service>> findByIdAndPayload_CatalogueId(String id, String catalogueId);
 
