@@ -1,6 +1,8 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
-import eu.einfracentral.domain.*;
+import eu.einfracentral.domain.ResourceBundle;
+import eu.einfracentral.domain.Service;
+import eu.einfracentral.domain.ServiceBundle;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
 import org.springframework.data.domain.Page;

@@ -1,7 +1,6 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
 import eu.einfracentral.domain.Bundle;
-import eu.einfracentral.domain.RichResource;
 import eu.openminted.registry.core.domain.Paging;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
@@ -13,14 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
 

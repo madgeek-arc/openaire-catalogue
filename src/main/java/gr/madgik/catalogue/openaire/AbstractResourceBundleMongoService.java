@@ -6,19 +6,12 @@ import eu.openminted.registry.core.domain.Facet;
 import eu.openminted.registry.core.domain.Value;
 import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.dto.FacetedPage;
-import gr.madgik.catalogue.openaire.dto.CountFacet;
-import gr.madgik.catalogue.openaire.dto.FacetValue;
-import gr.madgik.catalogue.openaire.dto.ResourceSnippet;
-import gr.madgik.catalogue.openaire.dto.SortByCountFacet;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.FacetOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -27,7 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 public abstract class AbstractResourceBundleMongoService<T extends Identifiable, B extends Bundle<T>, ID> implements BundleResourceOperations<T, B, ID> {
@@ -48,7 +40,7 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
         return null;
     }
 
-//    @Override
+    //    @Override
     public List<T> search(Map<String, Object> filters) {
         Query dynamicQuery = new Query();
         for (Map.Entry<String, Object> filter : filters.entrySet()) {
@@ -63,7 +55,7 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
         return filteredResults.stream().map(Bundle::getPayload).collect(Collectors.toList());
     }
 
-//    @Override
+    //    @Override
     public FacetedPage<T> search(Map<String, Object> filters, Pageable pageable) {
         Query dynamicQuery = new Query().with(pageable);
         List<Criteria> criteriaList = new ArrayList<>();
@@ -91,7 +83,7 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
         return page;
     }
 
-//    @Override
+    //    @Override
     public FacetedPage<T> searchSnippets(Map<String, Object> filters, String field, String keyword, Pageable pageable, String[] fields) {
         Query dynamicQuery = new Query();
         if (fields != null) {
@@ -137,7 +129,7 @@ public abstract class AbstractResourceBundleMongoService<T extends Identifiable,
     private List<LinkedHashMap> getFacets(Map<String, Object> filters, Criteria criteria) {
         List<LinkedHashMap> list = new ArrayList<>();
 //        List<Map<String, List<Map<String, Integer>>>> values = new ArrayList<>(); // TODO
-        String[] fields = {"payload.trl","payload.lifeCycleStatus","payload.extras.users","payload.extras.portfolios"};
+        String[] fields = {"payload.trl", "payload.lifeCycleStatus", "payload.extras.users", "payload.extras.portfolios"};
         for (String field : fields) {
             try {
                 list.addAll(mongoTemplate.aggregate(newAggregation(/*match(criteria),*/ facet(unwind(field), sortByCount(field)).as(field)), bundleType, LinkedHashMap.class).getMappedResults());

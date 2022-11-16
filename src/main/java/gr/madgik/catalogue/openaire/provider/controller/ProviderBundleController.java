@@ -1,6 +1,5 @@
 package gr.madgik.catalogue.openaire.provider.controller;
 
-import eu.einfracentral.domain.Provider;
 import eu.einfracentral.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
 import org.slf4j.Logger;

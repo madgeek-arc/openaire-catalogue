@@ -18,7 +18,8 @@ public class ResourceSnippet {
     String label;
     List<UiVocabulary> user;
 
-    public ResourceSnippet() {}
+    public ResourceSnippet() {
+    }
 
     public String getId() {
         return id;

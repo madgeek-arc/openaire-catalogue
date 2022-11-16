@@ -2,7 +2,6 @@ package gr.madgik.catalogue.openaire;
 
 import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.Identifiable;
-import eu.einfracentral.domain.RichResource;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
 import eu.openminted.registry.core.service.ServiceException;
@@ -12,7 +11,6 @@ import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
 
 import java.util.Arrays;
 import java.util.List;

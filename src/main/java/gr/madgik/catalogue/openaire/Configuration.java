@@ -19,8 +19,8 @@ import org.springframework.context.annotation.FilterType;
         })
 public class Configuration implements CatalogueLibConfiguration {
 
-        @Override
-        public String generatedClassesPackageName() {
-                return "eu.einfracentral.domain";
-        }
+    @Override
+    public String generatedClassesPackageName() {
+        return "eu.einfracentral.domain";
+    }
 }

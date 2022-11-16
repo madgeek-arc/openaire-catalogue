@@ -1,9 +1,7 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
 import eu.openminted.registry.core.domain.Paging;
-import gr.madgik.catalogue.controller.AbstractResourceController;
 import gr.madgik.catalogue.dto.BulkOperation;
-import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.ServiceBundleService;
 import gr.madgik.catalogue.utils.PagingUtils;

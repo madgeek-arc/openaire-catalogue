@@ -7,7 +7,8 @@ public class UiVocabulary {
     private String id;
     private String name;
 
-    public UiVocabulary() {}
+    public UiVocabulary() {
+    }
 
     public UiVocabulary of(Vocabulary vocabulary) {
         UiVocabulary uiVocabulary = new UiVocabulary();
