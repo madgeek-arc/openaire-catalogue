@@ -8,9 +8,11 @@ import eu.openminted.registry.core.service.ServiceException;
 import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
+import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,9 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
     private final Catalogue<B, String> catalogue;
     private final RegistryCoreRepository<B, String> repository;
 
+    @Autowired
+    private FieldValidator fieldValidator;
+
     protected AbstractBundleService(Catalogue<B, String> catalogue, RegistryCoreRepository<B, String> repository) {
         this.catalogue = catalogue;
         this.repository = repository;
@@ -33,7 +38,8 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
 
     @Override
     public boolean validate(Object resource) {
-        return false;
+        fieldValidator.validate(resource);
+        return true;
     }
 
     @Override
@@ -59,6 +65,11 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
     @Override
     public B getBundle(ID id) {
         return repository.get(id);
+    }
+
+    @Override
+    public Paging<B> getWithEnrichedFacets(FacetFilter filter) {
+        return repository.get(filter);
     }
 
     @Override

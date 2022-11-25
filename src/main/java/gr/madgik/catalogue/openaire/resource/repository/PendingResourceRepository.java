@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
-import eu.einfracentral.domain.ServiceBundle;
 import gr.athenarc.catalogue.service.GenericItemService;
+import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.springframework.stereotype.Component;
 

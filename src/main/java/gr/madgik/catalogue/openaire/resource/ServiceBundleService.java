@@ -8,7 +8,7 @@ import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.openaire.resource.repository.ServiceRegistryRepository;
+import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.service.VocabularyService;
 
@@ -24,7 +24,7 @@ public class ServiceBundleService extends AbstractBundleService<Service, Service
     private final VocabularyService vocabularyService;
 
     public ServiceBundleService(Catalogue<ServiceBundle, String> catalogue,
-                                ServiceRegistryRepository repository,
+                                ServiceRepository repository,
                                 VocabularyService vocabularyService) {
         super(catalogue, repository);
         this.catalogue = catalogue;
@@ -32,10 +32,6 @@ public class ServiceBundleService extends AbstractBundleService<Service, Service
         this.vocabularyService = vocabularyService;
     }
 
-    @Override
-    public boolean validate(Object resource) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
 
     @Override
     public Service register(Service service) {

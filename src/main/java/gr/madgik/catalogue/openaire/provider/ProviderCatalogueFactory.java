@@ -6,7 +6,7 @@ import eu.einfracentral.domain.User;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
-import gr.madgik.catalogue.openaire.provider.repository.ProviderMongoRepository;
+import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +24,12 @@ import java.util.List;
 public class ProviderCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ProviderCatalogueFactory.class);
-    private final ProviderMongoRepository providerRepository;
+    private final ProviderRepository providerRepository;
     private final ProviderService providerService;
     private final JmsTemplate jmsTopicTemplate;
     private final ProviderMailService registrationMailService;
 
-    public ProviderCatalogueFactory(ProviderMongoRepository providerRepository,
+    public ProviderCatalogueFactory(ProviderRepository providerRepository,
                                     @Lazy ProviderService providerService,
                                     JmsTemplate jmsTopicTemplate,
                                     ProviderMailService registrationMailService) {

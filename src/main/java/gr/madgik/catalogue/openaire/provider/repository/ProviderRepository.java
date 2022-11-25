@@ -7,9 +7,9 @@ import gr.madgik.catalogue.repository.Repository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegistryProviderRepository extends RegistryCoreRepository<ProviderBundle, String> implements Repository<ProviderBundle, String> {
+public class ProviderRepository extends RegistryCoreRepository<ProviderBundle, String> implements Repository<ProviderBundle, String> {
 
-    public RegistryProviderRepository(GenericItemService itemService) {
+    public ProviderRepository(GenericItemService itemService) {
         super(itemService);
     }
 

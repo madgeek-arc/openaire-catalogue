@@ -8,10 +8,12 @@ import freemarker.template.TemplateException;
 import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.madgik.catalogue.Mailer;
 import gr.madgik.catalogue.SecurityService;
+import gr.madgik.catalogue.openaire.domain.Service;
+import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.provider.repository.PendingProviderRepository;
-import gr.madgik.catalogue.openaire.provider.repository.RegistryProviderRepository;
-import gr.madgik.catalogue.openaire.resource.repository.MongoServiceRepository;
+import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.openaire.resource.repository.PendingResourceRepository;
+import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,9 +37,9 @@ public class ProviderMailService {
     private final Mailer mailService;
     private final SecurityService securityService;
     private final Configuration cfg;
-    private final RegistryProviderRepository providerRepository;
+    private final ProviderRepository providerRepository;
     private final PendingProviderRepository pendingProviderRepository;
-    private final MongoServiceRepository serviceRepository;
+    private final ServiceRepository serviceRepository;
     private final PendingResourceRepository pendingResourceRepository;
 
     @Value("${project.catalogue.name}")
@@ -74,9 +76,9 @@ public class ProviderMailService {
 
     public ProviderMailService(Mailer mailService, Configuration cfg,
                                SecurityService securityService,
-                               RegistryProviderRepository providerRepository,
+                               ProviderRepository providerRepository,
                                PendingProviderRepository pendingProviderRepository,
-                               MongoServiceRepository serviceRepository,
+                               ServiceRepository serviceRepository,
                                PendingResourceRepository pendingResourceRepository) {
         this.mailService = mailService;
         this.cfg = cfg;
@@ -106,7 +108,10 @@ public class ProviderMailService {
             throw new ResourceNotFoundException("Provider is null");
         }
 
-        List<Service> serviceList = serviceRepository.getServices(providerBundle.getId())
+        FacetFilter filter = new FacetFilter();
+        filter.setQuantity(10000);
+        filter.addFilter("resource_organization", providerBundle.getId());
+        List<Service> serviceList = serviceRepository.get(filter).getResults()
                 .stream()
                 .map(ServiceBundle::getService)
                 .toList();
@@ -290,7 +295,7 @@ public class ProviderMailService {
         Map<String, Object> root = new HashMap<>();
         root.put("project", projectName);
         root.put("endpoint", endpoint);
-        ServiceBundle infraService = serviceRepository.get(resourceId, catalogueName);
+        gr.madgik.catalogue.openaire.domain.ServiceBundle infraService = serviceRepository.get(resourceId, catalogueName);
         ProviderBundle providerBundle = providerRepository.get(infraService.getService().getResourceOrganisation());
         if (providerBundle.getProvider().getUsers() == null || providerBundle.getProvider().getUsers().isEmpty()) {
 //            throw new ValidationException(String.format("Provider [%s]-[%s] has no Users", providerBundle.getId(), providerBundle.getProvider().getName()));

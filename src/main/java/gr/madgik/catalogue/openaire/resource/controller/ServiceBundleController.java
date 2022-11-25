@@ -39,7 +39,7 @@ public class ServiceBundleController {
     })
     @GetMapping
     public Paging<ServiceBundle> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
-        return serviceBundleService.get(PagingUtils.createFacetFilter(allRequestParams));
+        return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
     }
 
 

@@ -61,7 +61,7 @@ public class ServiceController {
     })
     @GetMapping
     public Paging<Service> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
-        return serviceBundleService.get(PagingUtils.createFacetFilter(allRequestParams)).map(Bundle::getPayload);
+        return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(Bundle::getPayload);
     }
 
     @PostMapping(path = "validate")

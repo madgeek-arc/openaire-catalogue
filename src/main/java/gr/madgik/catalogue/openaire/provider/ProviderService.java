@@ -7,7 +7,7 @@ import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.SecurityService;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
-import gr.madgik.catalogue.openaire.provider.repository.RegistryProviderRepository;
+import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.repository.Repository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class ProviderService extends AbstractBundleService<Provider, ProviderBun
     private String catalogueName;
 
     public ProviderService(Catalogue<ProviderBundle, String> catalogue,
-                           RegistryProviderRepository repository,
+                           ProviderRepository repository,
                            SecurityService securityService) {
         super(catalogue, repository);
         this.catalogue = catalogue;

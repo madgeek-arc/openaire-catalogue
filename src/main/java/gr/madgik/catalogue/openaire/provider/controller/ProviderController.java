@@ -2,9 +2,9 @@ package gr.madgik.catalogue.openaire.provider.controller;
 
 import eu.einfracentral.domain.Provider;
 import eu.einfracentral.domain.ProviderBundle;
-import eu.einfracentral.domain.User;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
+import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
 import gr.madgik.catalogue.utils.PagingUtils;
 import io.swagger.annotations.ApiImplicitParam;
@@ -58,40 +58,15 @@ public class ProviderController {
             @ApiImplicitParam(name = "orderField", value = "Order field", dataType = "string", paramType = "query")
     })
     @GetMapping
-    public Paging<Provider> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams,
-                                   @RequestParam(defaultValue = "eosc", name = "catalogue_id") String catalogueIds) {
-        allRequestParams.putIfAbsent("catalogue_id", catalogueIds);
-        if (catalogueIds != null && catalogueIds.equals("all")) {
-            allRequestParams.remove("catalogue_id");
-        }
-        return providerService.get(PagingUtils.createFacetFilter(allRequestParams)).map(ProviderBundle::getPayload);
+    public Paging<Provider> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
+        return providerService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(ProviderBundle::getPayload);
     }
 
-//    @PostMapping(path = "search")
-//    public FacetedPage<Provider> search(@RequestBody Map<String, Object> filters, @RequestParam(required = false, name = "catalogue_id") String catalogueIds, Pageable pageable) {
-//        if (catalogueIds != null && !catalogueIds.equalsIgnoreCase("all")) {
-//            filters.putIfAbsent("catalogueId", catalogueIds);
-//        }
-//        return providerService.search(filters, pageable);
-//    }
-
-//    @GetMapping(path = "my")
-//    public List<Provider> getMy(@RequestParam(required = false, name = "catalogue_id") String catalogueIds, Authentication authentication) {
-//        Map<String, Object> filters = new HashMap<>();
-//        if (catalogueIds != null && !catalogueIds.equalsIgnoreCase("all")) {
-//            filters.putIfAbsent("catalogueId", catalogueIds);
-//        }
-//        filters.putIfAbsent("users.email", User.of(authentication).getEmail());
-//        return providerService.search(filters);
-//    }
-
     @GetMapping(path = "my")
-    public List<Provider> getMy(@RequestParam(required = false, name = "catalogue_id") String catalogueIds, Authentication authentication) {
+    public List<Provider> getMy(@ApiIgnore Authentication authentication) {
         FacetFilter filter = new FacetFilter();
-        if (catalogueIds != null && !catalogueIds.equalsIgnoreCase("all")) {
-            filter.addFilter("catalogueId", catalogueIds);
-        }
-        filter.addFilter("users.email", User.of(authentication).getEmail());
+        filter.setQuantity(10000);
+        filter.addFilter("users", User.of(authentication).getEmail());
         return providerService.get(filter).map(ProviderBundle::getPayload).getResults();
     }
 

@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire;
+package gr.madgik.catalogue.openaire.config;
 
 import gr.athenarc.catalogue.CatalogueApplication;
 import gr.athenarc.catalogue.config.CatalogueLibConfiguration;

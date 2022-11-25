@@ -59,7 +59,7 @@ public class DatasourceController {
         if (catalogueIds != null && catalogueIds.equals("all")) {
             allRequestParams.remove("catalogue_id");
         }
-        return datasourceBundleService.get(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
+        return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
     }
 
 //    @PostMapping(path = "search")
