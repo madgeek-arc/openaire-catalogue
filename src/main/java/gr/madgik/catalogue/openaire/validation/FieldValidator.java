@@ -43,7 +43,7 @@ public class FieldValidator {
 
     @Autowired
     public FieldValidator(VocabularyService vocabularyService,
-                          ProviderService providerService,
+                          @Lazy ProviderService providerService,
                           @Lazy ServiceBundleService serviceBundleService,
                           @Lazy DatasourceBundleService datasourceBundleService) {
         this.vocabularyService = vocabularyService;
