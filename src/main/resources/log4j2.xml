@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Properties>
+        <Property name="baseDir">logs</Property>
+        <Property name="app">OpenAIRE Catalogue</Property>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level} --- [%15.15t] %-40.40c{1.} : %m%n%style{%notEmpty{[transaction_id=%X{transaction_id}]\n}}{magenta}%style{%notEmpty{user_info=%X{user_info}\n}}{yellow}%ex
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="${LOG_PATTERN}"/>
+        </Console>
+
+
+        <RollingFile name="RollingFile" fileName="${baseDir}/${app}.log"
+                     filePattern="${baseDir}/$${date:yyyy-MM}/${app}-%d{yyyy-MM-dd_HH:mm:ss}.log.gz">
+            <PatternLayout
+                    pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <CronTriggeringPolicy schedule="0 0 0 1 * ?"/>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${baseDir}" maxDepth="2">
+                    <IfFileName glob="*/${app}-*.log.gz"/>
+                    <IfLastModified age="180d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+        <Logger name="springfox.documentation" level="warn">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="org.springframework" level="warn">
+            <AppenderRef ref="Console"/>
+        </Logger>
+    </Loggers>
+</Configuration>
