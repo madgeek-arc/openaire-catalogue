@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -74,14 +75,14 @@ public class ProviderMailService {
     private int maxQuantity;
 
 
-    public ProviderMailService(Mailer mailService, Configuration cfg,
+    public ProviderMailService(Mailer mailService, FreeMarkerConfigurer cfg,
                                SecurityService securityService,
                                ProviderRepository providerRepository,
                                PendingProviderRepository pendingProviderRepository,
                                ServiceRepository serviceRepository,
                                PendingResourceRepository pendingResourceRepository) {
         this.mailService = mailService;
-        this.cfg = cfg;
+        this.cfg = cfg.getConfiguration();
         this.securityService = securityService;
         this.providerRepository = providerRepository;
         this.pendingProviderRepository = pendingProviderRepository;
