@@ -53,7 +53,7 @@ public class ServiceCatalogueFactory {
             @Override
             public void preHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service registration preHandle");
-                if (serviceBundle.getService().getResourceOrganisation() == null) {
+                if (serviceBundle.getService().getResourceOrganisation() == null || serviceBundle.getService().getResourceOrganisation().equals("")) {
                     serviceBundle.getService().setResourceOrganisation("openaire");
                 }
                 serviceBundle.setId(createId(serviceBundle.getPayload()));

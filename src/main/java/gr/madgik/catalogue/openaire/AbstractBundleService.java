@@ -44,7 +44,7 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
 
     @Override
     public B create(B resource) {
-        return catalogue.register(resource);
+        return repository.create(resource);
     }
 
     @Override
