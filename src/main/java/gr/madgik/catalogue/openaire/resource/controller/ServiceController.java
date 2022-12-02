@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -38,16 +39,19 @@ public class ServiceController {
     }
 
     @PostMapping
+    @PreAuthorize("isProviderAdmin(#service.resourceOrganisation)")
     public Service add(@RequestBody Service service) {
         return serviceBundleService.register(service); // TODO: change this ??
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("isServiceProviderAdmin(#service)")
     public Service update(@PathVariable String id, @RequestBody Service service) {
         return serviceBundleService.update(id, new ServiceBundle(service)).getService(); // TODO: change this ??
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("isServiceProviderAdmin(#id)")
     public void delete(@PathVariable String id) {
         serviceBundleService.delete(id);
     }
@@ -65,6 +69,7 @@ public class ServiceController {
     }
 
     @PostMapping(path = "validate")
+    @PreAuthorize("isServiceProviderAdmin(#service)")
     public boolean validate(@RequestBody Service service) {
         logger.info("Validating Service with name '{}' and id '{}'", service.getName(), service.getId());
         return serviceBundleService.validate(service);

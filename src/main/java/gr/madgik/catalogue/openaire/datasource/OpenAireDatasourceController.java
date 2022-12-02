@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -34,7 +35,12 @@ public class OpenAireDatasourceController {
             @ApiImplicitParam(name = "orderField", value = "Order field", dataType = "string", paramType = "query")
     })
     @GetMapping("dsm/datasources")
-    public Paging<?> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) throws ParseException, JsonProcessingException {
+    public Paging<?> get(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) throws ParseException, JsonProcessingException {
         return this.openAireDatasourceService.getOpenAIREDatasourcesAsJSON(PagingUtils.createFacetFilter(allRequestParams));
+    }
+
+    @GetMapping("provide/datasources/{id}")
+    public Object getByID(@PathVariable("id") String id) throws ParseException {
+        return this.openAireDatasourceService.getEnrichedOpenAIREDatasourceById(id);
     }
 }

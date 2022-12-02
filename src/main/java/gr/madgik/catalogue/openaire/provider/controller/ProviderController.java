@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -36,16 +37,19 @@ public class ProviderController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Provider add(@RequestBody Provider provider) {
         return providerService.register(provider); // TODO: change this ??
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("isProviderAdmin(#provider)")
     public Provider update(@PathVariable String id, @RequestBody Provider provider) {
         return providerService.update(id, new ProviderBundle(provider)).getProvider(); // TODO: change this ??
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void delete(@PathVariable String id) {
         providerService.delete(id);
     }

@@ -42,9 +42,9 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .regexMatchers("/dump/.*", "/restore/", "/resources.*", "/resourceType.*", "/search.*", "/logs.*").hasAnyAuthority("ADMIN")
                         .antMatchers(HttpMethod.GET, "/forms/**").permitAll()
-//                        .antMatchers( "/forms/**").hasAnyAuthority("ADMIN")
+                        .antMatchers(HttpMethod.GET, "/vocabularies/**").permitAll()
+                        .regexMatchers("/dump/.*", "/restore/", "/resources.*", "/version.*", "/items.*", "/resourceType.*", "/search.*", "/logs.*", "/forms.*", "/vocabularies.*").hasAnyAuthority("ADMIN")
                         .anyRequest().permitAll())
                 .oauth2Login()
                 .successHandler(authSuccessHandler)

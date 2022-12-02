@@ -28,13 +28,25 @@ public class OpenAireDatasourceService {
     @Value("${openaire.dsm-api.url}")
     String dsmAPI;
 
+    @Value("${openaire.provide.url}")
+    String provideAPI;
+
+    public Object getEnrichedOpenAIREDatasourceById(String id) throws ParseException {
+        String response = createHttpRequest(searchEnrichedDatasourceByID(id).toUri(), "", HttpMethod.GET);
+        Object result = new JSONObject();
+        if (response != null) {
+            result = new JSONParser().parse(response);
+        }
+        return result;
+    }
+
     public Paging<Object> getOpenAIREDatasourcesAsJSON(FacetFilter ff) throws ParseException, JsonProcessingException {
         String page = createPage(ff);
         String size = Integer.toString(ff.getQuantity());
         String ordering = createOrdering(ff);
         String data = objectMapper.writeValueAsString(ff.getFilter());
 
-        String response = createHttpRequest(searchDatasourceUri(page, size, ordering).toUri(), data);
+        String response = createHttpRequest(searchDatasourceUri(page, size, ordering).toUri(), data, HttpMethod.POST);
         Paging<Object> paging = new Paging<>();
         if (response != null) {
             JSONObject obj = (JSONObject) new JSONParser().parse(response);
@@ -56,6 +68,14 @@ public class OpenAireDatasourceService {
         paging.setTotal(total);
         paging.setResults(results);
         return paging;
+    }
+
+    private UriComponents searchEnrichedDatasourceByID(String id) {
+
+        return UriComponentsBuilder
+                .fromHttpUrl(provideAPI + "/repositories/getRepositoryById/")
+                .path("/{id}")
+                .build().expand(id).encode();
     }
 
     private UriComponents searchDatasourceUri(String page, String size, String order) {
@@ -87,12 +107,12 @@ public class OpenAireDatasourceService {
         return ordering;
     }
 
-    public String createHttpRequest(URI uri, String data) {
+    public String createHttpRequest(URI uri, String data, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("accept", "application/json");
         headers.add("Content-Type", "application/json");
         HttpEntity<Object> entity = new HttpEntity<>(data, headers);
-        return restTemplate.exchange(uri.toString(), HttpMethod.POST, entity, String.class).getBody();
+        return restTemplate.exchange(uri.toString(), method, entity, String.class).getBody();
     }
 
 }
