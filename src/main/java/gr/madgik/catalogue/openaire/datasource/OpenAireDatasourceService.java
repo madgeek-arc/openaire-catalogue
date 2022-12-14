@@ -81,7 +81,7 @@ public class OpenAireDatasourceService {
     private UriComponents searchDatasourceUri(String page, String size, String order) {
 
         return UriComponentsBuilder
-                .fromHttpUrl(dsmAPI + "/ds/searchdetails/")
+                .fromHttpUrl(dsmAPI + "/ds/searchregistered/")
                 .path("/{page}/{size}/")
                 .queryParam("requestSortBy", "officialname")
                 .queryParam("order", order)
