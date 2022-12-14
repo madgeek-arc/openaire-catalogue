@@ -23,7 +23,7 @@ public class ServiceRepository extends RegistryCoreRepository<ServiceBundle, Str
     @Override
     public ServiceBundle get(String s, String catalogue) {
         FacetFilter filter = new FacetFilter();
-        filter.addFilter("service_id", s);
+        filter.addFilter("resource_internal_id", s);
         filter.addFilter("catalogue_id", catalogue);
         Paging<ServiceBundle> results = get(filter);
         if (results.getResults() != null && !results.getResults().isEmpty()) {
