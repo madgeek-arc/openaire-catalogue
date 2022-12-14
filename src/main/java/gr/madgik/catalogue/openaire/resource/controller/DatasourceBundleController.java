@@ -1,11 +1,22 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
-import eu.einfracentral.domain.DatasourceBundle;
+import eu.openminted.registry.core.domain.Paging;
+import gr.madgik.catalogue.dto.BulkOperation;
+import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
+import gr.madgik.catalogue.repository.RegistryCoreRepository;
+import gr.madgik.catalogue.utils.PagingUtils;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/bundles/datasources")
@@ -14,25 +25,72 @@ public class DatasourceBundleController {
     private static final Logger logger = LoggerFactory.getLogger(DatasourceBundleController.class);
 
     private final DatasourceBundleService datasourceBundleService;
+    private final RegistryCoreRepository<DatasourceBundle, String> datasourceRepository;
 
-    public DatasourceBundleController(DatasourceBundleService datasourceBundleService) {
+    public DatasourceBundleController(DatasourceBundleService datasourceBundleService,
+                                      RegistryCoreRepository<DatasourceBundle, String> datasourceRepository) {
         this.datasourceBundleService = datasourceBundleService;
+        this.datasourceRepository = datasourceRepository;
+    }
+
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "query", value = "Keyword to refine the search", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "from", value = "Starting index in the result set", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "quantity", value = "Quantity to be fetched", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "asc / desc", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "orderField", value = "Order field", dataType = "string", paramType = "query")
+    })
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Paging<DatasourceBundle> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
+        return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
     }
 
 
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("hasAuthority('ADMIN')")
     public DatasourceBundle verifyProvider(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
-                                           @RequestParam(required = false) String status) {
-        DatasourceBundle service = datasourceBundleService.verify(id, status, active);
-        logger.info("User updated Service with name '{}' [status: {}] [active: {}]", service.getDatasource().getName(), status, active);
-        return service;
+                                        @RequestParam(required = false) String status) {
+        DatasourceBundle datasource = datasourceBundleService.verify(id, status, active);
+        logger.info("User updated Datasource with name '{}' [status: {}] [active: {}]", datasource.getPayload().getName(), status, active);
+        return datasource;
     }
 
-    // Activate/Deactivate a Service.
+    // Activate/Deactivate a Datasource.
     @PatchMapping(path = "{id}/publish", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("hasAuthority('ADMIN')")
     public DatasourceBundle publish(@PathVariable("id") String id, @RequestParam(required = false) Boolean active) {
-        DatasourceBundle service = datasourceBundleService.activate(id, active);
-        logger.info("User updated Service with name '{}' [active: {}]", service.getDatasource().getName(), active);
-        return service;
+        DatasourceBundle datasource = datasourceBundleService.activate(id, active);
+        logger.info("User updated Datasource with name '{}' [active: {}]", datasource.getPayload().getName(), active);
+        return datasource;
+    }
+
+    @PostMapping("bulk")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public BulkOperation<DatasourceBundle> addAll(@RequestBody List<DatasourceBundle> bundles) {
+        BulkOperation<DatasourceBundle> datasources = new BulkOperation<>();
+        for (DatasourceBundle bundle : bundles) {
+            try {
+                datasources.getSuccessful().add(datasourceRepository.create(bundle));
+            } catch (Exception e) {
+                datasources.getFailed().add(bundle);
+            }
+        }
+        return datasources;
+    }
+
+    @PutMapping("bulk")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public BulkOperation<DatasourceBundle> updateAll(@RequestBody List<DatasourceBundle> bundles) {
+        BulkOperation<DatasourceBundle> datasources = new BulkOperation<>();
+        for (DatasourceBundle bundle : bundles) {
+            try {
+                datasources.getSuccessful().add(datasourceRepository.update(bundle.getId(), bundle));
+            } catch (Exception e) {
+                datasources.getFailed().add(bundle);
+            }
+        }
+        return datasources;
     }
 }

@@ -1,10 +1,10 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import eu.einfracentral.domain.Datasource;
-import eu.einfracentral.domain.DatasourceBundle;
 import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
+import gr.madgik.catalogue.openaire.domain.Datasource;
+import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
 
 @org.springframework.stereotype.Service
