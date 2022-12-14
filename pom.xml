@@ -14,7 +14,7 @@
     <name>openaire-catalogue</name>
     <description>OpenAIRE Catalogue Project</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <elasticsearch.version>7.4.2</elasticsearch.version> <!-- Spring-Boot override -->
     </properties>
     <dependencies>
