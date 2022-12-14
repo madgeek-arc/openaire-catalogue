@@ -3,176 +3,176 @@
     {
       "multivalued": false,
       "name": "resource_internal_id",
-      "path": "$.service.id",
+      "path": "$.datasource.id",
       "type": "java.lang.String",
       "primaryKey": true
     },
     {
       "multivalued": false,
       "name": "name",
-      "label": "Service Name",
-      "path": "$.service.name",
+      "label": "Datasource Name",
+      "path": "$.datasource.name",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "abbreviation",
       "label": "Abbreviation",
-      "path": "$.service.abbreviation",
+      "path": "$.datasource.abbreviation",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "version",
       "label": "Version",
-      "path": "$.service.version",
+      "path": "$.datasource.version",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "resource_organisation",
       "label": "Resource Organisation",
-      "path": "$.service.resourceOrganisation",
+      "path": "$.datasource.resourceOrganisation",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "resource_providers",
       "label": "Resource Provider",
-      "path": "$.service.resourceProviders.*",
+      "path": "$.datasource.resourceProviders.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "subcategories",
       "label": "Subcategory",
-      "path": "$.service.categories.*.subcategory",
+      "path": "$.datasource.categories.*.subcategory",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "scientific_subdomains",
       "label": "Scientific Subdomain",
-      "path": "$.service.scientificDomains.*.scientificSubdomain",
+      "path": "$.datasource.scientificDomains.*.scientificSubdomain",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "target_users",
       "label": "Target User",
-      "path": "$.service.targetUsers.*",
+      "path": "$.datasource.targetUsers.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "access_types",
       "label": "Access Type",
-      "path": "$.service.accessTypes.*",
+      "path": "$.datasource.accessTypes.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "access_modes",
       "label": "Access Mode",
-      "path": "$.service.accessModes.*",
+      "path": "$.datasource.accessModes.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "language_availabilities",
       "label": "Language Availability",
-      "path": "$.service.languageAvailabilities.*",
+      "path": "$.datasource.languageAvailabilities.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "geographical_availabilities",
       "label": "Geographical Availability",
-      "path": "$.service.geographicalAvailabilities.*",
+      "path": "$.datasource.geographicalAvailabilities.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "resource_geographic_locations",
       "label": "Resource Geographic Location",
-      "path": "$.service.resourceGeographicLocations.*",
+      "path": "$.datasource.resourceGeographicLocations.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "trl",
       "label": "TRL",
-      "path": "$.service.trl",
+      "path": "$.datasource.trl",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "life_cycle_status",
       "label": "Life Cycle Status",
-      "path": "$.service.lifeCycleStatus",
+      "path": "$.datasource.lifeCycleStatus",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "catalogue_id",
       "label": "Catalogue ID",
-      "path": "$.service.catalogueId",
+      "path": "$.datasource.catalogueId",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "funding_body",
       "label": "Funding Body",
-      "path": "$.service.fundingBody.*",
+      "path": "$.datasource.fundingBody.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "funding_programs",
       "label": "Funding Program",
-      "path": "$.service.fundingPrograms.*",
+      "path": "$.datasource.fundingPrograms.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "description",
       "label": "Description",
-      "path": "$.service.description",
+      "path": "$.datasource.description",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "tagline",
       "label": "Tagline",
-      "path": "$.service.tagline",
+      "path": "$.datasource.tagline",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "use_cases",
       "label": "Use Case",
-      "path": "$.service.useCases.*",
+      "path": "$.datasource.useCases.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "open_source_technologies",
       "label": "Open Source Technology",
-      "path": "$.service.openSourceTechnologies.*",
+      "path": "$.datasource.openSourceTechnologies.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "tags",
       "label": "Tag",
-      "path": "$.service.tags.*",
+      "path": "$.datasource.tags.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": false,
       "name": "order_type",
       "label": "Order Type",
-      "path": "$.service.orderType",
+      "path": "$.datasource.orderType",
       "type": "java.lang.String"
     },
     {
@@ -320,23 +320,23 @@
       "multivalued": true,
       "name": "portfolios",
       "label": "Portfolios",
-      "path": "$.service.extras.portfolios.*",
+      "path": "$.datasource.extras.portfolios.*",
       "type": "java.lang.String"
     },
     {
       "multivalued": true,
       "name": "users",
       "label": "Users",
-      "path": "$.service.extras.users.*",
+      "path": "$.datasource.extras.users.*",
       "type": "java.lang.String"
     }
   ],
   "indexMapperClass": "eu.openminted.registry.core.index.DefaultIndexMapper",
-  "name": "service",
+  "name": "datasource",
   "aliasGroup": "resources",
   "payloadType": "json",
   "properties": {
-    "class": "gr.madgik.catalogue.openaire.domain.ServiceBundle"
+    "class": "gr.madgik.catalogue.openaire.domain.DatasourceBundle"
   },
   "schema": "{\n\t\"$schema\": \"https://json-schema.org/draft/2019-09/schema\"\n}"
 }

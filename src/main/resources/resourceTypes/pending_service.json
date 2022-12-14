@@ -2,7 +2,7 @@
   "indexFields": [
     {
       "multivalued": false,
-      "name": "pending_service_id",
+      "name": "resource_internal_id",
       "path": "$.service.id",
       "type": "java.lang.String",
       "primaryKey": true
