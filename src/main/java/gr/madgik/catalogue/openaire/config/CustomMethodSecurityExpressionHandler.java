@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.config;
 
 
-import eu.einfracentral.domain.DatasourceBundle;
 import eu.einfracentral.domain.ProviderBundle;
+import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.aopalliance.intercept.MethodInvocation;
