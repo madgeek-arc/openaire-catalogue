@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -83,6 +84,7 @@ public class ServiceCatalogueFactory {
             @Override
             public void handleError(ServiceBundle serviceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Service registration handleError");
+                throw new gr.athenarc.catalogue.exception.ResourceException(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         });
 
@@ -180,6 +182,7 @@ public class ServiceCatalogueFactory {
             @Override
             public void handleError(ServiceBundle serviceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Service update handleError");
+                throw new gr.athenarc.catalogue.exception.ResourceException(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         });
 
