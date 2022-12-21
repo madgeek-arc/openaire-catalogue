@@ -14,6 +14,7 @@ import gr.madgik.catalogue.service.VocabularyService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class ExtendedVocabulariesService extends VocabularyService implements Ex
 
     @Scheduled(fixedRate = 600000) // refresh cache every 10 minutes
     @CachePut(value = CACHE_UI_VOCABULARIES)
+    @Transactional
     public Map<String, List<Value>> cacheVocabularies() {
         return getControlValuesMap();
     }
