@@ -57,6 +57,9 @@ public class ServiceCatalogueFactory {
                 if (serviceBundle.getService().getResourceOrganisation() == null || serviceBundle.getService().getResourceOrganisation().equals("")) {
                     serviceBundle.getService().setResourceOrganisation("openaire");
                 }
+                if (serviceBundle.getService().getCatalogueId() == null || serviceBundle.getService().getCatalogueId().equals("")) {
+                    serviceBundle.getService().setCatalogueId("eosc");
+                }
                 serviceBundle.setId(createId(serviceBundle.getPayload()));
 
                 // validate
