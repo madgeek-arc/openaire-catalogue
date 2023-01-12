@@ -7,6 +7,8 @@ import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
+
 @Component
 public class ServiceRepository extends RegistryCoreRepository<ServiceBundle, String> implements ResourceRepository<ServiceBundle, String> {
 
@@ -21,11 +23,9 @@ public class ServiceRepository extends RegistryCoreRepository<ServiceBundle, Str
     }
 
     @Override
-    public ServiceBundle get(String s, String catalogue) {
+    public ServiceBundle get(@NotNull String s, String catalogue) {
         FacetFilter filter = new FacetFilter();
-        if (s != null) {
-            filter.addFilter("resource_internal_id", s);
-        }
+        filter.addFilter("resource_internal_id", s);
         if (catalogue != null) {
             filter.addFilter("catalogue_id", catalogue);
         }
