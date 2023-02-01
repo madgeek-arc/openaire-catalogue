@@ -38,12 +38,14 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        Cookie cookie = new Cookie("AccessToken", ((OidcUser) authentication.getPrincipal()).getIdToken().getTokenValue());
+        Cookie cookie = new Cookie(applicationProperties.getCookie().getName(), ((OidcUser) authentication.getPrincipal()).getIdToken().getTokenValue());
         cookie.setMaxAge(createCookieMaxAge(authentication));
         cookie.setPath("/");
-//        cookie.setSecure(true);
+        cookie.setDomain(applicationProperties.getCookie().getDomain());
 
-        logger.debug("Assigning Cookie: {}", objectMapper.writeValueAsString(cookie));
+        if (logger.isDebugEnabled()) {
+            logger.debug("Assigning Cookie: {}", objectMapper.writeValueAsString(cookie));
+        }
         response.addCookie(cookie);
         logger.debug("Authentication Successful - Redirecting to: {}", applicationProperties.getLoginRedirect());
         response.sendRedirect(applicationProperties.getLoginRedirect());

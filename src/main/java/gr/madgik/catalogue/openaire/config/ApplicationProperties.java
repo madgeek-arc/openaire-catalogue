@@ -14,6 +14,7 @@ public class ApplicationProperties {
     private String loginRedirect;
 
     private String logoutRedirect;
+    private Cookie cookie;
 
     public Set<Object> getAdmins() {
         return admins;
@@ -39,4 +40,32 @@ public class ApplicationProperties {
         this.logoutRedirect = logoutRedirect;
     }
 
+    public Cookie getCookie() {
+        return cookie;
+    }
+
+    public void setCookie(Cookie cookie) {
+        this.cookie = cookie;
+    }
+
+    public static class Cookie {
+        private String name;
+        private String domain;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+    }
 }

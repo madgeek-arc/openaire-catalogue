@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .successHandler(authSuccessHandler)
                 .and()
                 .logout().logoutSuccessUrl(applicationProperties.getLogoutRedirect())
-                .deleteCookies("JSESSIONID", "AccessToken")
+                .deleteCookies().clearAuthentication(true).invalidateHttpSession(true)
                 .and()
                 .cors()
                 .and()
