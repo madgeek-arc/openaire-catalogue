@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -32,16 +33,19 @@ public class DatasourceController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN') or isProviderAdmin(#datasource.resourceOrganisation)")
     public Datasource add(@RequestBody Datasource datasource) {
         return datasourceBundleService.register(datasource); // TODO: change this ??
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or isDatasourceProviderAdmin(#datasource)")
     public Datasource update(@PathVariable String id, @RequestBody Datasource datasource) {
         return datasourceBundleService.update(id, new DatasourceBundle(datasource)).getDatasource(); // TODO: change this ??
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or isDatasourceProviderAdmin(#id)")
     public void delete(@PathVariable String id) {
         datasourceBundleService.delete(id);
     }
