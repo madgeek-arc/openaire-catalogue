@@ -13,6 +13,8 @@ import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
 
+import java.util.Objects;
+
 public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomMethodSecurityExpressionRoot.class);
@@ -94,7 +96,8 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
         }
         return providerBundle.getProvider().getUsers()
                 .stream()
-                .anyMatch(u -> u.getId().equals(user.getSub()) || u.getEmail().equals(user.getEmail()));
+                .filter(Objects::nonNull)
+                .anyMatch(u -> u.getEmail().equals(user.getEmail()));
     }
 
     public <T extends Identifiable> boolean isServiceProviderAdmin(T resource) {
