@@ -14,7 +14,6 @@ import gr.madgik.catalogue.service.VocabularyService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ public class ExtendedVocabulariesService extends VocabularyService implements Ex
 
     @Scheduled(fixedRate = 600000) // refresh cache every 10 minutes
     @CachePut(value = CACHE_UI_VOCABULARIES)
-    @Transactional
     public Map<String, List<Value>> cacheVocabularies() {
         return getControlValuesMap();
     }
@@ -58,7 +56,7 @@ public class ExtendedVocabulariesService extends VocabularyService implements Ex
         controlValues.put("Service", getAllServices());
 
         // add Resource Organizations from EOSC
-        controlValues.put("resourceProviders", getEoscProviders());
+        controlValues.put("resourceProviders", controlValues.get("Provider"));
 
         // add all vocabularies
         for (Map.Entry<String, List<Vocabulary>> entry : this.getByType().entrySet()) {
@@ -91,6 +89,7 @@ public class ExtendedVocabulariesService extends VocabularyService implements Ex
                 .toList();
     }
 
+    @Deprecated
     List<Value> getEoscProviders() {
         RestTemplate restTemplate = new RestTemplate();
         Browsing<Map<String, String>> eoscProviders;
