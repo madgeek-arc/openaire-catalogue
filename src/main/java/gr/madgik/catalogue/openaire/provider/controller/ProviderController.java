@@ -43,7 +43,7 @@ public class ProviderController {
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("isProviderAdmin(#provider)")
+    @PreAuthorize("hasAuthority('ADMIN') or isProviderAdmin(#provider)")
     public Provider update(@PathVariable String id, @RequestBody Provider provider) {
         return providerService.update(id, new ProviderBundle(provider)).getProvider(); // TODO: change this ??
     }
