@@ -7,6 +7,7 @@ import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
@@ -19,12 +20,17 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
 
     private AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
 
+    /** Use Lazy loading to avoid initialization issues.
+     * (e.g. breaks advisors' configuration and @Transactional annotations do not work) **/
+    @Lazy
     @Autowired
     private RegistryCoreRepository<ProviderBundle, String> providerRepository;
 
+    @Lazy
     @Autowired
     private RegistryCoreRepository<ServiceBundle, String> serviceRepository;
 
+    @Lazy
     @Autowired
     private RegistryCoreRepository<DatasourceBundle, String> datasourceRepository;
 
