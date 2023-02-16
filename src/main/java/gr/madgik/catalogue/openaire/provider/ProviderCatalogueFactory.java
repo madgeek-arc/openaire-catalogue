@@ -94,7 +94,6 @@ public class ProviderCatalogueFactory {
             @Override
             public void preHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider delete preHandle");
-                providerRepository.delete(providerBundle);
             }
 
             @Override
