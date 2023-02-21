@@ -3,6 +3,7 @@ package gr.madgik.catalogue.openaire.resource.controller;
 import eu.openminted.registry.core.domain.Paging;
 import gr.madgik.catalogue.dto.BulkOperation;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
+import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.utils.PagingUtils;
@@ -47,6 +48,11 @@ public class DatasourceBundleController {
         return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
     }
 
+    @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public DatasourceBundle get(@PathVariable("id") String id) {
+        return datasourceRepository.findById(id).orElse(null);
+    }
 
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAuthority('ADMIN')")

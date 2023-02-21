@@ -48,6 +48,11 @@ public class ServiceBundleController {
         return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
     }
 
+    @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ServiceBundle get(@PathVariable("id") String id) {
+        return serviceRepository.findById(id).orElse(null);
+    }
 
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAuthority('ADMIN')")
