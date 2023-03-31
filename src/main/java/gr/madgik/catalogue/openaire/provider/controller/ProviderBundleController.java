@@ -45,4 +45,9 @@ public class ProviderBundleController {
         }
 //        return
     }
+
+    @GetMapping("{id}")
+    public ProviderBundle get(@PathVariable("id") String id) {
+        return providerService.getBundle(id);
+    }
 }

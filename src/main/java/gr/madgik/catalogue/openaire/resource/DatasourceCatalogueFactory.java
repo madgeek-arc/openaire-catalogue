@@ -28,35 +28,37 @@ public class DatasourceCatalogueFactory {
 
         catalogue.registerHandler(Catalogue.Action.REGISTER, new ActionHandler<>() {
             @Override
-            public void preHandle(DatasourceBundle serviceBundle, Context ctx) {
+            public DatasourceBundle preHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource registration preHandle");
-                serviceBundle.setId(createId(serviceBundle.getDatasource()));
+                datasourceBundle.setId(createId(datasourceBundle.getDatasource()));
+                return datasourceBundle;
             }
 
             @Override
-            public void postHandle(DatasourceBundle serviceBundle, Context ctx) {
+            public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource registration postHandle");
             }
 
             @Override
-            public void handleError(DatasourceBundle serviceBundle, Throwable throwable, Context ctx) {
+            public void handleError(DatasourceBundle datasourceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Datasource registration handleError");
             }
         });
 
         catalogue.registerHandler(Catalogue.Action.UPDATE, new ActionHandler<>() {
             @Override
-            public void preHandle(DatasourceBundle serviceBundle, Context ctx) {
+            public DatasourceBundle preHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource update preHandle");
+                return datasourceBundle;
             }
 
             @Override
-            public void postHandle(DatasourceBundle serviceBundle, Context ctx) {
+            public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource update postHandle");
             }
 
             @Override
-            public void handleError(DatasourceBundle serviceBundle, Throwable throwable, Context ctx) {
+            public void handleError(DatasourceBundle datasourceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Datasource update handleError");
             }
         });

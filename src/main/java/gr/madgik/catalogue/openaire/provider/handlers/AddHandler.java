@@ -6,8 +6,8 @@ import gr.madgik.catalogue.Context;
 
 public class AddHandler implements ActionHandler<ProviderBundle, String> {
     @Override
-    public void preHandle(ProviderBundle providerBundle, Context ctx) {
-        ActionHandler.super.preHandle(providerBundle, ctx);
+    public ProviderBundle preHandle(ProviderBundle providerBundle, Context ctx) {
+        return ActionHandler.super.preHandle(providerBundle, ctx);
     }
 
     @Override

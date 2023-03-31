@@ -15,7 +15,7 @@ import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import gr.madgik.catalogue.service.sync.ServiceSync;
-import gr.madgik.catalogue.utils.SortUtils;
+import gr.athenarc.catalogue.utils.SortUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class ServiceCatalogueFactory {
 
         catalogue.registerHandler(Catalogue.Action.REGISTER, new ActionHandler<>() {
             @Override
-            public void preHandle(ServiceBundle serviceBundle, Context ctx) {
+            public ServiceBundle preHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service registration preHandle");
                 if (serviceBundle.getService().getResourceOrganisation() == null || serviceBundle.getService().getResourceOrganisation().equals("")) {
                     serviceBundle.getService().setResourceOrganisation("openaire");
@@ -76,6 +76,7 @@ public class ServiceCatalogueFactory {
                 // create Metadata
                 serviceBundle.setMetadata(Metadata.createMetadata(User.of(SecurityContextHolder.getContext().getAuthentication()).getFullname()));
 
+                return serviceBundle;
             }
 
             @Override
@@ -93,7 +94,7 @@ public class ServiceCatalogueFactory {
 
         catalogue.registerHandler(Catalogue.Action.UPDATE, new ActionHandler<>() {
             @Override
-            public void preHandle(ServiceBundle serviceBundle, Context ctx) {
+            public ServiceBundle preHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service update preHandle");
                 fieldValidator.validate(serviceBundle);
 
@@ -163,6 +164,8 @@ public class ServiceCatalogueFactory {
                         throw new ValidationException("You cannot change catalogueId");
                     }
                 }
+
+                return serviceBundle;
             }
 
             @Override

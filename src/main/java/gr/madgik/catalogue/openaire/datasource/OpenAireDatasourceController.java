@@ -2,7 +2,7 @@ package gr.madgik.catalogue.openaire.datasource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.openminted.registry.core.domain.Paging;
-import gr.madgik.catalogue.utils.PagingUtils;
+import gr.athenarc.catalogue.utils.PagingUtils;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.json.simple.parser.ParseException;

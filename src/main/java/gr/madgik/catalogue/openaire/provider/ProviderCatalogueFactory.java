@@ -1,8 +1,6 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import eu.einfracentral.domain.Provider;
-import eu.einfracentral.domain.ProviderBundle;
-import eu.einfracentral.domain.User;
+import eu.einfracentral.domain.*;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
@@ -13,12 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class ProviderCatalogueFactory {
@@ -45,15 +42,31 @@ public class ProviderCatalogueFactory {
 
         catalogue.registerHandler(Catalogue.Action.REGISTER, new ActionHandler<>() {
             @Override
-            public void preHandle(ProviderBundle providerBundle, Context ctx) {
+            public ProviderBundle preHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider registration preHandle");
                 providerService.onboard(providerBundle, null);
                 providerBundle.setId(createId(providerBundle.getProvider()));
                 addAuthenticatedUser(providerBundle.getProvider());
                 providerService.validate(providerBundle);
-//                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//                providerBundle.setMetadata(Metadata.createMetadata(User.of(auth).getFullName(), User.of(auth).getEmail()));
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                User user = User.of(auth);
+
+                providerBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
+
+                LoggingInfo loggingInfo = new LoggingInfo();
+                loggingInfo.setActionType(LoggingInfo.ActionType.REGISTERED.getKey());
+                loggingInfo.setType(LoggingInfo.Types.ONBOARD.getKey());
+                loggingInfo.setUserEmail(user.getEmail());
+                loggingInfo.setUserFullName(user.getFullName());
+                loggingInfo.setDate(new Date().toString());
+                loggingInfo.setUserRole("");
+
+                providerBundle.setLoggingInfo(new LinkedList<>());
+                providerBundle.getLoggingInfo().add(loggingInfo);
+                providerBundle.setLatestUpdateInfo(loggingInfo);
                 sortFields(providerBundle);
+
+                return providerBundle;
             }
 
             @Override
@@ -75,8 +88,33 @@ public class ProviderCatalogueFactory {
 
         catalogue.registerHandler(Catalogue.Action.UPDATE, new ActionHandler<>() {
             @Override
-            public void preHandle(ProviderBundle providerBundle, Context ctx) {
+            public ProviderBundle preHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider update preHandle");
+
+                ProviderBundle existing = providerRepository.get(providerBundle.getId());
+                existing.setProvider(providerBundle.getProvider());
+                providerBundle = existing;
+
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                User user = User.of(auth);
+
+                providerBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
+
+                LoggingInfo loggingInfo = new LoggingInfo();
+                loggingInfo.setActionType(LoggingInfo.ActionType.UPDATED.getKey());
+                loggingInfo.setType(LoggingInfo.Types.UPDATE.getKey());
+                loggingInfo.setUserEmail(user.getEmail());
+                loggingInfo.setUserFullName(user.getFullName());
+                loggingInfo.setDate(new Date().toString());
+                loggingInfo.setUserRole("");
+
+                if (providerBundle.getLoggingInfo() == null) {
+                    providerBundle.setLoggingInfo(new ArrayList<>());
+                }
+                providerBundle.getLoggingInfo().add(loggingInfo);
+                providerBundle.setLatestUpdateInfo(loggingInfo);
+
+                return providerBundle;
             }
 
             @Override
@@ -92,8 +130,9 @@ public class ProviderCatalogueFactory {
 
         catalogue.registerHandler(Catalogue.Action.DELETE, new ActionHandler<>() {
             @Override
-            public void preHandle(ProviderBundle providerBundle, Context ctx) {
+            public ProviderBundle preHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider delete preHandle");
+                return providerBundle;
             }
 
             @Override
