@@ -1,6 +1,7 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
 import eu.openminted.registry.core.domain.Paging;
+import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.dto.BulkOperation;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
@@ -8,12 +9,12 @@ import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Map;
@@ -34,16 +35,10 @@ public class DatasourceBundleController {
     }
 
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "query", value = "Keyword to refine the search", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "from", value = "Starting index in the result set", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "quantity", value = "Quantity to be fetched", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "order", value = "asc / desc", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "orderField", value = "Order field", dataTypeClass = String.class, paramType = "query")
-    })
+    @Browse
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Paging<DatasourceBundle> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
+    public Paging<DatasourceBundle> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
     }
 

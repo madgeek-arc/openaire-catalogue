@@ -7,14 +7,13 @@ import eu.einfracentral.domain.ResourceBundle;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
 import eu.openminted.registry.core.domain.Resource;
+import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.service.GenericItemService;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.service.FacetLabelService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.*;
 
@@ -50,15 +49,9 @@ public class CatalogueResourcesController {
     }
 
     @ApiOperation(value = "Browse Catalogue Resources.")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "query", value = "Keyword to refine the search", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "from", value = "Starting index in the result set", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "quantity", value = "Quantity to be fetched", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "order", value = "asc / desc", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "orderField", value = "Order field", dataTypeClass = String.class, paramType = "query")
-    })
+    @Browse
     @GetMapping
-    public Paging<?> getCatalogueResources(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
+    public Paging<?> getCatalogueResources(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
         filter.setResourceType("resources");
         Paging<?> paging = genericItemService.getResults(filter).map(r -> ((ResourceBundle<?>) r).getPayload());

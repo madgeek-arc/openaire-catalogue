@@ -4,17 +4,18 @@ import eu.einfracentral.domain.Provider;
 import eu.einfracentral.domain.ProviderBundle;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
+import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Map;
@@ -54,20 +55,14 @@ public class ProviderController {
         providerService.delete(id);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "query", value = "Keyword to refine the search", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "from", value = "Starting index in the result set", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "quantity", value = "Quantity to be fetched", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "order", value = "asc / desc", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "orderField", value = "Order field", dataTypeClass = String.class, paramType = "query")
-    })
+    @Browse
     @GetMapping
-    public Paging<Provider> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
+    public Paging<Provider> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         return providerService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(ProviderBundle::getPayload);
     }
 
     @GetMapping(path = "my")
-    public List<Provider> getMy(@ApiIgnore Authentication authentication) {
+    public List<Provider> getMy(@Parameter(hidden = true) Authentication authentication) {
         FacetFilter filter = new FacetFilter();
         filter.setQuantity(10000);
         filter.addFilter("users", User.of(authentication).getEmail());

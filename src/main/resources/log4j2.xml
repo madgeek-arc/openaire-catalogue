@@ -36,9 +36,6 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
-        <Logger name="springfox.documentation" level="warn">
-            <AppenderRef ref="Console"/>
-        </Logger>
         <Logger name="org.springframework" level="warn">
             <AppenderRef ref="Console"/>
         </Logger>

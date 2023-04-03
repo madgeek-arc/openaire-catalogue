@@ -2,12 +2,14 @@ package gr.madgik.catalogue.openaire.resource.controller;
 
 import eu.einfracentral.domain.Bundle;
 import eu.openminted.registry.core.domain.Paging;
+import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.ServiceBundleService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -15,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Map;
@@ -56,15 +57,9 @@ public class ServiceController {
         serviceBundleService.delete(id);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "query", value = "Keyword to refine the search", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "from", value = "Starting index in the result set", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "quantity", value = "Quantity to be fetched", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "order", value = "asc / desc", dataTypeClass = String.class, paramType = "query"),
-            @ApiImplicitParam(name = "orderField", value = "Order field", dataTypeClass = String.class, paramType = "query")
-    })
+    @Browse
     @GetMapping
-    public Paging<Service> getAll(@ApiIgnore @RequestParam Map<String, Object> allRequestParams) {
+    public Paging<Service> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(Bundle::getPayload);
     }
 
@@ -86,7 +81,7 @@ public class ServiceController {
     })
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_EPOT')")
     @GetMapping(path = "ids/{ids}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<Service>> getSomeServices(@PathVariable("ids") String[] ids, @ApiIgnore Authentication auth) {
+    public ResponseEntity<List<Service>> getSomeServices(@PathVariable("ids") String[] ids, @Parameter(hidden = true) Authentication auth) {
         return ResponseEntity.ok(serviceBundleService.getByIds(ids));
     }
 }
