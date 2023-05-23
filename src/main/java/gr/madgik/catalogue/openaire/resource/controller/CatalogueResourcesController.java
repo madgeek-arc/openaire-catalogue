@@ -59,6 +59,22 @@ public class CatalogueResourcesController {
         return paging;
     }
 
+    @GetMapping("bundles/{id}")
+    public <T extends Bundle<?>> Object getBundle(@PathVariable("id") String id) {
+        return genericItemService.get("resources", id);
+    }
+
+    @ApiOperation(value = "Browse Catalogue Resource Bundles.")
+    @Browse
+    @GetMapping("bundles")
+    public Paging<?> getCatalogueResourceBundles(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
+        FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
+        filter.setResourceType("resources");
+        Paging<?> paging = genericItemService.getResults(filter);
+        paging.setFacets(facetLabelService.createLabels(paging.getFacets()));
+        return paging;
+    }
+
     @ApiOperation(value = "Get all Resources in the catalogue organized by an attribute, e.g. get Resources organized in categories.")
     @GetMapping(path = "by/{field}")
     public <T extends ResourceBundle<? extends eu.einfracentral.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field) {
