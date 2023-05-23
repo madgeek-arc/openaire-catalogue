@@ -3,6 +3,7 @@ package gr.madgik.catalogue.openaire.config;
 import eu.einfracentral.domain.Identifiable;
 import eu.einfracentral.domain.ProviderBundle;
 import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
@@ -22,8 +23,8 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
 
     private final RegistryCoreRepository<ProviderBundle, String> providerRepository;
     private final RegistryCoreRepository<ServiceBundle, String> serviceRepository;
-
     private final RegistryCoreRepository<DatasourceBundle, String> datasourceRepository;
+    private final InvitationService invitationService;
 
 
     private Object filterObject;
@@ -33,11 +34,13 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     public CustomMethodSecurityExpressionRoot(Authentication authentication,
                                               RegistryCoreRepository<ProviderBundle, String> providerRepository,
                                               RegistryCoreRepository<ServiceBundle, String> serviceRepository,
-                                              RegistryCoreRepository<DatasourceBundle, String> datasourceRepository) {
+                                              RegistryCoreRepository<DatasourceBundle, String> datasourceRepository,
+                                              InvitationService invitationService) {
         super(authentication);
         this.providerRepository = providerRepository;
         this.serviceRepository = serviceRepository;
         this.datasourceRepository = datasourceRepository;
+        this.invitationService = invitationService;
     }
 
 
@@ -80,6 +83,9 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     /*       Custom Security Expression Methods       */
     /* ********************************************** */
 
+    public boolean hasProviderInvitation(String invitationToken) {
+        return invitationService.accept(invitationToken, User.of(this.authentication).getEmail());
+    }
 
     public <T extends Identifiable> boolean isProviderAdmin(T resource) {
         return isProviderAdmin(resource.getId());

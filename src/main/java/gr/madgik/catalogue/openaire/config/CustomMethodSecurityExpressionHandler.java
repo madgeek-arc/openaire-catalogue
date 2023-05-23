@@ -2,6 +2,7 @@ package gr.madgik.catalogue.openaire.config;
 
 
 import eu.einfracentral.domain.ProviderBundle;
+import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
@@ -34,12 +35,17 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
     @Autowired
     private RegistryCoreRepository<DatasourceBundle, String> datasourceRepository;
 
+    @Lazy
+    @Autowired
+    private InvitationService invitationService;
+
     @Override
     protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication, MethodInvocation invocation) {
         CustomMethodSecurityExpressionRoot root = new CustomMethodSecurityExpressionRoot(authentication,
                 providerRepository,
                 serviceRepository,
-                datasourceRepository);
+                datasourceRepository,
+                invitationService);
         root.setTrustResolver(this.trustResolver);
         root.setRoleHierarchy(getRoleHierarchy());
         return root;

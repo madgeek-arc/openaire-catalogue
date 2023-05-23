@@ -8,11 +8,12 @@ import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +39,9 @@ public class ProviderController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public Provider add(@RequestBody Provider provider) {
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @PostAuthorize("hasAuthority('ADMIN') or hasProviderInvitation(#invitation)")
+    public Provider add(@RequestBody Provider provider, @RequestParam(required = false) String invitation) {
         return providerService.register(provider); // TODO: change this ??
     }
 
@@ -50,6 +52,7 @@ public class ProviderController {
     }
 
     @DeleteMapping("{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ADMIN')")
     public void delete(@PathVariable String id) {
         providerService.delete(id);
