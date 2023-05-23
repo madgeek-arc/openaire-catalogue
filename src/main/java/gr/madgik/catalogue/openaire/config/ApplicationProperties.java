@@ -11,6 +11,8 @@ public class ApplicationProperties {
 
     private Set<Object> admins;
 
+    private Set<Object> onboardingTeam;
+
     private String loginRedirect;
 
     private String logoutRedirect;
@@ -22,6 +24,14 @@ public class ApplicationProperties {
 
     public void setAdmins(Set<Object> admins) {
         this.admins = admins;
+    }
+
+    public Set<Object> getOnboardingTeam() {
+        return onboardingTeam;
+    }
+
+    public void setOnboardingTeam(Set<Object> onboardingTeam) {
+        this.onboardingTeam = onboardingTeam;
     }
 
     public String getLoginRedirect() {
