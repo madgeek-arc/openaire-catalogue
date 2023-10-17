@@ -1,5 +1,7 @@
 package gr.madgik.catalogue.openaire.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.einfracentral.domain.*;
 import org.json.simple.JSONObject;
 
@@ -54,5 +56,14 @@ public class Datasource extends eu.einfracentral.domain.Datasource {
         int result = super.hashCode();
         result = 31 * result + (getExtras() != null ? getExtras().hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

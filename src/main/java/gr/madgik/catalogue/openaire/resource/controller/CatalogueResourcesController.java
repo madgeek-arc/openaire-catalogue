@@ -3,7 +3,6 @@ package gr.madgik.catalogue.openaire.resource.controller;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.einfracentral.domain.Bundle;
-import eu.einfracentral.domain.ResourceBundle;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
 import eu.openminted.registry.core.domain.Resource;
@@ -54,7 +53,7 @@ public class CatalogueResourcesController {
     public Paging<?> getCatalogueResources(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
         filter.setResourceType("resources");
-        Paging<?> paging = genericItemService.getResults(filter).map(r -> ((ResourceBundle<?>) r).getPayload());
+        Paging<?> paging = genericItemService.getResults(filter).map(r -> ((Bundle<?>) r).getPayload());
         paging.setFacets(facetLabelService.createLabels(paging.getFacets()));
         return paging;
     }
@@ -77,7 +76,7 @@ public class CatalogueResourcesController {
 
     @ApiOperation(value = "Get all Resources in the catalogue organized by an attribute, e.g. get Resources organized in categories.")
     @GetMapping(path = "by/{field}")
-    public <T extends ResourceBundle<? extends eu.einfracentral.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field) {
+    public <T extends Bundle<? extends eu.einfracentral.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field) {
         Map<String, List<T>> results;
         FacetFilter filter = new FacetFilter();
         filter.setQuantity(10_000);

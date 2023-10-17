@@ -66,7 +66,7 @@ public class ServiceCatalogueFactory {
                 fieldValidator.validate(serviceBundle);
 
                 // FIXME: imported code from eosc project - needs refactoring
-                serviceBundle.setStatus("approved resource");
+                serviceBundle.setStatus("pending resource");
                 serviceBundle.setActive(true);
                 sortFields(serviceBundle);
 
@@ -229,7 +229,7 @@ public class ServiceCatalogueFactory {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = User.of(auth);
         List<LoggingInfo> loggingInfoList = new ArrayList<>();
-        LoggingInfo loggingInfo = LoggingInfo.createLoggingInfoEntry(User.of(auth).getEmail(), User.of(auth).getFullname(), String.join(",", user.getRoles()),
+        LoggingInfo loggingInfo = LoggingInfo.createLoggingInfoEntry(auth, User.of(auth).getFullname(), String.join(",", user.getRoles()),
                 LoggingInfo.Types.ONBOARD.getKey(), LoggingInfo.ActionType.REGISTERED.getKey());
         loggingInfoList.add(loggingInfo);
 
@@ -238,7 +238,7 @@ public class ServiceCatalogueFactory {
 
         // resource status & extra loggingInfo for Approval
         serviceBundle.setStatus("approved resource");
-        LoggingInfo loggingInfoApproved = LoggingInfo.createLoggingInfoEntry(User.of(auth).getEmail(), user.getFullname(), String.join(",", user.getRoles()),
+        LoggingInfo loggingInfoApproved = LoggingInfo.createLoggingInfoEntry(auth, user.getFullname(), String.join(",", user.getRoles()),
                 LoggingInfo.Types.ONBOARD.getKey(), LoggingInfo.ActionType.APPROVED.getKey());
         loggingInfoList.add(loggingInfoApproved);
 

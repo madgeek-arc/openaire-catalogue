@@ -1,7 +1,9 @@
 package gr.madgik.catalogue.openaire.domain;
 
+import eu.einfracentral.annotation.FieldValidation;
+import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.Metadata;
-import eu.einfracentral.domain.ResourceBundle;
+import eu.einfracentral.domain.ResourceExtras;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -9,7 +11,14 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType
 @XmlRootElement(namespace = "http://openaire.eu")
-public class ServiceBundle extends ResourceBundle<Service> {
+public class ServiceBundle extends Bundle<Service> {
+
+    @XmlElement
+    private String status;
+
+    @XmlElement
+    @FieldValidation(nullable = true)
+    private ResourceExtras resourceExtras;
 
     public ServiceBundle() {
         // No arg constructor
@@ -45,8 +54,24 @@ public class ServiceBundle extends ResourceBundle<Service> {
         super.setId(id);
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public ResourceExtras getResourceExtras() {
+        return resourceExtras;
+    }
+
+    public void setResourceExtras(ResourceExtras resourceExtras) {
+        this.resourceExtras = resourceExtras;
+    }
+
     @Override
     public String toString() {
-        return "ServiceBundle{} " + super.toString();
+        return super.toString();
     }
 }

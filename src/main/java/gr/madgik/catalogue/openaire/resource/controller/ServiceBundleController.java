@@ -49,7 +49,7 @@ public class ServiceBundleController {
 
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ServiceBundle verifyProvider(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
+    public ServiceBundle verify(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
                                         @RequestParam(required = false) String status) {
         ServiceBundle service = serviceBundleService.verify(id, status, active);
         logger.info("User updated Service with name '{}' [status: {}] [active: {}]", service.getPayload().getName(), status, active);
