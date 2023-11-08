@@ -43,14 +43,14 @@ public class ServiceBundleService extends AbstractBundleService<Service, Service
         ServiceBundle bundle = repository.get(id);
         bundle.setActive(active);
         bundle.setStatus(status);
-        return catalogue.update(id, bundle);
+        return repository.update(id, bundle);
     }
 
     @Override
     public ServiceBundle activate(String id, Boolean active) {
         ServiceBundle bundle = repository.get(id);
         bundle.setActive(active);
-        return catalogue.update(id, bundle);
+        return repository.update(id, bundle);
     }
 
     public Map<String, List<Service>> getByVocabulary(String field, String type) {
