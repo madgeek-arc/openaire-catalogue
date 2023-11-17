@@ -36,19 +36,19 @@ public class ServiceBundleController {
 
     @GetMapping
     @Browse
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public Paging<ServiceBundle> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public ServiceBundle get(@PathVariable("id") String id) {
         return serviceRepository.findById(id).orElse(null);
     }
 
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public ServiceBundle verify(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
                                         @RequestParam(required = false) String status) {
         ServiceBundle service = serviceBundleService.verify(id, status, active);
@@ -58,7 +58,7 @@ public class ServiceBundleController {
 
     // Activate/Deactivate a Service.
     @PatchMapping(path = "{id}/publish", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public ServiceBundle publish(@PathVariable("id") String id, @RequestParam(required = false) Boolean active) {
         ServiceBundle service = serviceBundleService.activate(id, active);
         logger.info("User updated Service with name '{}' [active: {}]", service.getPayload().getName(), active);
@@ -66,7 +66,7 @@ public class ServiceBundleController {
     }
 
     @PostMapping("bulk")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public BulkOperation<ServiceBundle> addAll(@RequestBody List<ServiceBundle> bundles) {
         BulkOperation<ServiceBundle> services = new BulkOperation<>();
         for (ServiceBundle bundle : bundles) {
@@ -80,7 +80,7 @@ public class ServiceBundleController {
     }
 
     @PutMapping("bulk")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public BulkOperation<ServiceBundle> updateAll(@RequestBody List<ServiceBundle> bundles) {
         BulkOperation<ServiceBundle> services = new BulkOperation<>();
         for (ServiceBundle bundle : bundles) {

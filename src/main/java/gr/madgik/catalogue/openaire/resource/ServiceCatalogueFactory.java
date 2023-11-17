@@ -4,6 +4,7 @@ import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.LoggingInfo;
 import eu.einfracentral.domain.Metadata;
 import eu.openminted.registry.core.service.ServiceException;
+import gr.athenarc.catalogue.utils.SortUtils;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
@@ -15,7 +16,6 @@ import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import gr.madgik.catalogue.service.sync.ServiceSync;
-import gr.athenarc.catalogue.utils.SortUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,16 +235,6 @@ public class ServiceCatalogueFactory {
 
         // latestOnboardingInfo
         serviceBundle.setLatestOnboardingInfo(loggingInfo);
-
-        // resource status & extra loggingInfo for Approval
-        serviceBundle.setStatus("approved resource");
-        LoggingInfo loggingInfoApproved = LoggingInfo.createLoggingInfoEntry(auth, user.getFullname(), String.join(",", user.getRoles()),
-                LoggingInfo.Types.ONBOARD.getKey(), LoggingInfo.ActionType.APPROVED.getKey());
-        loggingInfoList.add(loggingInfoApproved);
-
-        // latestOnboardingInfo
-        serviceBundle.setLatestOnboardingInfo(loggingInfoApproved);
-
 
         // LoggingInfo
         serviceBundle.setLoggingInfo(loggingInfoList);

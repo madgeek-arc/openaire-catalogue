@@ -40,19 +40,19 @@ public class ServiceController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN') or isProviderAdmin(#service.resourceOrganisation)")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isProviderAdmin(#service.resourceOrganisation)")
     public Service add(@RequestBody Service service) {
         return serviceBundleService.register(service); // TODO: change this ??
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or isServiceProviderAdmin(#service)")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isServiceProviderAdmin(#service)")
     public Service update(@PathVariable String id, @RequestBody Service service) {
         return serviceBundleService.update(id, new ServiceBundle(service)).getService(); // TODO: change this ??
     }
 
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or isServiceProviderAdmin(#id)")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isServiceProviderAdmin(#id)")
     public void delete(@PathVariable String id) {
         serviceBundleService.delete(id);
     }
@@ -64,7 +64,6 @@ public class ServiceController {
     }
 
     @PostMapping(path = "validate")
-    @PreAuthorize("hasAuthority('ADMIN') or isServiceProviderAdmin(#service)")
     public boolean validate(@RequestBody Service service) {
         logger.info("Validating Service with name '{}' and id '{}'", service.getName(), service.getId());
         return serviceBundleService.validate(service);

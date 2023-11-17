@@ -32,19 +32,19 @@ public class DatasourceController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN') or isProviderAdmin(#datasource.resourceOrganisation)")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isProviderAdmin(#datasource.resourceOrganisation)")
     public Datasource add(@RequestBody Datasource datasource) {
         return datasourceBundleService.register(datasource); // TODO: change this ??
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or isDatasourceProviderAdmin(#datasource)")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isDatasourceProviderAdmin(#datasource)")
     public Datasource update(@PathVariable String id, @RequestBody Datasource datasource) {
         return datasourceBundleService.update(id, new DatasourceBundle(datasource)).getDatasource(); // TODO: change this ??
     }
 
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or isDatasourceProviderAdmin(#id)")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isDatasourceProviderAdmin(#id)")
     public void delete(@PathVariable String id) {
         datasourceBundleService.delete(id);
     }

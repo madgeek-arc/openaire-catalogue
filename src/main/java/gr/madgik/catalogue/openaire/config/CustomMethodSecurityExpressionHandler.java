@@ -2,9 +2,9 @@ package gr.madgik.catalogue.openaire.config;
 
 
 import eu.einfracentral.domain.ProviderBundle;
-import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
+import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;

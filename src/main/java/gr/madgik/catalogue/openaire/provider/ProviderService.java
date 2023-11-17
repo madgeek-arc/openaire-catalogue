@@ -52,14 +52,14 @@ public class ProviderService extends AbstractBundleService<Provider, ProviderBun
         ProviderBundle bundle = repository.get(id);
         bundle.setActive(active);
         bundle.setStatus(status);
-        return catalogue.update(id, bundle);
+        return repository.update(id, bundle);
     }
 
     @Override
     public ProviderBundle activate(String id, Boolean active) {
         ProviderBundle bundle = repository.get(id);
         bundle.setActive(active);
-        return catalogue.update(id, bundle);
+        return repository.update(id, bundle);
     }
 
     public ProviderBundle onboard(ProviderBundle provider, Authentication auth) {

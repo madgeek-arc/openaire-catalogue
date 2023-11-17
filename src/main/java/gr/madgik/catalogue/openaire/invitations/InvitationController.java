@@ -31,7 +31,7 @@ public class InvitationController {
 
     @PostMapping(produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public String create(@RequestParam String email, @Parameter(hidden = true) Authentication authentication) {
         return invitationService.create(User.of(authentication), email);
     }

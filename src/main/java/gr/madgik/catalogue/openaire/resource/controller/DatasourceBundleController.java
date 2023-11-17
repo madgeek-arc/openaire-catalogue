@@ -7,8 +7,6 @@ import gr.madgik.catalogue.dto.BulkOperation;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,20 +35,20 @@ public class DatasourceBundleController {
 
     @Browse
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public Paging<DatasourceBundle> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public DatasourceBundle get(@PathVariable("id") String id) {
         return datasourceRepository.findById(id).orElse(null);
     }
 
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public DatasourceBundle verifyProvider(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
+    public DatasourceBundle verify(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
                                            @RequestParam(required = false) String status) {
         DatasourceBundle datasource = datasourceBundleService.verify(id, status, active);
         logger.info("User updated Datasource with name '{}' [status: {}] [active: {}]", datasource.getPayload().getName(), status, active);
@@ -59,7 +57,7 @@ public class DatasourceBundleController {
 
     // Activate/Deactivate a Datasource.
     @PatchMapping(path = "{id}/publish", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public DatasourceBundle publish(@PathVariable("id") String id, @RequestParam(required = false) Boolean active) {
         DatasourceBundle datasource = datasourceBundleService.activate(id, active);
         logger.info("User updated Datasource with name '{}' [active: {}]", datasource.getPayload().getName(), active);
@@ -67,7 +65,7 @@ public class DatasourceBundleController {
     }
 
     @PostMapping("bulk")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public BulkOperation<DatasourceBundle> addAll(@RequestBody List<DatasourceBundle> bundles) {
         BulkOperation<DatasourceBundle> datasources = new BulkOperation<>();
         for (DatasourceBundle bundle : bundles) {
@@ -81,7 +79,7 @@ public class DatasourceBundleController {
     }
 
     @PutMapping("bulk")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public BulkOperation<DatasourceBundle> updateAll(@RequestBody List<DatasourceBundle> bundles) {
         BulkOperation<DatasourceBundle> datasources = new BulkOperation<>();
         for (DatasourceBundle bundle : bundles) {
