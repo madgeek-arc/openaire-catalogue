@@ -64,34 +64,38 @@ public class SecurityConfig {
             Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
 
             authorities.forEach(authority -> {
-                String userEmail = null;
-
-                if (authority instanceof OidcUserAuthority oidcUserAuthority) {
+                if (authority instanceof OidcUserAuthority) {
+                    OidcUserAuthority oidcUserAuthority = (OidcUserAuthority) authority;
 
                     OidcIdToken idToken = oidcUserAuthority.getIdToken();
                     OidcUserInfo userInfo = oidcUserAuthority.getUserInfo();
 
-                    if (idToken != null) {
-                        userEmail = idToken.getClaims().get("email").toString();
-                    } else if (userInfo != null) {
-                        userEmail = userInfo.getEmail();
-                    } else if (((OidcUserAuthority) authority).getAttributes() != null
-                                && ((OidcUserAuthority) authority).getAttributes().containsKey("email")) {
-                        userEmail = ((OidcUserAuthority) authority).getAttributes().get("email").toString();
+                    if (idToken != null && applicationProperties.getAdmins().contains(idToken.getClaims().get("email"))) {
+                        mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
+                    } else if (userInfo != null && applicationProperties.getAdmins().contains(userInfo.getEmail())) {
+                        mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
+                    } else {
+                        if (((OidcUserAuthority) authority).getAttributes() != null
+                                && ((OidcUserAuthority) authority).getAttributes().containsKey("email")
+                                && (applicationProperties.getAdmins().contains(((OidcUserAuthority) authority).getAttributes().get("email")))) {
+                            mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
+                        }
                     }
 
-                } else if (authority instanceof OAuth2UserAuthority oauth2UserAuthority) {
+                    // Map the claims found in idToken and/or userInfo
+                    // to one or more GrantedAuthority's and add it to mappedAuthorities
+
+                } else if (authority instanceof OAuth2UserAuthority) {
+                    OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority) authority;
+
                     Map<String, Object> userAttributes = oauth2UserAuthority.getAttributes();
-                    userEmail = userAttributes.get("email").toString();
-                }
 
-                // Map claims found to one or more GrantedAuthority's and add it to mappedAuthorities
-                if (applicationProperties.getAdmins().contains(userEmail)) {
-                    mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-                }
+                    if (userAttributes != null && applicationProperties.getAdmins().contains(userAttributes.get("email"))) {
+                        mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
+                    }
+                    // Map the attributes found in userAttributes
+                    // to one or more GrantedAuthority's and add it to mappedAuthorities
 
-                if (applicationProperties.getOnboardingTeam().contains(userEmail)) {
-                    mappedAuthorities.add(new SimpleGrantedAuthority("ONBOARDING_TEAM"));
                 }
             });
 
