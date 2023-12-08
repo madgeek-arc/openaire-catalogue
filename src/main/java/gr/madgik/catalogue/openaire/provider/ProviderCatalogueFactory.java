@@ -5,14 +5,20 @@ import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
+import gr.madgik.catalogue.openaire.utils.UserUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mitre.openid.connect.model.OIDCAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -49,7 +55,7 @@ public class ProviderCatalogueFactory {
                 addAuthenticatedUser(providerBundle.getProvider());
                 providerService.validate(providerBundle);
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = User.of(auth);
+                User user = UserUtils.getUserFromAuthentication(auth);
 
                 providerBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
 
@@ -177,7 +183,7 @@ public class ProviderCatalogueFactory {
 
     private void addAuthenticatedUser(Provider provider) {
         List<User> users;
-        User authUser = User.of(SecurityContextHolder.getContext().getAuthentication());
+        User authUser = UserUtils.getUserFromAuthentication(SecurityContextHolder.getContext().getAuthentication());
         users = provider.getUsers();
         if (users == null) {
             users = new ArrayList<>();

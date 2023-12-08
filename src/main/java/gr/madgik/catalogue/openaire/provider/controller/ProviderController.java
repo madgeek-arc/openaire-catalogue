@@ -41,7 +41,7 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or hasProviderInvitation(#invitation)")
     public Provider add(@RequestBody Provider provider, @RequestParam(required = false) String invitation) {
-        return providerService.register(provider); // TODO: change this ??
+        return providerService.register(provider);
     }
 
     @PutMapping("{id}")
