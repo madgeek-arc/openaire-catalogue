@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
@@ -67,39 +65,35 @@ public class SecurityConfig {
                 if (authority instanceof OidcUserAuthority) {
                     OidcUserAuthority oidcUserAuthority = (OidcUserAuthority) authority;
 
-                    OidcIdToken idToken = oidcUserAuthority.getIdToken();
-                    OidcUserInfo userInfo = oidcUserAuthority.getUserInfo();
-
-                    if (idToken != null && applicationProperties.getAdmins().contains(idToken.getClaims().get("email"))) {
-                        mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-                    } else if (userInfo != null && applicationProperties.getAdmins().contains(userInfo.getEmail())) {
-                        mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-                    } else {
-                        if (((OidcUserAuthority) authority).getAttributes() != null
-                                && ((OidcUserAuthority) authority).getAttributes().containsKey("email")
-                                && (applicationProperties.getAdmins().contains(((OidcUserAuthority) authority).getAttributes().get("email")))) {
-                            mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-                        }
-                    }
-
-                    // Map the claims found in idToken and/or userInfo
-                    // to one or more GrantedAuthority's and add it to mappedAuthorities
+                    Map<String, Object> userAttributes = oidcUserAuthority.getAttributes();
+                    addAuthorities(userAttributes, mappedAuthorities);
 
                 } else if (authority instanceof OAuth2UserAuthority) {
                     OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority) authority;
 
                     Map<String, Object> userAttributes = oauth2UserAuthority.getAttributes();
-
-                    if (userAttributes != null && applicationProperties.getAdmins().contains(userAttributes.get("email"))) {
-                        mappedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-                    }
-                    // Map the attributes found in userAttributes
-                    // to one or more GrantedAuthority's and add it to mappedAuthorities
+                    addAuthorities(userAttributes, mappedAuthorities);
 
                 }
             });
 
             return mappedAuthorities;
         };
+    }
+
+    /**
+     * Adds one or more GrantedAuthority's to the user's mappedAuthorities
+     *
+     * @param userAttributes
+     * @param grantedAuthorities
+     */
+    private void addAuthorities(Map<String, Object> userAttributes, Set<GrantedAuthority> grantedAuthorities) {
+        if (userAttributes != null && applicationProperties.getAdmins().contains(userAttributes.get("email"))) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
+        }
+
+        if (userAttributes != null && applicationProperties.getOnboardingTeam().contains(userAttributes.get("email"))) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ONBOARDING_TEAM"));
+        }
     }
 }
