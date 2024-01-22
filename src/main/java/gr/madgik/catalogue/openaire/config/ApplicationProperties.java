@@ -3,19 +3,33 @@ package gr.madgik.catalogue.openaire.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Component
 @ConfigurationProperties(prefix = "catalogue")
 public class ApplicationProperties {
 
+    /**
+     * List of Administrator emails
+     */
     private Set<Object> admins;
 
-    private Set<Object> onboardingTeam;
+    /**
+     * List of Onboarding Team emails
+     */
+    private Set<Object> onboardingTeam = new HashSet<>();
 
+    /**
+     * Page to redirect after successful login
+     */
     private String loginRedirect;
 
+    /**
+     * Page to redirect after logging out
+     */
     private String logoutRedirect;
+
     private Cookie cookie;
 
     public Set<Object> getAdmins() {
