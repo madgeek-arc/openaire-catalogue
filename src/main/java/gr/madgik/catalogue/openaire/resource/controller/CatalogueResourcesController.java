@@ -12,6 +12,7 @@ import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.service.FacetLabelService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -76,9 +77,10 @@ public class CatalogueResourcesController {
 
     @ApiOperation(value = "Get all Resources in the catalogue organized by an attribute, e.g. get Resources organized in categories.")
     @GetMapping(path = "by/{field}")
-    public <T extends Bundle<? extends eu.einfracentral.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field) {
+    public <T extends Bundle<? extends eu.einfracentral.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field,
+                                                                                                    @RequestParam Map<String, Object> allRequestParams) {
         Map<String, List<T>> results;
-        FacetFilter filter = new FacetFilter();
+        FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
         filter.setQuantity(10_000);
         filter.setResourceType("resources");
         results = genericItemService.getResultsGrouped(filter, field);
