@@ -56,7 +56,8 @@ public class SecurityConfig {
                         .successHandler(authSuccessHandler))
 
                 .logout(logout -> logout
-                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
+//                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
+                        .logoutSuccessUrl(applicationProperties.getLogoutRedirect())
                         .deleteCookies()
                         .clearAuthentication(true)
                         .invalidateHttpSession(true))
@@ -66,7 +67,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
+    @Bean // TODO: should be registered as a logoutSuccessHandler in the configuration above ^^
     public LogoutSuccessHandler oidcLogoutSuccessHandler() {
         OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
                 new OidcClientInitiatedLogoutSuccessHandler(
