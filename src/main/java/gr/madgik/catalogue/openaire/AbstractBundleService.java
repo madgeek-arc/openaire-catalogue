@@ -62,6 +62,11 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
         return repository.get(id).getPayload();
     }
 
+    public T getActive(ID id) {
+        B t = repository.get(id);
+        return t.isActive() ? t.getPayload() : null;
+    }
+
     @Override
     public B getBundle(ID id) {
         return repository.get(id);
@@ -84,7 +89,7 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
                 .map(id ->
                 {
                     try {
-                        return get(id);
+                        return getActive(id);
                     } catch (ServiceException | ResourceNotFoundException e) {
                         return null;
                     }
