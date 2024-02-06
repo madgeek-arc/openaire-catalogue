@@ -51,7 +51,7 @@ public class DatasourceBundleController {
     public DatasourceBundle verify(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
                                            @RequestParam(required = false) String status) {
         DatasourceBundle datasource = datasourceBundleService.verify(id, status, active);
-        logger.info("User updated Datasource with name '{}' [status: {}] [active: {}]", datasource.getPayload().getName(), status, active);
+        logger.info("User updated Datasource with id '{}' [status: {}] [active: {}]", datasource.getPayload().getId(), status, active);
         return datasource;
     }
 
@@ -60,7 +60,7 @@ public class DatasourceBundleController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public DatasourceBundle publish(@PathVariable("id") String id, @RequestParam(required = false) Boolean active) {
         DatasourceBundle datasource = datasourceBundleService.activate(id, active);
-        logger.info("User updated Datasource with name '{}' [active: {}]", datasource.getPayload().getName(), active);
+        logger.info("User updated Datasource with id '{}' [active: {}]", datasource.getPayload().getId(), active);
         return datasource;
     }
 

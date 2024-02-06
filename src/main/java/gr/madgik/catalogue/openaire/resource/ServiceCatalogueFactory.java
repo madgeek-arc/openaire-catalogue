@@ -67,7 +67,7 @@ public class ServiceCatalogueFactory {
 
                 // FIXME: imported code from eosc project - needs refactoring
                 serviceBundle.setStatus("pending resource");
-                serviceBundle.setActive(true);
+                serviceBundle.setActive(false);
                 sortFields(serviceBundle);
 
                 // create logging info

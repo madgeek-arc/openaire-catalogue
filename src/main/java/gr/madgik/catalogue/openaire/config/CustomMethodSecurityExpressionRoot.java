@@ -133,7 +133,7 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
         if (datasourceBundle == null) {
             return false;
         }
-        return isProviderAdmin(datasourceBundle.getPayload().getResourceOrganisation());
+        return isServiceProviderAdmin(datasourceBundle.getDatasource().getServiceId());
     }
 
 }

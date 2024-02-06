@@ -87,7 +87,7 @@
         <dependency>
             <groupId>eu.einfracentral</groupId>
             <artifactId>eic-registry-model</artifactId>
-            <version>4.1.1-SNAPSHOT</version>
+            <version>4.1.2-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>eu.einfracentral</groupId>

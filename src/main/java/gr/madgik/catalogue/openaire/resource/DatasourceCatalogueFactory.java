@@ -31,6 +31,7 @@ public class DatasourceCatalogueFactory {
             public DatasourceBundle preHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource registration preHandle");
                 datasourceBundle.setId(createId(datasourceBundle.getDatasource()));
+                datasourceBundle.setActive(false);
                 return datasourceBundle;
             }
 
@@ -67,21 +68,6 @@ public class DatasourceCatalogueFactory {
     }
 
     private String createId(Datasource resource) {
-        if (resource.getResourceOrganisation() == null || resource.getResourceOrganisation().equals("")) {
-//            throw new ValidationException("Resource must have a Resource Organisation.");
-            throw new RuntimeException("Resource must have a Resource Organisation.");
-        }
-        if (resource.getName() == null || resource.getName().equals("")) {
-//            throw new ValidationException("Resource must have a Name.");
-            throw new RuntimeException("Resource must have a Name.");
-        }
-        String provider = resource.getResourceOrganisation();
-        return String.format("%s.%s", provider, StringUtils
-                .stripAccents(resource.getName())
-                .replaceAll("[\n\t\\s]+", " ")
-                .replaceAll("\\s+$", "")
-                .replaceAll("[^a-zA-Z0-9\\s\\-\\_]+", "")
-                .replace(" ", "_")
-                .toLowerCase());
+        return resource.getServiceId();
     }
 }

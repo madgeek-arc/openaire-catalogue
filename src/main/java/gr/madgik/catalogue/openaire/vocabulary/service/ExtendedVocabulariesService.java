@@ -37,7 +37,7 @@ public class ExtendedVocabulariesService extends VocabularyService implements Ex
         this.providerService = providerService;
     }
 
-    @Scheduled(fixedRate = 600000) // refresh cache every 10 minutes
+//    @Scheduled(fixedRate = 600000) // refresh cache every 10 minutes
     @CachePut(value = CACHE_UI_VOCABULARIES)
     public Map<String, List<Value>> cacheVocabularies() {
         return getControlValuesMap();

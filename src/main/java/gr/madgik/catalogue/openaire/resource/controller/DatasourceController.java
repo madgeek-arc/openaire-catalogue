@@ -70,7 +70,7 @@ public class DatasourceController {
 
     @PostMapping(path = "validate")
     public boolean validate(@RequestBody Datasource datasource) {
-        logger.info("Validating Datasource with name '{}' and id '{}'", datasource.getName(), datasource.getId());
+        logger.info("Validating Datasource with id '{}'", datasource.getId());
         return datasourceBundleService.validate(datasource);
     }
 }
