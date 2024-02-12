@@ -64,7 +64,7 @@ public class ProviderCatalogueFactory {
                 loggingInfo.setType(LoggingInfo.Types.ONBOARD.getKey());
                 loggingInfo.setUserEmail(user.getEmail());
                 loggingInfo.setUserFullName(user.getFullName());
-                loggingInfo.setDate(new Date().toString());
+                loggingInfo.setDate(String.valueOf(System.currentTimeMillis()));
                 loggingInfo.setUserRole("");
 
                 providerBundle.setLoggingInfo(new LinkedList<>());
@@ -111,7 +111,7 @@ public class ProviderCatalogueFactory {
                 loggingInfo.setType(LoggingInfo.Types.UPDATE.getKey());
                 loggingInfo.setUserEmail(user.getEmail());
                 loggingInfo.setUserFullName(user.getFullName());
-                loggingInfo.setDate(new Date().toString());
+                loggingInfo.setDate(String.valueOf(System.currentTimeMillis()));
                 loggingInfo.setUserRole("");
 
                 if (providerBundle.getLoggingInfo() == null) {
