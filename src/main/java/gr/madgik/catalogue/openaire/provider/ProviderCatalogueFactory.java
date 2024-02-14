@@ -5,20 +5,16 @@ import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
+import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
+import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
 import gr.madgik.catalogue.openaire.utils.UserUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.mitre.openid.connect.model.OIDCAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -31,15 +27,21 @@ public class ProviderCatalogueFactory {
     private final ProviderService providerService;
     private final JmsTemplate jmsTopicTemplate;
     private final ProviderMailService registrationMailService;
+    private final ProviderResourcesCommonMethods commonMethods;
+    private final SimpleIdCreator idCreator;
 
     public ProviderCatalogueFactory(ProviderRepository providerRepository,
                                     @Lazy ProviderService providerService,
                                     JmsTemplate jmsTopicTemplate,
-                                    ProviderMailService registrationMailService) {
+                                    ProviderMailService registrationMailService,
+                                    ProviderResourcesCommonMethods commonMethods,
+                                    SimpleIdCreator idCreator) {
         this.providerRepository = providerRepository;
         this.providerService = providerService;
         this.jmsTopicTemplate = jmsTopicTemplate;
         this.registrationMailService = registrationMailService;
+        this.commonMethods = commonMethods;
+        this.idCreator = idCreator;
     }
 
     @Bean
@@ -51,7 +53,7 @@ public class ProviderCatalogueFactory {
             public ProviderBundle preHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider registration preHandle");
                 providerService.onboard(providerBundle, null);
-                providerBundle.setId(createId(providerBundle.getProvider()));
+                providerBundle.setId(idCreator.createProviderId(providerBundle.getProvider()));
                 addAuthenticatedUser(providerBundle.getProvider());
                 providerService.validate(providerBundle);
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -106,18 +108,11 @@ public class ProviderCatalogueFactory {
 
                 providerBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
 
-                LoggingInfo loggingInfo = new LoggingInfo();
-                loggingInfo.setActionType(LoggingInfo.ActionType.UPDATED.getKey());
-                loggingInfo.setType(LoggingInfo.Types.UPDATE.getKey());
-                loggingInfo.setUserEmail(user.getEmail());
-                loggingInfo.setUserFullName(user.getFullName());
-                loggingInfo.setDate(String.valueOf(System.currentTimeMillis()));
-                loggingInfo.setUserRole("");
-
-                if (providerBundle.getLoggingInfo() == null) {
-                    providerBundle.setLoggingInfo(new ArrayList<>());
-                }
-                providerBundle.getLoggingInfo().add(loggingInfo);
+                List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(providerBundle, auth);
+                LoggingInfo loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
+                        LoggingInfo.ActionType.UPDATED.getKey());
+                loggingInfoList.add(loggingInfo);
+                providerBundle.setLoggingInfo(loggingInfoList);
                 providerBundle.setLatestUpdateInfo(loggingInfo);
 
                 return providerBundle;
@@ -154,31 +149,6 @@ public class ProviderCatalogueFactory {
 
 
         return catalogue;
-    }
-
-    // FIXME: remove this method ?
-    private String createId(Provider provider) {
-        String providerId;
-        if (provider.getId() == null || "".equals(provider.getId())) {
-            if (provider.getAbbreviation() != null && !"".equals(provider.getAbbreviation()) && !"null".equals(provider.getAbbreviation())) {
-                providerId = provider.getAbbreviation();
-            } else if (provider.getName() != null && !"".equals(provider.getName()) && !"null".equals(provider.getName())) {
-                providerId = provider.getName();
-            } else {
-//                throw new ValidationException("Provider must have an acronym or name.");
-                throw new RuntimeException("Provider must have an acronym or name.");
-            }
-        } else {
-            providerId = provider.getId();
-        }
-        return StringUtils
-                .stripAccents(providerId)
-                .replaceAll("[\\n\\t\\s]+", " ")
-                .replaceAll("\\s+$", "")
-                .replaceAll("[^a-zA-Z0-9\\s\\-\\_]+", "")
-                .replace(" ", "_")
-                .toLowerCase();
-
     }
 
     private void addAuthenticatedUser(Provider provider) {

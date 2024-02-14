@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.service.repository;
+package gr.madgik.catalogue.openaire.resource.repository;
 
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;

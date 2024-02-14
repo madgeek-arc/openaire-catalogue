@@ -1,11 +1,11 @@
-package gr.madgik.catalogue.openaire.service.controller;
+package gr.madgik.catalogue.openaire.resource.controller;
 
 import eu.openminted.registry.core.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.dto.BulkOperation;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.openaire.service.ServiceBundleService;
+import gr.madgik.catalogue.openaire.resource.ServiceBundleService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;

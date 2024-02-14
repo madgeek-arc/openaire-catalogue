@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.service.repository;
+package gr.madgik.catalogue.openaire.resource.repository;
 
 import gr.athenarc.catalogue.service.GenericItemService;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;

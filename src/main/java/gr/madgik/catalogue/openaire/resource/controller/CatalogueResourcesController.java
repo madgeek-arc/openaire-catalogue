@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.service.controller;
+package gr.madgik.catalogue.openaire.resource.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

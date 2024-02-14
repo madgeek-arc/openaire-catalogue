@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.service;
+package gr.madgik.catalogue.openaire.resource;
 
 import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.LoggingInfo;
@@ -13,11 +13,11 @@ import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.exception.ValidationException;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.openaire.service.repository.ServiceRepository;
+import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
+import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import gr.madgik.catalogue.service.sync.ServiceSync;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -39,15 +39,18 @@ public class ServiceCatalogueFactory {
     private final FieldValidator fieldValidator;
     private final MailerService mailerService;
     private final ProviderResourcesCommonMethods commonMethods;
+    private final SimpleIdCreator idCreator;
 
     public ServiceCatalogueFactory(ServiceRepository resourceRepository, ServiceSync serviceSync,
                                    FieldValidator fieldValidator, MailerService mailerService,
-                                   ProviderResourcesCommonMethods commonMethods) {
+                                   ProviderResourcesCommonMethods commonMethods,
+                                   SimpleIdCreator idCreator) {
         this.resourceRepository = resourceRepository;
         this.serviceSync = serviceSync;
         this.fieldValidator = fieldValidator;
         this.mailerService = mailerService;
         this.commonMethods = commonMethods;
+        this.idCreator = idCreator;
     }
 
     @Bean
@@ -64,7 +67,7 @@ public class ServiceCatalogueFactory {
                 if (serviceBundle.getService().getCatalogueId() == null || serviceBundle.getService().getCatalogueId().equals("")) {
                     serviceBundle.getService().setCatalogueId("eosc");
                 }
-                serviceBundle.setId(createId(serviceBundle.getPayload()));
+                serviceBundle.setId(idCreator.createServiceId(serviceBundle.getService()));
 
                 // validate
                 fieldValidator.validate(serviceBundle);
@@ -186,25 +189,6 @@ public class ServiceCatalogueFactory {
         });
 
         return catalogue;
-    }
-
-    private String createId(Service resource) {
-        if (resource.getResourceOrganisation() == null || resource.getResourceOrganisation().equals("")) {
-//            throw new ValidationException("Resource must have a Resource Organisation.");
-            throw new RuntimeException("Resource must have a Resource Organisation.");
-        }
-        if (resource.getName() == null || resource.getName().equals("")) {
-//            throw new ValidationException("Resource must have a Name.");
-            throw new RuntimeException("Resource must have a Name.");
-        }
-        String provider = resource.getResourceOrganisation();
-        return String.format("%s.%s", provider, StringUtils
-                .stripAccents(resource.getName())
-                .replaceAll("[\n\t\\s]+", " ")
-                .replaceAll("\\s+$", "")
-                .replaceAll("[^a-zA-Z0-9\\s\\-\\_]+", "")
-                .replace(" ", "_")
-                .toLowerCase());
     }
 
     public static LoggingInfo createLoggingInfoEntry(User user, String type, String actionType) {

@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.service;
+package gr.madgik.catalogue.openaire.resource;
 
 import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.Vocabulary;
@@ -8,7 +8,7 @@ import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.openaire.service.repository.ServiceRepository;
+import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.service.VocabularyService;
 
