@@ -1,11 +1,11 @@
-package gr.madgik.catalogue.openaire.resource;
+package gr.madgik.catalogue.openaire.service;
 
 import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
-import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
+import gr.madgik.catalogue.openaire.service.repository.DatasourceRepository;
 
 @org.springframework.stereotype.Service
 public class DatasourceBundleService extends AbstractBundleService<Datasource, DatasourceBundle, String> implements BundleResourceOperations<Datasource, DatasourceBundle, String> {

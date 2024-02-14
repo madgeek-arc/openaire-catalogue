@@ -23,13 +23,6 @@
     },
     {
       "multivalued": false,
-      "name": "version",
-      "label": "Version",
-      "path": "$.service.version",
-      "type": "java.lang.String"
-    },
-    {
-      "multivalued": false,
       "name": "resource_organisation",
       "label": "Resource Organisation",
       "path": "$.service.resourceOrganisation",
@@ -40,6 +33,13 @@
       "name": "resource_providers",
       "label": "Resource Provider",
       "path": "$.service.resourceProviders.*",
+      "type": "java.lang.String"
+    },
+    {
+      "multivalued": true,
+      "name": "alternative_identifiers_values",
+      "label": "Alternative Identifier Value",
+      "path": "$.service.alternativeIdentifiers[*].value",
       "type": "java.lang.String"
     },
     {
@@ -149,13 +149,6 @@
     },
     {
       "multivalued": true,
-      "name": "use_cases",
-      "label": "Use Case",
-      "path": "$.service.useCases.*",
-      "type": "java.lang.String"
-    },
-    {
-      "multivalued": true,
       "name": "open_source_technologies",
       "label": "Open Source Technology",
       "path": "$.service.openSourceTechnologies.*",
@@ -166,6 +159,26 @@
       "name": "tags",
       "label": "Tag",
       "path": "$.service.tags.*",
+      "type": "java.lang.String"
+    },
+    {
+      "multivalued": false,
+      "name": "horizontalService",
+      "path": "$.service.horizontalService",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "multivalued": true,
+      "name": "service_categories",
+      "label": "Service Category",
+      "path": "$.service.serviceCategories.*",
+      "type": "java.lang.String"
+    },
+    {
+      "multivalued": true,
+      "name": "marketplace_locations",
+      "label": "Marketplace Location",
+      "path": "$.service.marketplaceLocations.*",
       "type": "java.lang.String"
     },
     {
@@ -207,21 +220,8 @@
     },
     {
       "multivalued": false,
-      "name": "horizontalService",
-      "path": "$.resourceExtras.horizontalService",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "multivalued": false,
       "name": "originalId",
       "path": "$.identifiers.originalId",
-      "type": "java.lang.String"
-    },
-    {
-      "multivalued": true,
-      "name": "alternative_identifiers",
-      "label": "Alternative Identifier",
-      "path": "$.identifiers.alternativeIdentifiers.*.value",
       "type": "java.lang.String"
     },
     {
@@ -322,18 +322,11 @@
       "label": "Portfolios",
       "path": "$.service.extras.portfolios.*",
       "type": "java.lang.String"
-    },
-    {
-      "multivalued": true,
-      "name": "users",
-      "label": "Users",
-      "path": "$.service.extras.users.*",
-      "type": "java.lang.String"
     }
   ],
   "indexMapperClass": "eu.openminted.registry.core.index.DefaultIndexMapper",
   "name": "service",
-  "aliasGroup": "resources",
+  "aliases": ["resources", "resourceTypes"],
   "payloadType": "json",
   "properties": {
     "class": "gr.madgik.catalogue.openaire.domain.ServiceBundle"

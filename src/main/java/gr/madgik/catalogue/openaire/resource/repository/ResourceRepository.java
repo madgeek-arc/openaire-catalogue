@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.resource.repository;
+package gr.madgik.catalogue.openaire.service.repository;
 
 import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.Identifiable;

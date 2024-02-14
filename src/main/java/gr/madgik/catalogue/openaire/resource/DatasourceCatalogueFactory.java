@@ -1,12 +1,11 @@
-package gr.madgik.catalogue.openaire.resource;
+package gr.madgik.catalogue.openaire.service;
 
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
 import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
-import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
-import org.apache.commons.lang3.StringUtils;
+import gr.madgik.catalogue.openaire.service.repository.DatasourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;

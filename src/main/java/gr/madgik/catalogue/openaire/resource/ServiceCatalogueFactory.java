@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.resource;
+package gr.madgik.catalogue.openaire.service;
 
 import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.LoggingInfo;
@@ -13,7 +13,8 @@ import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.exception.ValidationException;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
+import gr.madgik.catalogue.openaire.service.repository.ServiceRepository;
+import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import gr.madgik.catalogue.service.sync.ServiceSync;
 import org.apache.commons.lang3.StringUtils;
@@ -37,13 +38,16 @@ public class ServiceCatalogueFactory {
     private final ServiceSync serviceSync;
     private final FieldValidator fieldValidator;
     private final MailerService mailerService;
+    private final ProviderResourcesCommonMethods commonMethods;
 
     public ServiceCatalogueFactory(ServiceRepository resourceRepository, ServiceSync serviceSync,
-                                   FieldValidator fieldValidator, MailerService mailerService) {
+                                   FieldValidator fieldValidator, MailerService mailerService,
+                                   ProviderResourcesCommonMethods commonMethods) {
         this.resourceRepository = resourceRepository;
         this.serviceSync = serviceSync;
         this.fieldValidator = fieldValidator;
         this.mailerService = mailerService;
+        this.commonMethods = commonMethods;
     }
 
     @Bean
@@ -98,7 +102,8 @@ public class ServiceCatalogueFactory {
                 logger.info("Inside Service update preHandle");
                 fieldValidator.validate(serviceBundle);
 
-                User user = User.of(SecurityContextHolder.getContext().getAuthentication());
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                User user = User.of(auth);
                 // FIXME: imported code from eosc project - needs refactoring
                 ServiceBundle existingService = resourceRepository.get(serviceBundle.getService().getId(), serviceBundle.getService().getCatalogueId());
                 serviceBundle.setMetadata(Metadata.updateMetadata(existingService.getMetadata(), user.getFullname()));
@@ -113,26 +118,14 @@ public class ServiceCatalogueFactory {
                 // update VS version update
                 if (((serviceBundle.getService().getVersion() == null) && (existingService.getService().getVersion() == null)) ||
                         (serviceBundle.getService().getVersion().equals(existingService.getService().getVersion()))) {
-                    loggingInfo = createLoggingInfoEntry(user, LoggingInfo.Types.UPDATE.getKey(),
+                    loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
                             LoggingInfo.ActionType.UPDATED.getKey());
-                    if (existingService.getLoggingInfo() != null) {
-                        loggingInfoList = existingService.getLoggingInfo();
-                        loggingInfoList.add(loggingInfo);
-                        loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate));
-                    } else {
-                        loggingInfoList.add(loggingInfo);
-                    }
                 } else {
-                    loggingInfo = createLoggingInfoEntry(user, LoggingInfo.Types.UPDATE.getKey(),
+                    loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
                             LoggingInfo.ActionType.UPDATED_VERSION.getKey());
-                    if (existingService.getLoggingInfo() != null) {
-                        loggingInfoList = existingService.getLoggingInfo();
-                        loggingInfoList.add(loggingInfo);
-                        loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate));
-                    } else {
-                        loggingInfoList.add(loggingInfo);
-                    }
                 }
+                loggingInfoList.add(loggingInfo);
+                loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate));
                 serviceBundle.setLoggingInfo(loggingInfoList);
 
                 // latestUpdateInfo

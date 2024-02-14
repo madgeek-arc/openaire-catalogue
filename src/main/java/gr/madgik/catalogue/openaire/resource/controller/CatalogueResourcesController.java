@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.resource.controller;
+package gr.madgik.catalogue.openaire.service.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +12,6 @@ import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.service.FacetLabelService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
