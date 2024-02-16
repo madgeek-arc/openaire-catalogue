@@ -8,7 +8,8 @@ import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
 
 @org.springframework.stereotype.Service
-public class DatasourceBundleService extends AbstractBundleService<Datasource, DatasourceBundle, String> implements BundleResourceOperations<Datasource, DatasourceBundle, String> {
+public class DatasourceBundleService extends AbstractBundleService<Datasource, DatasourceBundle, String>
+        implements BundleResourceOperations<Datasource, DatasourceBundle, String> {
 
     private final Catalogue<DatasourceBundle, String> catalogue;
     private final DatasourceRepository repository;

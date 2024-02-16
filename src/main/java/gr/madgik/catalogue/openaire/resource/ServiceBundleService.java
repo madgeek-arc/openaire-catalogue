@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 @org.springframework.stereotype.Service
-public class ServiceBundleService extends AbstractBundleService<Service, ServiceBundle, String> implements BundleResourceOperations<Service, ServiceBundle, String> {
+public class ServiceBundleService extends AbstractBundleService<Service, ServiceBundle, String>
+        implements BundleResourceOperations<Service, ServiceBundle, String> {
 
     private final Catalogue<ServiceBundle, String> catalogue;
     private final RegistryCoreRepository<ServiceBundle, String> repository;

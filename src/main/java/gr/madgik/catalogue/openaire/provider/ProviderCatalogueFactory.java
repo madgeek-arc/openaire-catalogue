@@ -8,16 +8,17 @@ import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
 import gr.madgik.catalogue.openaire.utils.UserUtils;
+import gr.madgik.catalogue.service.sync.ProviderSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ProviderCatalogueFactory {
@@ -25,21 +26,18 @@ public class ProviderCatalogueFactory {
     private static final Logger logger = LoggerFactory.getLogger(ProviderCatalogueFactory.class);
     private final ProviderRepository providerRepository;
     private final ProviderService providerService;
-    private final JmsTemplate jmsTopicTemplate;
-    private final ProviderMailService registrationMailService;
+    private final ProviderSync providerSync;
     private final ProviderResourcesCommonMethods commonMethods;
     private final SimpleIdCreator idCreator;
 
     public ProviderCatalogueFactory(ProviderRepository providerRepository,
+                                    ProviderSync providerSync,
                                     @Lazy ProviderService providerService,
-                                    JmsTemplate jmsTopicTemplate,
-                                    ProviderMailService registrationMailService,
                                     ProviderResourcesCommonMethods commonMethods,
                                     SimpleIdCreator idCreator) {
         this.providerRepository = providerRepository;
+        this.providerSync = providerSync;
         this.providerService = providerService;
-        this.jmsTopicTemplate = jmsTopicTemplate;
-        this.registrationMailService = registrationMailService;
         this.commonMethods = commonMethods;
         this.idCreator = idCreator;
     }
@@ -52,27 +50,15 @@ public class ProviderCatalogueFactory {
             @Override
             public ProviderBundle preHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider registration preHandle");
-                providerService.onboard(providerBundle, null);
-                providerBundle.setId(idCreator.createProviderId(providerBundle.getProvider()));
-                addAuthenticatedUser(providerBundle.getProvider());
-                providerService.validate(providerBundle);
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 User user = UserUtils.getUserFromAuthentication(auth);
-
+                commonMethods.onboard(providerBundle, auth);
+                providerBundle.setId(idCreator.createProviderId(providerBundle.getProvider()));
+                addAuthenticatedUser(providerBundle.getProvider(), user);
                 providerBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
 
-                LoggingInfo loggingInfo = new LoggingInfo();
-                loggingInfo.setActionType(LoggingInfo.ActionType.REGISTERED.getKey());
-                loggingInfo.setType(LoggingInfo.Types.ONBOARD.getKey());
-                loggingInfo.setUserEmail(user.getEmail());
-                loggingInfo.setUserFullName(user.getFullName());
-                loggingInfo.setDate(String.valueOf(System.currentTimeMillis()));
-                loggingInfo.setUserRole("");
-
-                providerBundle.setLoggingInfo(new LinkedList<>());
-                providerBundle.getLoggingInfo().add(loggingInfo);
-                providerBundle.setLatestUpdateInfo(loggingInfo);
-                sortFields(providerBundle);
+                // validate
+                providerService.validate(providerBundle);
 
                 return providerBundle;
             }
@@ -80,12 +66,7 @@ public class ProviderCatalogueFactory {
             @Override
             public void postHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider registration postHandle");
-
-                registrationMailService.sendEmailsToNewlyAddedAdmins(providerBundle, null);
-
-                jmsTopicTemplate.convertAndSend("provider.create", providerBundle.getProvider());
-
-//                synchronizerServiceProvider.syncAdd(provider.getProvider());
+//                serviceSync.syncAdd(providerBundle.getProvider());
             }
 
             @Override
@@ -103,10 +84,15 @@ public class ProviderCatalogueFactory {
                 existing.setProvider(providerBundle.getProvider());
                 providerBundle = existing;
 
+                // validate
+                commonMethods.prohibitCatalogueIdChange(providerBundle.getProvider().getCatalogueId());
+                providerService.validate(providerBundle);
+
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 User user = User.of(auth);
 
-                providerBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
+                providerBundle.setMetadata(Metadata.updateMetadata(providerBundle.getMetadata(), user.getFullName(),
+                        user.getEmail()));
 
                 List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(providerBundle, auth);
                 LoggingInfo loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
@@ -121,6 +107,7 @@ public class ProviderCatalogueFactory {
             @Override
             public void postHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider update postHandle");
+//                serviceSync.syncUpdate(providerBundle.getProvider());
             }
 
             @Override
@@ -139,6 +126,7 @@ public class ProviderCatalogueFactory {
             @Override
             public void postHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider delete postHandle");
+//                serviceSync.syncDelete(providerBundle.getProvider());
             }
 
             @Override
@@ -151,10 +139,8 @@ public class ProviderCatalogueFactory {
         return catalogue;
     }
 
-    private void addAuthenticatedUser(Provider provider) {
-        List<User> users;
-        User authUser = UserUtils.getUserFromAuthentication(SecurityContextHolder.getContext().getAuthentication());
-        users = provider.getUsers();
+    private void addAuthenticatedUser(Provider provider, User authUser) {
+        List<User> users = provider.getUsers();
         if (users == null) {
             users = new ArrayList<>();
         }
@@ -162,16 +148,5 @@ public class ProviderCatalogueFactory {
             users.add(authUser);
             provider.setUsers(users);
         }
-    }
-
-    private void sortFields(ProviderBundle provider) {
-        if (provider.getProvider().getParticipatingCountries() != null && !provider.getProvider().getParticipatingCountries().isEmpty()) {
-            provider.getProvider().setParticipatingCountries(sortCountries(provider.getProvider().getParticipatingCountries()));
-        }
-    }
-
-    public List<String> sortCountries(List<String> countries) {
-        Collections.sort(countries);
-        return countries;
     }
 }

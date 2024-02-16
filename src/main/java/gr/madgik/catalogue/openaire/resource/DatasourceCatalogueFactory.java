@@ -1,24 +1,41 @@
 package gr.madgik.catalogue.openaire.resource;
 
+import eu.einfracentral.domain.*;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
-import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
+import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
+import gr.madgik.catalogue.openaire.utils.UserUtils;
+import gr.madgik.catalogue.openaire.validation.FieldValidator;
+import gr.madgik.catalogue.service.sync.DatasourceSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class DatasourceCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(DatasourceCatalogueFactory.class);
     private final DatasourceRepository resourceRepository;
+    private final DatasourceSync datasourceSync;
+    private final FieldValidator fieldValidator;
+    private final ProviderResourcesCommonMethods commonMethods;
 
-    public DatasourceCatalogueFactory(DatasourceRepository resourceRepository) {
+    public DatasourceCatalogueFactory(DatasourceRepository resourceRepository,
+                                      DatasourceSync dataSourceSync,
+                                      FieldValidator fieldValidator,
+                                      ProviderResourcesCommonMethods commonMethods) {
         this.resourceRepository = resourceRepository;
+        this.datasourceSync = dataSourceSync;
+        this.fieldValidator = fieldValidator;
+        this.commonMethods = commonMethods;
     }
 
     @Bean
@@ -29,14 +46,22 @@ public class DatasourceCatalogueFactory {
             @Override
             public DatasourceBundle preHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource registration preHandle");
-                datasourceBundle.setId(createId(datasourceBundle.getDatasource()));
-                datasourceBundle.setActive(false);
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                User user = UserUtils.getUserFromAuthentication(auth);
+                commonMethods.onboard(datasourceBundle, auth);
+                datasourceBundle.setId(datasourceBundle.getDatasource().getServiceId());
+                datasourceBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
+
+                // validate
+                fieldValidator.validate(datasourceBundle);
+
                 return datasourceBundle;
             }
 
             @Override
             public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource registration postHandle");
+//                datasourceSync.syncAdd(datasourceBundle.getDatasource());
             }
 
             @Override
@@ -49,12 +74,35 @@ public class DatasourceCatalogueFactory {
             @Override
             public DatasourceBundle preHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource update preHandle");
+
+                DatasourceBundle existing = resourceRepository.get(datasourceBundle.getId());
+                existing.setDatasource(datasourceBundle.getDatasource());
+                datasourceBundle = existing;
+
+                // validate
+                commonMethods.prohibitCatalogueIdChange(datasourceBundle.getDatasource().getCatalogueId());
+                fieldValidator.validate(datasourceBundle);
+
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                User user = User.of(auth);
+
+                datasourceBundle.setMetadata(Metadata.updateMetadata(datasourceBundle.getMetadata(), user.getFullName(),
+                        user.getEmail()));
+
+                List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(datasourceBundle, auth);
+                LoggingInfo loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
+                        LoggingInfo.ActionType.UPDATED.getKey());
+                loggingInfoList.add(loggingInfo);
+                datasourceBundle.setLoggingInfo(loggingInfoList);
+                datasourceBundle.setLatestUpdateInfo(loggingInfo);
+
                 return datasourceBundle;
             }
 
             @Override
             public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource update postHandle");
+//                datasourceSync.syncUpdate(datasourceBundle.getDatasource());
             }
 
             @Override
@@ -63,10 +111,25 @@ public class DatasourceCatalogueFactory {
             }
         });
 
-        return catalogue;
-    }
+        catalogue.registerHandler(Catalogue.Action.DELETE, new ActionHandler<>() {
+            @Override
+            public DatasourceBundle preHandle(DatasourceBundle datasourceBundle, Context ctx) {
+                logger.info("Inside Datasource delete preHandle");
+                return datasourceBundle;
+            }
 
-    private String createId(Datasource resource) {
-        return resource.getServiceId();
+            @Override
+            public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
+                logger.info("Inside Datasource delete postHandle");
+//                datasourceSync.syncDelete(datasourceBundle.getDatasource());
+            }
+
+            @Override
+            public void handleError(DatasourceBundle datasourceBundle, Throwable throwable, Context ctx) {
+                logger.info("Inside Datasource delete handleError");
+            }
+        });
+
+        return catalogue;
     }
 }
