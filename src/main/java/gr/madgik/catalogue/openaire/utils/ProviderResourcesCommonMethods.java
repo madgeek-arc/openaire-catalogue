@@ -1,10 +1,13 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import eu.einfracentral.domain.*;
-import gr.madgik.catalogue.SecurityService;
+import eu.einfracentral.domain.Bundle;
+import eu.einfracentral.domain.LoggingInfo;
+import eu.einfracentral.domain.ProviderBundle;
+import eu.einfracentral.domain.ServiceBundle;
+import eu.einfracentral.domain.DatasourceBundle;
+import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,15 +16,13 @@ import java.util.List;
 @Component
 public class ProviderResourcesCommonMethods {
 
-    private final SecurityService securityService;
     @Value("${project.catalogue.name}")
     private String catalogueName;
 
-    public ProviderResourcesCommonMethods(SecurityService securityService) {
-        this.securityService = securityService;
+    public ProviderResourcesCommonMethods() {
     }
 
-    public void onboard(Bundle<?> bundle, Authentication auth) {
+    public void onboard(Bundle<?> bundle, User user) {
         bundle.setActive(false);
 
         if (bundle instanceof ProviderBundle providerBundle) {
@@ -45,29 +46,36 @@ public class ProviderResourcesCommonMethods {
         }
 
         // loggingInfo
-        List<LoggingInfo> loggingInfoList = returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(bundle, auth);
+        List<LoggingInfo> loggingInfoList = returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(bundle, user);
         bundle.setLoggingInfo(loggingInfoList);
         bundle.setLatestOnboardingInfo(loggingInfoList.get(0));
+    }
+
+    public List<LoggingInfo> returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(Bundle<?> bundle, User user) {
+        List<LoggingInfo> loggingInfoList = new ArrayList<>();
+        if (bundle.getLoggingInfo() != null && !bundle.getLoggingInfo().isEmpty()) {
+            loggingInfoList = bundle.getLoggingInfo();
+        } else {
+            loggingInfoList.add(createLoggingInfo(user, LoggingInfo.Types.ONBOARD.getKey(),
+                    LoggingInfo.ActionType.REGISTERED.getKey()));
+        }
+        return loggingInfoList;
+    }
+
+    public LoggingInfo createLoggingInfo(User user, String type, String actionType) {
+        LoggingInfo ret = new LoggingInfo();
+        ret.setDate(String.valueOf(System.currentTimeMillis()));
+        ret.setType(type);
+        ret.setActionType(actionType);
+        ret.setUserEmail(user.getEmail());
+        ret.setUserFullName(user.getFullname());
+        ret.setUserRole(String.join(",", user.getRoles()));
+        return ret;
     }
 
     public void prohibitCatalogueIdChange(String catalogueId) {
         if (!catalogueId.equals(catalogueName)) {
             throw new ValidationException("You cannot change catalogueId");
         }
-    }
-
-    public List<LoggingInfo> returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(Bundle<?> bundle, Authentication auth) {
-        List<LoggingInfo> loggingInfoList = new ArrayList<>();
-        if (bundle.getLoggingInfo() != null && !bundle.getLoggingInfo().isEmpty()) {
-            loggingInfoList = bundle.getLoggingInfo();
-        } else {
-            loggingInfoList.add(createLoggingInfo(auth, LoggingInfo.Types.ONBOARD.getKey(),
-                    LoggingInfo.ActionType.REGISTERED.getKey()));
-        }
-        return loggingInfoList;
-    }
-
-    public LoggingInfo createLoggingInfo(Authentication auth, String type, String actionType) {
-        return LoggingInfo.createLoggingInfoEntry(auth, securityService.getRoleName(auth), type, actionType);
     }
 }

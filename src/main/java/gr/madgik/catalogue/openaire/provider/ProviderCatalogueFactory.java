@@ -1,23 +1,27 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import eu.einfracentral.domain.*;
+import eu.einfracentral.domain.LoggingInfo;
+import eu.einfracentral.domain.Metadata;
+import eu.einfracentral.domain.ProviderBundle;
+import eu.einfracentral.domain.Provider;
+import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
-import gr.madgik.catalogue.openaire.utils.UserUtils;
 import gr.madgik.catalogue.service.sync.ProviderSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -29,6 +33,8 @@ public class ProviderCatalogueFactory {
     private final ProviderSync providerSync;
     private final ProviderResourcesCommonMethods commonMethods;
     private final SimpleIdCreator idCreator;
+    @Value("${project.catalogue.name}")
+    private String catalogueName;
 
     public ProviderCatalogueFactory(ProviderRepository providerRepository,
                                     ProviderSync providerSync,
@@ -50,12 +56,11 @@ public class ProviderCatalogueFactory {
             @Override
             public ProviderBundle preHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider registration preHandle");
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = UserUtils.getUserFromAuthentication(auth);
-                commonMethods.onboard(providerBundle, auth);
+                User user = User.of(SecurityContextHolder.getContext().getAuthentication());
+                commonMethods.onboard(providerBundle, user);
                 providerBundle.setId(idCreator.createProviderId(providerBundle.getProvider()));
-                addAuthenticatedUser(providerBundle.getProvider(), user);
-                providerBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
+                addAuthenticatedUser(providerBundle.getProvider());
+                providerBundle.setMetadata(Metadata.createMetadata(user.getFullname(), user.getEmail()));
 
                 // validate
                 providerService.validate(providerBundle);
@@ -83,21 +88,22 @@ public class ProviderCatalogueFactory {
                 ProviderBundle existing = providerRepository.get(providerBundle.getId());
                 existing.setProvider(providerBundle.getProvider());
                 providerBundle = existing;
+                providerBundle.getProvider().setCatalogueId(catalogueName);
 
                 // validate
                 commonMethods.prohibitCatalogueIdChange(providerBundle.getProvider().getCatalogueId());
                 providerService.validate(providerBundle);
 
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = User.of(auth);
+                User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 
-                providerBundle.setMetadata(Metadata.updateMetadata(providerBundle.getMetadata(), user.getFullName(),
+                providerBundle.setMetadata(Metadata.updateMetadata(providerBundle.getMetadata(), user.getFullname(),
                         user.getEmail()));
 
-                List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(providerBundle, auth);
-                LoggingInfo loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
+                List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(providerBundle, user);
+                LoggingInfo loggingInfo = commonMethods.createLoggingInfo(user, LoggingInfo.Types.UPDATE.getKey(),
                         LoggingInfo.ActionType.UPDATED.getKey());
                 loggingInfoList.add(loggingInfo);
+                loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate).reversed());
                 providerBundle.setLoggingInfo(loggingInfoList);
                 providerBundle.setLatestUpdateInfo(loggingInfo);
 
@@ -139,8 +145,10 @@ public class ProviderCatalogueFactory {
         return catalogue;
     }
 
-    private void addAuthenticatedUser(Provider provider, User authUser) {
-        List<User> users = provider.getUsers();
+    private void addAuthenticatedUser(Provider provider) {
+        List<eu.einfracentral.domain.User> users;
+        eu.einfracentral.domain.User authUser = eu.einfracentral.domain.User.of(SecurityContextHolder.getContext().getAuthentication());
+        users = provider.getUsers();
         if (users == null) {
             users = new ArrayList<>();
         }

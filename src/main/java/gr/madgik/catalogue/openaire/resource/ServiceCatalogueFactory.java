@@ -1,6 +1,8 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import eu.einfracentral.domain.*;
+import eu.einfracentral.domain.LoggingInfo;
+import eu.einfracentral.domain.Metadata;
+import gr.madgik.catalogue.domain.User;
 import eu.openminted.registry.core.service.ServiceException;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
@@ -9,14 +11,13 @@ import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
-import gr.madgik.catalogue.openaire.utils.UserUtils;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import gr.madgik.catalogue.service.sync.ServiceSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,8 @@ public class ServiceCatalogueFactory {
     private final FieldValidator fieldValidator;
     private final ProviderResourcesCommonMethods commonMethods;
     private final SimpleIdCreator idCreator;
+    @Value("${project.catalogue.name}")
+    private String catalogueName;
 
     public ServiceCatalogueFactory(ServiceRepository resourceRepository,
                                    ServiceSync serviceSync,
@@ -53,11 +56,10 @@ public class ServiceCatalogueFactory {
             @Override
             public ServiceBundle preHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service registration preHandle");
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = UserUtils.getUserFromAuthentication(auth);
-                commonMethods.onboard(serviceBundle, auth);
+                User user = User.of(SecurityContextHolder.getContext().getAuthentication());
+                commonMethods.onboard(serviceBundle, user);
                 serviceBundle.setId(idCreator.createServiceId(serviceBundle.getService()));
-                serviceBundle.setMetadata(Metadata.createMetadata(user.getFullName(), user.getEmail()));
+                serviceBundle.setMetadata(Metadata.createMetadata(user.getFullname(), user.getEmail()));
 
                 // validate
                 fieldValidator.validate(serviceBundle);
@@ -84,34 +86,34 @@ public class ServiceCatalogueFactory {
                 logger.info("Inside Service update preHandle");
                 ServiceBundle existingService = resourceRepository.get(serviceBundle.getService().getId(),
                         serviceBundle.getService().getCatalogueId());
+                serviceBundle.getService().setCatalogueId(catalogueName);
 
                 // validate
                 commonMethods.prohibitCatalogueIdChange(serviceBundle.getService().getCatalogueId());
                 fieldValidator.validate(serviceBundle);
 
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = User.of(auth);
+                User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 
-                serviceBundle.setMetadata(Metadata.updateMetadata(serviceBundle.getMetadata(), user.getFullName(),
+                serviceBundle.setMetadata(Metadata.updateMetadata(serviceBundle.getMetadata(), user.getFullname(),
                         user.getEmail()));
                 serviceBundle.setResourceExtras(existingService.getResourceExtras());
                 serviceBundle.setIdentifiers(existingService.getIdentifiers());
                 serviceBundle.setMigrationStatus(existingService.getMigrationStatus());
 
-                List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(serviceBundle, auth);
+                List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(existingService, user);
 
                 // update VS version update
                 LoggingInfo loggingInfo;
                 if (((serviceBundle.getService().getVersion() == null) && (existingService.getService().getVersion() == null)) ||
                         (serviceBundle.getService().getVersion().equals(existingService.getService().getVersion()))) {
-                    loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
+                    loggingInfo = commonMethods.createLoggingInfo(user, LoggingInfo.Types.UPDATE.getKey(),
                             LoggingInfo.ActionType.UPDATED.getKey());
                 } else {
-                    loggingInfo = commonMethods.createLoggingInfo(auth, LoggingInfo.Types.UPDATE.getKey(),
+                    loggingInfo = commonMethods.createLoggingInfo(user, LoggingInfo.Types.UPDATE.getKey(),
                             LoggingInfo.ActionType.UPDATED_VERSION.getKey());
                 }
                 loggingInfoList.add(loggingInfo);
-                loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate));
+                loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate).reversed());
                 serviceBundle.setLoggingInfo(loggingInfoList);
 
                 // latestUpdateInfo
