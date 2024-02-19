@@ -31,7 +31,7 @@ public class ProviderBundleController {
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public ProviderBundle verify(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
-                                         @RequestParam(required = false) String status) {
+                                 @RequestParam(required = false) String status) {
         ProviderBundle provider = providerService.verify(id, status, active);
         logger.info("User updated Provider with name '{}' [status: {}] [active: {}]", provider.getProvider().getName(), status, active);
         return provider;

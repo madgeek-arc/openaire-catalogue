@@ -49,7 +49,7 @@ public class DatasourceBundleController {
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public DatasourceBundle verify(@PathVariable("id") String id, @RequestParam(required = false) Boolean active,
-                                           @RequestParam(required = false) String status) {
+                                   @RequestParam(required = false) String status) {
         DatasourceBundle datasource = datasourceBundleService.verify(id, status, active);
         logger.info("User updated Datasource with id '{}' [status: {}] [active: {}]", datasource.getPayload().getId(), status, active);
         return datasource;

@@ -8,9 +8,11 @@ import eu.einfracentral.domain.DatasourceBundle;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -49,6 +51,40 @@ public class ProviderResourcesCommonMethods {
         List<LoggingInfo> loggingInfoList = returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(bundle, user);
         bundle.setLoggingInfo(loggingInfoList);
         bundle.setLatestOnboardingInfo(loggingInfoList.get(0));
+    }
+
+    public void logVerificationAndActivation(Bundle<?> bundle, String status, Boolean active) {
+        User user = User.of(SecurityContextHolder.getContext().getAuthentication());
+        List<LoggingInfo> loggingInfoList = returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(bundle, user);
+        LoggingInfo loggingInfo = null;
+        if (status != null) {
+            switch (status) {
+                case "approved provider":
+                    loggingInfo = createLoggingInfo(user, LoggingInfo.Types.ONBOARD.getKey(),
+                            LoggingInfo.ActionType.APPROVED.getKey());
+                    break;
+                case "rejected provider":
+                    loggingInfo = createLoggingInfo(user, LoggingInfo.Types.ONBOARD.getKey(),
+                            LoggingInfo.ActionType.REJECTED.getKey());
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            if (active) {
+                loggingInfo = createLoggingInfo(user, LoggingInfo.Types.UPDATE.getKey(),
+                        LoggingInfo.ActionType.ACTIVATED.getKey());
+            } else {
+                loggingInfo = createLoggingInfo(user, LoggingInfo.Types.UPDATE.getKey(),
+                        LoggingInfo.ActionType.DEACTIVATED.getKey());
+            }
+        }
+        loggingInfoList.add(loggingInfo);
+        loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate));
+        bundle.setLoggingInfo(loggingInfoList);
+
+        // latestOnboardingInfo
+        bundle.setLatestOnboardingInfo(loggingInfo);
     }
 
     public List<LoggingInfo> returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(Bundle<?> bundle, User user) {

@@ -9,6 +9,7 @@ import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
+import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.service.VocabularyService;
 
@@ -23,14 +24,17 @@ public class ServiceBundleService extends AbstractBundleService<Service, Service
     private final Catalogue<ServiceBundle, String> catalogue;
     private final RegistryCoreRepository<ServiceBundle, String> repository;
     private final VocabularyService vocabularyService;
+    private final ProviderResourcesCommonMethods commonMethods;
 
     public ServiceBundleService(Catalogue<ServiceBundle, String> catalogue,
                                 ServiceRepository repository,
-                                VocabularyService vocabularyService) {
+                                VocabularyService vocabularyService,
+                                ProviderResourcesCommonMethods commonMethods) {
         super(catalogue, repository);
         this.catalogue = catalogue;
         this.repository = repository;
         this.vocabularyService = vocabularyService;
+        this.commonMethods = commonMethods;
     }
 
 
@@ -44,6 +48,7 @@ public class ServiceBundleService extends AbstractBundleService<Service, Service
         ServiceBundle bundle = repository.get(id);
         bundle.setActive(active);
         bundle.setStatus(status);
+        commonMethods.logVerificationAndActivation(bundle, status, null);
         return repository.update(id, bundle);
     }
 
@@ -51,6 +56,7 @@ public class ServiceBundleService extends AbstractBundleService<Service, Service
     public ServiceBundle activate(String id, Boolean active) {
         ServiceBundle bundle = repository.get(id);
         bundle.setActive(active);
+        commonMethods.logVerificationAndActivation(bundle, null, active);
         return repository.update(id, bundle);
     }
 
