@@ -80,7 +80,7 @@ public class ProviderResourcesCommonMethods {
             }
         }
         loggingInfoList.add(loggingInfo);
-        loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate));
+        loggingInfoList.sort(Comparator.comparing(LoggingInfo::getDate).reversed());
         bundle.setLoggingInfo(loggingInfoList);
 
         // latestOnboardingInfo
