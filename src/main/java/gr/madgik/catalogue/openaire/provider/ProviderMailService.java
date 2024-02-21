@@ -264,7 +264,7 @@ public class ProviderMailService {
         }
     }
 
-    @Scheduled(cron = "0 0 12 ? * 2/7") // At 12:00:00pm, every 7 days starting on Monday, every month
+//    @Scheduled(cron = "0 0 12 ? * 2/7") // At 12:00:00pm, every 7 days starting on Monday, every month
     public void sendEmailNotificationsToProviders() {
         FacetFilter ff = new FacetFilter();
         ff.setQuantity(maxQuantity);
@@ -353,7 +353,7 @@ public class ProviderMailService {
         sendMailsFromTemplate("resourceMovedEPOT.ftl", root, subject, registrationEmail, userRole);
     }
 
-    @Scheduled(cron = "0 0 12 ? * 2/2") // At 12:00:00pm, every 2 days starting on Monday, every month
+//    @Scheduled(cron = "0 0 12 ? * 2/2") // At 12:00:00pm, every 2 days starting on Monday, every month
     public void sendEmailNotificationsToAdmins() {
         FacetFilter ff = new FacetFilter();
         ff.setQuantity(maxQuantity);
@@ -383,7 +383,7 @@ public class ProviderMailService {
         }
     }
 
-    @Scheduled(cron = "0 0 12 ? * *") // At 12:00:00pm every day
+//    @Scheduled(cron = "0 0 12 ? * *") // At 12:00:00pm every day
 //    @Scheduled(fixedDelay = 1000)
     public void dailyNotificationsToAdmins() {
         // Create timestamps for today and yesterday
