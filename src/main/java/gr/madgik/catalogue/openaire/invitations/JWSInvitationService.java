@@ -101,9 +101,14 @@ public class JWSInvitationService implements InvitationService {
         }
 
         Invitation dbInvitation = invitationRepository.findById(invitation.getId()).orElse(new Invitation());
-        if (!invitation.equals(dbInvitation) || !Arrays.equals(invitation.getInviteeHash(), hashEmail(inviteeEmail))) {
-            logger.error("Invitee email does not match invitation");
+        if (dbInvitation.getId() == null) {
+            logger.error("Invitation does not exist in the DB. It has probably already been used.");
             return false;
+        } else {
+            if (!invitation.equals(dbInvitation) || !Arrays.equals(invitation.getInviteeHash(), hashEmail(inviteeEmail))) {
+                logger.error("Invitee email does not match invitation");
+                return false;
+            }
         }
 
         invitationRepository.deleteById(invitation.getId());

@@ -146,15 +146,23 @@ public class ProviderCatalogueFactory {
     }
 
     private void addAuthenticatedUser(Provider provider) {
-        List<eu.einfracentral.domain.User> users;
-        eu.einfracentral.domain.User authUser = eu.einfracentral.domain.User.of(SecurityContextHolder.getContext().getAuthentication());
-        users = provider.getUsers();
+        List<eu.einfracentral.domain.User> users = provider.getUsers();
+        User authUser = User.of(SecurityContextHolder.getContext().getAuthentication());
         if (users == null) {
             users = new ArrayList<>();
         }
         if (users.stream().noneMatch(u -> u.getEmail().equalsIgnoreCase(authUser.getEmail()))) {
-            users.add(authUser);
+            users.add(transformUser(authUser));
             provider.setUsers(users);
         }
+    }
+
+    private eu.einfracentral.domain.User transformUser(User user) {
+        eu.einfracentral.domain.User eicUser = new eu.einfracentral.domain.User();
+        eicUser.setId(user.getSub());
+        eicUser.setName(user.getName());
+        eicUser.setSurname(user.getSurname());
+        eicUser.setEmail(user.getEmail());
+        return eicUser;
     }
 }
