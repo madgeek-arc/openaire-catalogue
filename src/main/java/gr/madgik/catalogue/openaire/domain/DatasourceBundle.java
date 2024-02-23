@@ -1,9 +1,7 @@
 package gr.madgik.catalogue.openaire.domain;
 
-import eu.einfracentral.annotation.FieldValidation;
 import eu.einfracentral.domain.Bundle;
 import eu.einfracentral.domain.Metadata;
-import eu.einfracentral.domain.ResourceExtras;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,10 +13,6 @@ public class DatasourceBundle extends Bundle<Datasource> {
 
     @XmlElement
     private String status;
-
-    @XmlElement
-    @FieldValidation(nullable = true)
-    private ResourceExtras resourceExtras;
 
     public DatasourceBundle() {
         // No arg constructor
@@ -60,14 +54,6 @@ public class DatasourceBundle extends Bundle<Datasource> {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public ResourceExtras getResourceExtras() {
-        return resourceExtras;
-    }
-
-    public void setResourceExtras(ResourceExtras resourceExtras) {
-        this.resourceExtras = resourceExtras;
     }
 
     @Override
