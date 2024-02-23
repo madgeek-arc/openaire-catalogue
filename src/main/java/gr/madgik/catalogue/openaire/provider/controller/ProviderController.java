@@ -7,12 +7,13 @@ import eu.openminted.registry.core.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.invitations.Invitation;
+import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,11 @@ public class ProviderController {
     private static final Logger logger = LoggerFactory.getLogger(ProviderController.class);
 
     private final ProviderService providerService;
+    private final InvitationService invitationService;
 
-    public ProviderController(ProviderService providerService) {
+    public ProviderController(ProviderService providerService, InvitationService invitationService) {
         this.providerService = providerService;
+        this.invitationService = invitationService;
     }
 
     @GetMapping("{id}")
@@ -39,8 +42,10 @@ public class ProviderController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    @PostAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or hasProviderInvitation(#invitation)")
-    public Provider add(@RequestBody Provider provider, @RequestParam(required = false) String invitation) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or hasProviderInvitation(#invitationToken)")
+    public Provider add(@RequestBody Provider provider, @RequestParam(name = "invitation", required = false) String invitationToken) {
+        Invitation invitation = invitationService.validateAndConstructInvitation(invitationToken);
+        invitationService.accept(invitation);
         return providerService.register(provider);
     }
 

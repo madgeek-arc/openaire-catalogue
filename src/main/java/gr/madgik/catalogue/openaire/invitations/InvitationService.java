@@ -10,7 +10,8 @@ public interface InvitationService {
     String create(User inviter, String inviteeEmail);
 
     String create(User inviter, String inviteeEmail, Date expiration) throws JsonProcessingException;
-
-    boolean accept(String invitation, String inviteeEmail);
+    boolean processInvitation(String invitation, String inviteeEmail);
+    Invitation validateAndConstructInvitation(String invitationToken);
+    void accept(Invitation invitation);
 
 }

@@ -9,6 +9,8 @@ import com.nimbusds.jose.util.Base64URL;
 import eu.openminted.registry.core.service.ServiceException;
 import gr.athenarc.catalogue.exception.ResourceException;
 import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.exception.ValidationException;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -77,7 +79,23 @@ public class JWSInvitationService implements InvitationService {
     }
 
     @Override
-    public boolean accept(String invitationToken, String inviteeEmail) {
+    public boolean processInvitation(String invitationToken, String inviteeEmail) {
+        Invitation invitation = validateAndConstructInvitation(invitationToken);
+
+        Invitation dbInvitation = invitationRepository.findById(invitation.getId()).orElse(new Invitation());
+        if (dbInvitation.getId() == null) {
+            logger.error("Invitation does not exist. It has probably already been used.");
+            return false;
+        } else {
+            if (!invitation.equals(dbInvitation) || !Arrays.equals(invitation.getInviteeHash(), hashEmail(inviteeEmail))) {
+                logger.error("Invitee email does not match invitation");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Invitation validateAndConstructInvitation(String invitationToken) {
         String[] parts = invitationToken.split("\\.");
         if (parts.length != 3) {
             throw new ResourceException("Invalid Token", HttpStatus.BAD_REQUEST);
@@ -97,22 +115,15 @@ public class JWSInvitationService implements InvitationService {
 
         } catch (ParseException | JOSEException e) {
             logger.error(e.getMessage(), e);
-            return false;
+            throw new ValidationException("Invitation could not be reconstructed.");
         }
 
-        Invitation dbInvitation = invitationRepository.findById(invitation.getId()).orElse(new Invitation());
-        if (dbInvitation.getId() == null) {
-            logger.error("Invitation does not exist in the DB. It has probably already been used.");
-            return false;
-        } else {
-            if (!invitation.equals(dbInvitation) || !Arrays.equals(invitation.getInviteeHash(), hashEmail(inviteeEmail))) {
-                logger.error("Invitee email does not match invitation");
-                return false;
-            }
-        }
+        return invitation;
+    }
 
+    public void accept(Invitation invitation) {
+        logger.info("Invitation with id {} has been successfully consumed", invitation.getId());
         invitationRepository.deleteById(invitation.getId());
-        return true;
     }
 
     private String convertToJsonString(Invitation invitation) {

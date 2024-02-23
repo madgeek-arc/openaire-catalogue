@@ -84,7 +84,7 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     /* ********************************************** */
 
     public boolean hasProviderInvitation(String invitationToken) {
-        return invitationService.accept(invitationToken, User.of(this.authentication).getEmail());
+        return invitationService.processInvitation(invitationToken, User.of(this.authentication).getEmail());
     }
 
     public <T extends Identifiable> boolean isProviderAdmin(T resource) {
