@@ -60,10 +60,14 @@ public class ProviderResourcesCommonMethods {
         if (status != null) {
             switch (status) {
                 case "approved provider":
+                case "approved service":
+                case "approved datasource":
                     loggingInfo = createLoggingInfo(user, LoggingInfo.Types.ONBOARD.getKey(),
                             LoggingInfo.ActionType.APPROVED.getKey());
                     break;
                 case "rejected provider":
+                case "rejected service":
+                case "rejected datasource":
                     loggingInfo = createLoggingInfo(user, LoggingInfo.Types.ONBOARD.getKey(),
                             LoggingInfo.ActionType.REJECTED.getKey());
                     break;

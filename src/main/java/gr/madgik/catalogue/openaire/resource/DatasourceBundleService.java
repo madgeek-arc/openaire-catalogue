@@ -7,13 +7,14 @@ import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
+import gr.madgik.catalogue.repository.RegistryCoreRepository;
 
 @org.springframework.stereotype.Service
 public class DatasourceBundleService extends AbstractBundleService<Datasource, DatasourceBundle, String>
         implements BundleResourceOperations<Datasource, DatasourceBundle, String> {
 
     private final Catalogue<DatasourceBundle, String> catalogue;
-    private final DatasourceRepository repository;
+    private final RegistryCoreRepository<DatasourceBundle, String> repository;
     private final ProviderResourcesCommonMethods commonMethods;
 
     public DatasourceBundleService(Catalogue<DatasourceBundle, String> catalogue,
@@ -42,7 +43,7 @@ public class DatasourceBundleService extends AbstractBundleService<Datasource, D
         bundle.setActive(active);
         bundle.setStatus(status);
         commonMethods.logVerificationAndActivation(bundle, status, null);
-        return catalogue.update(id, bundle);
+        return repository.update(id, bundle);
     }
 
     @Override
@@ -50,6 +51,6 @@ public class DatasourceBundleService extends AbstractBundleService<Datasource, D
         DatasourceBundle bundle = repository.get(id);
         bundle.setActive(active);
         commonMethods.logVerificationAndActivation(bundle, null, active);
-        return catalogue.update(id, bundle);
+        return repository.update(id, bundle);
     }
 }
