@@ -72,7 +72,9 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
 
     @Override
     public Paging<B> getWithEnrichedFacets(FacetFilter filter) {
-        filter.setOrderBy(createDefaultOrdering());
+        if (filter.getOrderBy() == null) {
+            filter.setOrderBy(createDefaultOrdering());
+        }
         return repository.get(filter);
     }
 
