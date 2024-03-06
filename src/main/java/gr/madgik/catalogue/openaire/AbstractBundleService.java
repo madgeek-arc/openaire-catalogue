@@ -14,9 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -74,7 +72,16 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
 
     @Override
     public Paging<B> getWithEnrichedFacets(FacetFilter filter) {
+        filter.setOrderBy(createDefaultOrdering());
         return repository.get(filter);
+    }
+
+    private Map<String, Object> createDefaultOrdering() {
+        Map<String, Object> orderBy = new HashMap<>();
+        Map<String, String> orderDirection = new HashMap<>();
+        orderDirection.put("order", "asc");
+        orderBy.put("id", orderDirection);
+        return orderBy;
     }
 
     @Override
