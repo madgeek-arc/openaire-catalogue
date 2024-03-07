@@ -33,7 +33,7 @@ public class ProviderResourcesCommonMethods {
             providerBundle.setTemplateStatus("no template status");
         } else if (bundle instanceof ServiceBundle serviceBundle) {
             serviceBundle.getService().setCatalogueId(catalogueName);
-            serviceBundle.setStatus("pending service");
+            serviceBundle.setStatus("pending resource");
             if (serviceBundle.getService().getResourceOrganisation() == null ||
                     serviceBundle.getService().getResourceOrganisation().equals("")) {
                 serviceBundle.getService().setResourceOrganisation("openaire");
@@ -60,13 +60,13 @@ public class ProviderResourcesCommonMethods {
         if (status != null) {
             switch (status) {
                 case "approved provider":
-                case "approved service":
+                case "approved resource":
                 case "approved datasource":
                     loggingInfo = createLoggingInfo(user, LoggingInfo.Types.ONBOARD.getKey(),
                             LoggingInfo.ActionType.APPROVED.getKey());
                     break;
                 case "rejected provider":
-                case "rejected service":
+                case "rejected resource":
                 case "rejected datasource":
                     loggingInfo = createLoggingInfo(user, LoggingInfo.Types.ONBOARD.getKey(),
                             LoggingInfo.ActionType.REJECTED.getKey());
