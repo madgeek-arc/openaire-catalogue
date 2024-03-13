@@ -121,7 +121,6 @@ public class ServiceCatalogueFactory {
                 serviceBundle.setActive(existingService.isActive());
                 serviceBundle.setStatus(existingService.getStatus());
 
-                // TODO: TBD
                 // if Resource's status = "rejected resource", update to "pending resource"
                 if (existingService.getStatus().equals("rejected resource")) {
                     serviceBundle.setStatus("pending resource");
