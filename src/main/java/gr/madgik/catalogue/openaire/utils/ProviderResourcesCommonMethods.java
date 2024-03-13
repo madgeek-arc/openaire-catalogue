@@ -1,12 +1,14 @@
 package gr.madgik.catalogue.openaire.utils;
 
 import eu.einfracentral.domain.Bundle;
+import eu.einfracentral.domain.DatasourceBundle;
 import eu.einfracentral.domain.LoggingInfo;
 import eu.einfracentral.domain.ProviderBundle;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.exception.ValidationException;
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
+import gr.madgik.catalogue.openaire.validation.FieldValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ public class ProviderResourcesCommonMethods {
 
     @Value("${project.catalogue.name}")
     private String catalogueName;
+    @Autowired
+    private FieldValidator fieldValidator;
 
     public ProviderResourcesCommonMethods() {
     }
@@ -117,5 +121,10 @@ public class ProviderResourcesCommonMethods {
         if (!catalogueId.equals(catalogueName)) {
             throw new ValidationException("You cannot change catalogueId");
         }
+    }
+
+    public boolean validate(Object resource) {
+        fieldValidator.validate(resource);
+        return true;
     }
 }

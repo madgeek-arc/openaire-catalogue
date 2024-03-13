@@ -44,6 +44,11 @@ public class ServiceBundleService extends AbstractBundleService<Service, Service
     }
 
     @Override
+    public boolean validate(Object resource) {
+        return commonMethods.validate(resource);
+    }
+
+    @Override
     public ServiceBundle verify(String id, String status, Boolean active) {
         ServiceBundle bundle = repository.get(id);
         bundle.setActive(active);

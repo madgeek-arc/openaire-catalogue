@@ -29,8 +29,7 @@ public class ProviderService extends AbstractBundleService<Provider, ProviderBun
 
     @Override
     public boolean validate(Object resource) {
-//        throw new UnsupportedOperationException("Not implemented yet");
-        return true;
+        return commonMethods.validate(resource);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
 
+import eu.einfracentral.domain.Datasource;
+import eu.einfracentral.domain.DatasourceBundle;
 import eu.openminted.registry.core.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
-import gr.madgik.catalogue.openaire.domain.Datasource;
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
@@ -51,12 +51,7 @@ public class DatasourceController {
 
     @Browse
     @GetMapping
-    public Paging<Datasource> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams,
-                                     @RequestParam(defaultValue = "eosc", name = "catalogue_id") String catalogueIds) {
-        allRequestParams.putIfAbsent("catalogue_id", catalogueIds);
-        if (catalogueIds != null && catalogueIds.equals("all")) {
-            allRequestParams.remove("catalogue_id");
-        }
+    public Paging<Datasource> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
     }
 

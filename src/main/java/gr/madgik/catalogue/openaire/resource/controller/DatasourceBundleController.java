@@ -1,10 +1,10 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
+import eu.einfracentral.domain.DatasourceBundle;
 import eu.openminted.registry.core.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.dto.BulkOperation;
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,7 +43,7 @@ public class DatasourceBundleController {
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public DatasourceBundle get(@PathVariable("id") String id) {
-        return datasourceRepository.findById(id).orElse(null);
+        return datasourceBundleService.getBundle(id);
     }
 
     @PatchMapping(path = "{id}/verify", produces = {MediaType.APPLICATION_JSON_VALUE})

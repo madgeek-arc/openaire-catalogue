@@ -1,12 +1,12 @@
 package gr.madgik.catalogue.openaire.resource;
 
+import eu.einfracentral.domain.DatasourceBundle;
 import eu.einfracentral.domain.LoggingInfo;
 import eu.einfracentral.domain.Metadata;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;
 import gr.madgik.catalogue.domain.User;
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;

@@ -1,20 +1,21 @@
 package gr.madgik.catalogue.openaire.resource;
 
+import eu.einfracentral.domain.Datasource;
+import eu.einfracentral.domain.DatasourceBundle;
 import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
-import gr.madgik.catalogue.openaire.domain.Datasource;
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
-import gr.madgik.catalogue.repository.RegistryCoreRepository;
+import gr.madgik.catalogue.repository.Repository;
+import org.springframework.stereotype.Service;
 
-@org.springframework.stereotype.Service
+@Service
 public class DatasourceBundleService extends AbstractBundleService<Datasource, DatasourceBundle, String>
         implements BundleResourceOperations<Datasource, DatasourceBundle, String> {
 
     private final Catalogue<DatasourceBundle, String> catalogue;
-    private final RegistryCoreRepository<DatasourceBundle, String> repository;
+    private final Repository<DatasourceBundle, String> repository;
     private final ProviderResourcesCommonMethods commonMethods;
 
     public DatasourceBundleService(Catalogue<DatasourceBundle, String> catalogue,
@@ -28,13 +29,12 @@ public class DatasourceBundleService extends AbstractBundleService<Datasource, D
 
     @Override
     public boolean validate(Object resource) {
-        throw new UnsupportedOperationException("Not implemented yet");
-//        return null;
+        return commonMethods.validate(resource);
     }
 
     @Override
-    public Datasource register(Datasource provider) {
-        return catalogue.register(new DatasourceBundle(provider)).getDatasource();
+    public Datasource register(Datasource datasource) {
+        return catalogue.register(new DatasourceBundle(datasource)).getDatasource();
     }
 
     @Override

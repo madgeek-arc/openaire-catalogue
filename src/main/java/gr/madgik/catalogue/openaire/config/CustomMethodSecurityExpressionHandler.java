@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.config;
 
 
+import eu.einfracentral.domain.DatasourceBundle;
 import eu.einfracentral.domain.ProviderBundle;
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
@@ -21,8 +21,10 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
 
     private AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
 
-    /** Use Lazy loading to avoid initialization issues.
-     * (e.g. breaks advisors' configuration and @Transactional annotations do not work) **/
+    /**
+     * Use Lazy loading to avoid initialization issues.
+     * (e.g. breaks advisors' configuration and @Transactional annotations do not work)
+     **/
     @Lazy
     @Autowired
     private RegistryCoreRepository<ProviderBundle, String> providerRepository;

@@ -117,6 +117,44 @@
                     <layout>JAR</layout>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <version>2.16.538</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jsonLibrary>jackson2</jsonLibrary>
+                    <!-- OpenAIRE -->
+                    <classPatterns>
+                        <pattern>gr.madgik.catalogue.openaire.domain.**</pattern>
+                        <pattern>gr.madgik.catalogue.openaire.dto.**</pattern>
+                    </classPatterns>
+                    <!-- Other -->
+                    <classes>
+                        <class>eu.einfracentral.domain.ProviderBundle</class>
+                        <class>eu.einfracentral.domain.Provider</class>
+                        <class>eu.einfracentral.domain.DatasourceBundle</class>
+                        <class>eu.einfracentral.domain.Datasource</class>
+                    </classes>
+                    <customTypeNaming>
+                        <naming>gr.madgik.catalogue.openaire.domain.Service:OpenAIREService</naming>
+                        <naming>gr.madgik.catalogue.openaire.domain.ServiceBundle:OpenAIREServiceBundle</naming>
+                    </customTypeNaming>
+                    <outputFile>target/openaire-model.ts</outputFile>
+                    <outputKind>module</outputKind>
+                    <outputFileType>implementationFile</outputFileType>
+                    <mapEnum>asEnum</mapEnum>
+                    <mapClasses>asClasses</mapClasses>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

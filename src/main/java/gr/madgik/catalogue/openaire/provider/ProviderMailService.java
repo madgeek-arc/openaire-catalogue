@@ -7,7 +7,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.madgik.catalogue.Mailer;
-import gr.madgik.catalogue.SecurityService;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.provider.repository.PendingProviderRepository;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
@@ -36,7 +34,6 @@ import java.util.stream.Stream;
 public class ProviderMailService {
     private static final Logger logger = LoggerFactory.getLogger(ProviderMailService.class);
     private final Mailer mailService;
-    private final SecurityService securityService;
     private final Configuration cfg;
     private final ProviderRepository providerRepository;
     private final PendingProviderRepository pendingProviderRepository;
@@ -76,14 +73,12 @@ public class ProviderMailService {
 
 
     public ProviderMailService(Mailer mailService, FreeMarkerConfigurer cfg,
-                               SecurityService securityService,
                                ProviderRepository providerRepository,
                                PendingProviderRepository pendingProviderRepository,
                                ServiceRepository serviceRepository,
                                PendingResourceRepository pendingResourceRepository) {
         this.mailService = mailService;
         this.cfg = cfg.getConfiguration();
-        this.securityService = securityService;
         this.providerRepository = providerRepository;
         this.pendingProviderRepository = pendingProviderRepository;
         this.serviceRepository = serviceRepository;
@@ -264,7 +259,7 @@ public class ProviderMailService {
         }
     }
 
-//    @Scheduled(cron = "0 0 12 ? * 2/7") // At 12:00:00pm, every 7 days starting on Monday, every month
+    //    @Scheduled(cron = "0 0 12 ? * 2/7") // At 12:00:00pm, every 7 days starting on Monday, every month
     public void sendEmailNotificationsToProviders() {
         FacetFilter ff = new FacetFilter();
         ff.setQuantity(maxQuantity);
@@ -349,11 +344,10 @@ public class ProviderMailService {
         userRole = "admin";
         root.put("adminFullName", User.of(auth).getFullName());
         root.put("adminEmail", User.of(auth).getEmail());
-        root.put("adminRole", securityService.getRoleName(auth));
         sendMailsFromTemplate("resourceMovedEPOT.ftl", root, subject, registrationEmail, userRole);
     }
 
-//    @Scheduled(cron = "0 0 12 ? * 2/2") // At 12:00:00pm, every 2 days starting on Monday, every month
+    //    @Scheduled(cron = "0 0 12 ? * 2/2") // At 12:00:00pm, every 2 days starting on Monday, every month
     public void sendEmailNotificationsToAdmins() {
         FacetFilter ff = new FacetFilter();
         ff.setQuantity(maxQuantity);
@@ -383,7 +377,7 @@ public class ProviderMailService {
         }
     }
 
-//    @Scheduled(cron = "0 0 12 ? * *") // At 12:00:00pm every day
+    //    @Scheduled(cron = "0 0 12 ? * *") // At 12:00:00pm every day
 //    @Scheduled(fixedDelay = 1000)
     public void dailyNotificationsToAdmins() {
         // Create timestamps for today and yesterday
