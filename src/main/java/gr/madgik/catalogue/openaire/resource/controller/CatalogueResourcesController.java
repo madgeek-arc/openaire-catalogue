@@ -10,7 +10,7 @@ import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.service.GenericItemService;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.service.FacetLabelService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +47,8 @@ public class CatalogueResourcesController {
         return new AbstractMap.SimpleEntry<>("resourceType", resource.getResourceTypeName());
     }
 
-    @ApiOperation(value = "Browse Catalogue Resources.")
     @Browse
+    @Operation(summary = "Browse Catalogue Resources.")
     @GetMapping
     public Paging<?> getCatalogueResources(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
@@ -63,8 +63,8 @@ public class CatalogueResourcesController {
         return genericItemService.get("resources", id);
     }
 
-    @ApiOperation(value = "Browse Catalogue Resource Bundles.")
     @Browse
+    @Operation(summary = "Browse Catalogue Resource Bundles.")
     @GetMapping("bundles")
     public Paging<?> getCatalogueResourceBundles(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
@@ -74,8 +74,8 @@ public class CatalogueResourcesController {
         return paging;
     }
 
-    @ApiOperation(value = "Get all Resources in the catalogue organized by an attribute, e.g. get Resources organized in categories.")
-    @GetMapping(path = "by/{field}")
+    @Operation(summary = "Get all Resources in the catalogue organized by an attribute, e.g. get Resources organized in categories.")
+    @GetMapping("by/{field}")
     public <T extends Bundle<? extends eu.einfracentral.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field,
                                                                                                     @RequestParam Map<String, Object> allRequestParams) {
         Map<String, List<T>> results;

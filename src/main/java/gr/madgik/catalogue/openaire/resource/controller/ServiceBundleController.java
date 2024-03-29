@@ -34,8 +34,8 @@ public class ServiceBundleController {
     }
 
 
-    @GetMapping
     @Browse
+    @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public Paging<ServiceBundle> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
         return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));

@@ -5,8 +5,10 @@ import eu.einfracentral.domain.Datasource;
 import eu.einfracentral.domain.DatasourceBundle;
 import eu.openminted.registry.core.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
+import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,17 +57,19 @@ public class DatasourceController {
         return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
     }
 
-//    @PostMapping(path = "search")
-//    public FacetedPage<Datasource> search(@RequestBody Map<String, Object> filters, @RequestParam(required = false, name = "catalogue_id") String catalogueIds, Pageable pageable) {
-//        if (catalogueIds != null && !catalogueIds.equalsIgnoreCase("all")) {
-//            filters.putIfAbsent("catalogueId", catalogueIds);
-//        }
-//        return datasourceBundleService.search(filters, pageable);
-//    }
-
-    @PostMapping(path = "validate")
+    @PostMapping("validate")
     public boolean validate(@RequestBody Datasource datasource) {
         logger.info("Validating Datasource with id '{}'", datasource.getId());
         return datasourceBundleService.validate(datasource);
+    }
+
+    @Operation(summary = "Returns the Datasource (if exists) associated with the specific Service ID, else return null")
+    @GetMapping("/byService/{id}")
+    public Datasource getDatasourceByServiceId(@PathVariable("id") String id) {
+        try {
+            return datasourceBundleService.get(id);
+        } catch (ResourceNotFoundException e) {
+            return null;
+        }
     }
 }

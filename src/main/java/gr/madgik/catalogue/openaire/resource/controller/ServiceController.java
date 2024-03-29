@@ -63,13 +63,13 @@ public class ServiceController {
         return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(Bundle::getPayload);
     }
 
-    @PostMapping(path = "validate")
+    @PostMapping("validate")
     public boolean validate(@RequestBody Service service) {
         logger.info("Validating Service with name '{}' and id '{}'", service.getName(), service.getId());
         return serviceBundleService.validate(service);
     }
 
-    @GetMapping(path = "/by/{field}")
+    @GetMapping("/by/{field}")
     public Map<String, List<Service>> by(@PathVariable String field, @RequestParam("vocabularyType") String type) {
         logger.info("Requesting Services by [vocabulary={}]", type);
         return serviceBundleService.getByVocabulary(field, type);

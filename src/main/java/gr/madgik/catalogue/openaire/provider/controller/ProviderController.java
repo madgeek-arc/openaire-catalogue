@@ -68,7 +68,7 @@ public class ProviderController {
         return providerService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(ProviderBundle::getPayload);
     }
 
-    @GetMapping(path = "my")
+    @GetMapping("my")
     public List<Provider> getMy(@Parameter(hidden = true) Authentication authentication) {
         FacetFilter filter = new FacetFilter();
         filter.setQuantity(10000);
@@ -76,7 +76,7 @@ public class ProviderController {
         return providerService.get(filter).map(ProviderBundle::getPayload).getResults();
     }
 
-    @PostMapping(path = "validate")
+    @PostMapping("validate")
     public boolean validate(@RequestBody Provider provider) {
         logger.info("Validating Provider with name '{}' and id '{}'", provider.getName(), provider.getId());
         return providerService.validate(provider);
