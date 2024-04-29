@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.provider;
 
 import gr.uoa.di.madgik.resourcecatalogue.domain.*;
-import eu.openminted.registry.core.domain.FacetFilter;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

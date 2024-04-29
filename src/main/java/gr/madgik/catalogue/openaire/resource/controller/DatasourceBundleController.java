@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
 import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
-import eu.openminted.registry.core.domain.Paging;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.dto.BulkOperation;

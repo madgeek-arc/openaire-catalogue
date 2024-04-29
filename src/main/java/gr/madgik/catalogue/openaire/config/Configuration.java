@@ -1,24 +1,11 @@
 package gr.madgik.catalogue.openaire.config;
 
-import gr.athenarc.catalogue.CatalogueApplication;
-import gr.athenarc.catalogue.config.CatalogueLibConfiguration;
-import gr.athenarc.catalogue.config.RegistryCoreConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 
 @org.springframework.context.annotation.Configuration
 @ComponentScan(value = {"gr.athenarc.catalogue",
-        "eu.openminted.registry.core",
+        "gr.uoa.di.madgik.registry",
         "gr.madgik.catalogue"
-},
-        excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = CatalogueApplication.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = RegistryCoreConfiguration.class)
-        })
-public class Configuration implements CatalogueLibConfiguration {
-
-    @Override
-    public String generatedClassesPackageName() {
-        return "gr.uoa.di.madgik.resourcecatalogue.domain";
-    }
+})
+public class Configuration {
 }

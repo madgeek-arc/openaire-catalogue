@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.provider.controller;
 
 import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
-import eu.openminted.registry.core.domain.Paging;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.provider.ProviderService;

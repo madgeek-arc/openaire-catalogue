@@ -3,7 +3,7 @@ package gr.madgik.catalogue.openaire.resource;
 import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
 import gr.madgik.catalogue.domain.User;
-import eu.openminted.registry.core.service.ServiceException;
+import gr.uoa.di.madgik.registry.service.ServiceException;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;

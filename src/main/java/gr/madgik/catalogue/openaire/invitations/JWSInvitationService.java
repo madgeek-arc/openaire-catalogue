@@ -6,7 +6,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.util.Base64URL;
-import eu.openminted.registry.core.service.ServiceException;
+import gr.uoa.di.madgik.registry.service.ServiceException;
 import gr.athenarc.catalogue.exception.ResourceException;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.exception.ValidationException;
