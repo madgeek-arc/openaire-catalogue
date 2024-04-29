@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import eu.einfracentral.domain.Provider;
-import eu.einfracentral.domain.ProviderBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Provider;
+import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
 import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;

@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import eu.einfracentral.domain.LoggingInfo;
-import eu.einfracentral.domain.Metadata;
-import eu.einfracentral.domain.ProviderBundle;
-import eu.einfracentral.domain.Provider;
+import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
+import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Provider;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
@@ -146,7 +146,7 @@ public class ProviderCatalogueFactory {
     }
 
     private void addAuthenticatedUser(Provider provider) {
-        List<eu.einfracentral.domain.User> users = provider.getUsers();
+        List<gr.uoa.di.madgik.resourcecatalogue.domain.User> users = provider.getUsers();
         User authUser = User.of(SecurityContextHolder.getContext().getAuthentication());
         if (users == null) {
             users = new ArrayList<>();
@@ -157,8 +157,8 @@ public class ProviderCatalogueFactory {
         }
     }
 
-    private eu.einfracentral.domain.User transformUser(User user) {
-        eu.einfracentral.domain.User eicUser = new eu.einfracentral.domain.User();
+    private gr.uoa.di.madgik.resourcecatalogue.domain.User transformUser(User user) {
+        gr.uoa.di.madgik.resourcecatalogue.domain.User eicUser = new gr.uoa.di.madgik.resourcecatalogue.domain.User();
         eicUser.setId(user.getSub());
         eicUser.setName(user.getName());
         eicUser.setSurname(user.getSurname());

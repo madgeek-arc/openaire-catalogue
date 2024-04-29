@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
-import eu.einfracentral.domain.DatasourceBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
 import gr.athenarc.catalogue.service.GenericItemService;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.repository.Repository;

@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire;
 
-import eu.einfracentral.domain.Bundle;
-import eu.einfracentral.domain.Identifiable;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
 import eu.openminted.registry.core.domain.FacetFilter;
 import eu.openminted.registry.core.domain.Paging;
 import eu.openminted.registry.core.service.ServiceException;

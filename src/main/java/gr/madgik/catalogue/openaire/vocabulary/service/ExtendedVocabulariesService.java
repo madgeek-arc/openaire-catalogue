@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.vocabulary.service;
 
-import eu.einfracentral.domain.Provider;
-import eu.einfracentral.domain.ProviderBundle;
-import eu.einfracentral.domain.Vocabulary;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Provider;
+import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
 import eu.openminted.registry.core.domain.Browsing;
 import eu.openminted.registry.core.domain.FacetFilter;
 import gr.madgik.catalogue.BundleResourceOperations;

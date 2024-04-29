@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import eu.einfracentral.domain.Bundle;
-import eu.einfracentral.domain.DatasourceBundle;
-import eu.einfracentral.domain.LoggingInfo;
-import eu.einfracentral.domain.ProviderBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
+import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.exception.ValidationException;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;

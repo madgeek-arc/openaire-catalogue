@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import eu.einfracentral.domain.Datasource;
-import eu.einfracentral.domain.DatasourceBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Datasource;
+import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
 import gr.madgik.catalogue.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;

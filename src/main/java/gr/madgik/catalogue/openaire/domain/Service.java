@@ -2,7 +2,7 @@ package gr.madgik.catalogue.openaire.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.einfracentral.domain.*;
+import gr.uoa.di.madgik.resourcecatalogue.domain.*;
 import org.json.simple.JSONObject;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @XmlType(name = "service")
 @XmlRootElement(namespace = "http://openaire.eu")
-public class Service extends eu.einfracentral.domain.Service {
+public class Service extends gr.uoa.di.madgik.resourcecatalogue.domain.Service {
 
     @XmlElement
     private JSONObject extras;

@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.config;
 
-import eu.einfracentral.domain.DatasourceBundle;
-import eu.einfracentral.domain.Identifiable;
-import eu.einfracentral.domain.ProviderBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
+import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
 import gr.madgik.catalogue.domain.User;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.invitations.InvitationService;

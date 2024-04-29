@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import eu.einfracentral.domain.DatasourceBundle;
-import eu.einfracentral.domain.LoggingInfo;
-import eu.einfracentral.domain.Metadata;
+import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.Context;

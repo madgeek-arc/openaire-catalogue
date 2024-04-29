@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.dto;
 
-import eu.einfracentral.domain.Vocabulary;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
 
 public class UiVocabulary {
 

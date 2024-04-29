@@ -1,15 +1,17 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
-import eu.einfracentral.domain.Bundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
 import eu.openminted.registry.core.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.ServiceBundleService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -75,8 +77,14 @@ public class ServiceController {
         return serviceBundleService.getByVocabulary(field, type);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "Comma-separated list of Resource ids", dataTypeClass = String.class, paramType = "path")
+    @Parameters({
+            @Parameter(
+                    name = "ids",
+                    description = "Comma-separated list of Resource ids",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(type = "string")
+            )
     })
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_EPOT')")
     @GetMapping(path = "ids/{ids}", produces = {MediaType.APPLICATION_JSON_VALUE})

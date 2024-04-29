@@ -19,6 +19,6 @@ public class Configuration implements CatalogueLibConfiguration {
 
     @Override
     public String generatedClassesPackageName() {
-        return "eu.einfracentral.domain";
+        return "gr.uoa.di.madgik.resourcecatalogue.domain";
     }
 }

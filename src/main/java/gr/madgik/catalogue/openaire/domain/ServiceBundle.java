@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire.domain;
 
-import eu.einfracentral.annotation.FieldValidation;
-import eu.einfracentral.domain.Bundle;
-import eu.einfracentral.domain.Metadata;
-import eu.einfracentral.domain.ResourceExtras;
+import gr.uoa.di.madgik.resourcecatalogue.annotation.FieldValidation;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
+import gr.uoa.di.madgik.resourcecatalogue.domain.ResourceExtras;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

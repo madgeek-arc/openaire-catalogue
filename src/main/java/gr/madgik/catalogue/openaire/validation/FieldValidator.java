@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.validation;
 
-import eu.einfracentral.annotation.*;
-import eu.einfracentral.domain.*;
+import gr.uoa.di.madgik.resourcecatalogue.annotation.*;
+import gr.uoa.di.madgik.resourcecatalogue.domain.*;
 import gr.athenarc.catalogue.exception.ResourceException;
 import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.madgik.catalogue.exception.ValidationException;
@@ -60,8 +60,8 @@ public class FieldValidator {
         validationLocation = new ArrayDeque<>();
         try {
             validateFields(o);
-            if (o.getClass().getSuperclass() != null && (o.getClass().getSuperclass().getCanonicalName().contains("eu.einfracentral.domain.Bundle")
-                    || o.getClass().getSuperclass().getCanonicalName().contains("eu.einfracentral.domain.ResourceBundle"))) {
+            if (o.getClass().getSuperclass() != null && (o.getClass().getSuperclass().getCanonicalName().contains("gr.uoa.di.madgik.resourcecatalogue.domain.Bundle")
+                    || o.getClass().getSuperclass().getCanonicalName().contains("gr.uoa.di.madgik.resourcecatalogue.domain.ResourceBundle"))) {
                 try {
                     Field payload = Bundle.class.getDeclaredField("payload");
                     payload.setAccessible(true);
@@ -194,7 +194,7 @@ public class FieldValidator {
 
             if (annotation.containsId()) {
                 validateIds(field, fieldValue, annotation);
-            } else if (fieldValue != null && fieldValue.getClass().getCanonicalName().startsWith("eu.einfracentral.")) {
+            } else if (fieldValue != null && fieldValue.getClass().getCanonicalName().startsWith("gr.uoa.di.madgik.resourcecatalogue.")) {
                 validateFields(fieldValue);
             } else if (fieldValue != null && Collection.class.isAssignableFrom(fieldValue.getClass())) {
                 for (Object entry : ((Collection) fieldValue)) {
@@ -321,7 +321,7 @@ public class FieldValidator {
                         throw new ValidationException(
                                 String.format("Field '%s' should contain the ID of an existing Datasource",
                                         field.getName()));
-                    } else if ((eu.einfracentral.domain.Service.class.equals(annotation.idClass())
+                    } else if ((gr.uoa.di.madgik.resourcecatalogue.domain.Service.class.equals(annotation.idClass())
                             || ServiceBundle.class.equals(annotation.idClass()))
                             && serviceBundleService.get(o.toString()) == null) {
                         throw new ValidationException(

@@ -286,7 +286,7 @@
   "aliases": ["resourceTypes"],
   "payloadType": "json",
   "properties": {
-    "class": "eu.einfracentral.domain.ProviderBundle"
+    "class": "gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle"
   },
   "schema": "{\n\t\"$schema\": \"https://json-schema.org/draft/2019-09/schema\"\n}"
 }
