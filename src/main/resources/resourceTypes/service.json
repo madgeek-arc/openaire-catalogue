@@ -369,7 +369,7 @@
     }
   ],
   "indexMapperClass": "eu.openminted.registry.core.index.DefaultIndexMapper",
-  "aliases": ["resourceTypes"],
+  "aliases": ["resources", "resourceTypes"],
   "name": "service",
   "payloadType": "json",
   "properties": {
