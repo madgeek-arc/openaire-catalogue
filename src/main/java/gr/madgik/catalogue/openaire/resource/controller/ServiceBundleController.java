@@ -42,7 +42,7 @@ public class ServiceBundleController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isServiceProviderAdmin(#id)")
     public ServiceBundle get(@PathVariable("id") String id) {
         return serviceRepository.findById(id).orElse(null);
     }

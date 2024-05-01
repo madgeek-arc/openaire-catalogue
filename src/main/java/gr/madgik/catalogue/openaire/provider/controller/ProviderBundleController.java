@@ -63,7 +63,7 @@ public class ProviderBundleController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isProviderAdmin(#id)")
     public ProviderBundle get(@PathVariable("id") String id) {
         return providerService.getBundle(id);
     }

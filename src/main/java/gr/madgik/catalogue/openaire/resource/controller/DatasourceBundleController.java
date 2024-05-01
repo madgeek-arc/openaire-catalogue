@@ -41,7 +41,7 @@ public class DatasourceBundleController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM') or isDatasourceProviderAdmin(#id)")
     public DatasourceBundle get(@PathVariable("id") String id) {
         return datasourceBundleService.getBundle(id);
     }
