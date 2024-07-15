@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.provider.handlers;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
+import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.ActionHandler;
 import gr.madgik.catalogue.Context;
 

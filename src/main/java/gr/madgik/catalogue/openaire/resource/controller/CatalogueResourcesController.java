@@ -2,7 +2,7 @@ package gr.madgik.catalogue.openaire.resource.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
+import gr.madgik.catalogue.openaire.domain.Bundle;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.uoa.di.madgik.registry.domain.Resource;
@@ -76,7 +76,7 @@ public class CatalogueResourcesController {
 
     @Operation(summary = "Get all Resources in the catalogue organized by an attribute, e.g. get Resources organized in categories.")
     @GetMapping("by/{field}")
-    public <T extends Bundle<? extends gr.uoa.di.madgik.resourcecatalogue.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field,
+    public <T extends Bundle<? extends gr.madgik.catalogue.openaire.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field,
                                                                                                     @RequestParam Map<String, Object> allRequestParams) {
         Map<String, List<T>> results;
         FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
@@ -88,7 +88,7 @@ public class CatalogueResourcesController {
                 resources.put(getResourceName(key), value
                         .stream()
                         .map(Bundle::getPayload)
-                        .sorted(Comparator.comparing(gr.uoa.di.madgik.resourcecatalogue.domain.Service::getName))
+                        .sorted(Comparator.comparing(gr.madgik.catalogue.openaire.domain.Service::getName))
                         .toList()
                 )
         );

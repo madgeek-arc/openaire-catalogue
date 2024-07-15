@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.provider.controller;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Provider;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
+import gr.madgik.catalogue.openaire.domain.Provider;
+import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;

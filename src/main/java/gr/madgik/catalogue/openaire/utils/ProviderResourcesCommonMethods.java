@@ -1,13 +1,11 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
 import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.domain.*;
 import gr.madgik.catalogue.exception.ValidationException;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
+import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;

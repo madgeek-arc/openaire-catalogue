@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
+import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
 import gr.madgik.catalogue.ActionHandler;

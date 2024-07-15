@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
+import gr.madgik.catalogue.openaire.domain.Bundle;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;

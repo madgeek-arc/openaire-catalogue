@@ -1,7 +1,6 @@
 package gr.madgik.catalogue.openaire.domain;
 
 import gr.uoa.di.madgik.resourcecatalogue.annotation.FieldValidation;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
 import gr.uoa.di.madgik.resourcecatalogue.domain.ResourceExtras;
 

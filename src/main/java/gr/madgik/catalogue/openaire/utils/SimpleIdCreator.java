@@ -1,7 +1,8 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.*;
 import gr.madgik.catalogue.exception.ValidationException;
+import gr.madgik.catalogue.openaire.domain.Provider;
+import gr.madgik.catalogue.openaire.domain.Service;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

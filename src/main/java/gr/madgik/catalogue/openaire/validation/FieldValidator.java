@@ -60,7 +60,7 @@ public class FieldValidator {
         validationLocation = new ArrayDeque<>();
         try {
             validateFields(o);
-            if (o.getClass().getSuperclass() != null && (o.getClass().getSuperclass().getCanonicalName().contains("gr.uoa.di.madgik.resourcecatalogue.domain.Bundle")
+            if (o.getClass().getSuperclass() != null && (o.getClass().getSuperclass().getCanonicalName().contains("gr.madgik.catalogue.openaire.domain.Bundle")
                     || o.getClass().getSuperclass().getCanonicalName().contains("gr.uoa.di.madgik.resourcecatalogue.domain.ResourceBundle"))) {
                 try {
                     Field payload = Bundle.class.getDeclaredField("payload");
@@ -321,7 +321,7 @@ public class FieldValidator {
                         throw new ValidationException(
                                 String.format("Field '%s' should contain the ID of an existing Datasource",
                                         field.getName()));
-                    } else if ((gr.uoa.di.madgik.resourcecatalogue.domain.Service.class.equals(annotation.idClass())
+                    } else if ((gr.madgik.catalogue.openaire.domain.Service.class.equals(annotation.idClass())
                             || ServiceBundle.class.equals(annotation.idClass()))
                             && serviceBundleService.get(o.toString()) == null) {
                         throw new ValidationException(
