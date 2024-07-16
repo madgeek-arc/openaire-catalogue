@@ -2,7 +2,7 @@ package gr.madgik.catalogue.openaire.provider;
 
 import gr.madgik.catalogue.openaire.domain.Provider;
 import gr.madgik.catalogue.openaire.domain.ProviderBundle;
-import gr.madgik.catalogue.BundleResourceOperations;
+import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;

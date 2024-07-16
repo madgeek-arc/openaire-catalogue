@@ -120,13 +120,6 @@
                         <pattern>gr.madgik.catalogue.openaire.domain.**</pattern>
                         <pattern>gr.madgik.catalogue.openaire.dto.**</pattern>
                     </classPatterns>
-                    <!-- Other -->
-                    <classes>
-                        <class>gr.madgik.catalogue.openaire.domain.ProviderBundle</class>
-                        <class>gr.madgik.catalogue.openaire.domain.Provider</class>
-                        <class>gr.madgik.catalogue.openaire.domain.DatasourceBundle</class>
-                        <class>gr.uoa.di.madgik.resourcecatalogue.domain.Datasource</class>
-                    </classes>
                     <customTypeNaming>
                         <naming>gr.madgik.catalogue.openaire.domain.Service:OpenAIREService</naming>
                         <naming>gr.madgik.catalogue.openaire.domain.ServiceBundle:OpenAIREServiceBundle</naming>

@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Datasource;
+import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;

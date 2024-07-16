@@ -86,7 +86,7 @@ public class ProviderMailService {
     }
 
     @Async
-    public void sendProviderMails(ProviderBundle providerBundle) {
+    public void sendProviderMails(gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle) {
         Map<String, Object> root = new HashMap<>();
         StringWriter out = new StringWriter();
         String providerMail;
@@ -263,15 +263,15 @@ public class ProviderMailService {
     public void sendEmailNotificationsToProviders() {
         FacetFilter ff = new FacetFilter();
         ff.setQuantity(maxQuantity);
-        List<ProviderBundle> activeProviders = providerRepository.get(ff).getResults();
-        List<ProviderBundle> pendingProviders = pendingProviderRepository.get(ff).getResults();
-        List<ProviderBundle> allProviders = Stream.concat(activeProviders.stream(), pendingProviders.stream()).collect(Collectors.toList());
+        List<gr.madgik.catalogue.openaire.domain.ProviderBundle> activeProviders = providerRepository.get(ff).getResults();
+        List<gr.madgik.catalogue.openaire.domain.ProviderBundle> pendingProviders = pendingProviderRepository.get(ff).getResults();
+        List<gr.madgik.catalogue.openaire.domain.ProviderBundle> allProviders = Stream.concat(activeProviders.stream(), pendingProviders.stream()).collect(Collectors.toList());
 
         Map<String, Object> root = new HashMap<>();
         root.put("project", projectName);
         root.put("endpoint", endpoint);
 
-        for (ProviderBundle providerBundle : allProviders) {
+        for (gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle : allProviders) {
             if (providerBundle.getTemplateStatus().equals("no template status")) { //FIXME: we spam even those who don't want to continue to a Resource submission
                 if (providerBundle.getProvider().getUsers() == null || providerBundle.getProvider().getUsers().isEmpty()) {
                     continue;
@@ -292,7 +292,7 @@ public class ProviderMailService {
         root.put("project", projectName);
         root.put("endpoint", endpoint);
         gr.madgik.catalogue.openaire.domain.ServiceBundle infraService = serviceRepository.get(resourceId, catalogueName);
-        ProviderBundle providerBundle = providerRepository.get(infraService.getService().getResourceOrganisation());
+        gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle = providerRepository.get(infraService.getService().getResourceOrganisation());
         if (providerBundle.getProvider().getUsers() == null || providerBundle.getProvider().getUsers().isEmpty()) {
 //            throw new ValidationException(String.format("Provider [%s]-[%s] has no Users", providerBundle.getId(), providerBundle.getProvider().getName()));
             throw new RuntimeException(String.format("Provider [%s]-[%s] has no Users", providerBundle.getId(), providerBundle.getProvider().getName()));
@@ -351,11 +351,11 @@ public class ProviderMailService {
     public void sendEmailNotificationsToAdmins() {
         FacetFilter ff = new FacetFilter();
         ff.setQuantity(maxQuantity);
-        List<ProviderBundle> allProviders = providerRepository.get(ff).getResults();
+        List<gr.madgik.catalogue.openaire.domain.ProviderBundle> allProviders = providerRepository.get(ff).getResults();
 
         List<String> providersWaitingForInitialApproval = new ArrayList<>();
         List<String> providersWaitingForSTApproval = new ArrayList<>();
-        for (ProviderBundle providerBundle : allProviders) {
+        for (gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle : allProviders) {
             if (providerBundle.getStatus().equals("pending provider")) {
                 providersWaitingForInitialApproval.add(providerBundle.getProvider().getName());
             }
@@ -394,16 +394,16 @@ public class ProviderMailService {
         // Fetch Active/Pending Services and Active/Pending Providers
         FacetFilter ff = new FacetFilter();
         ff.setQuantity(maxQuantity);
-        List<ProviderBundle> activeProviders = providerRepository.get(ff).getResults();
-        List<ProviderBundle> pendingProviders = pendingProviderRepository.get(ff).getResults();
+        List<gr.madgik.catalogue.openaire.domain.ProviderBundle> activeProviders = providerRepository.get(ff).getResults();
+        List<gr.madgik.catalogue.openaire.domain.ProviderBundle> pendingProviders = pendingProviderRepository.get(ff).getResults();
         List<ServiceBundle> activeServices = serviceRepository.get(ff).getResults();
         List<ServiceBundle> pendingServices = pendingResourceRepository.get(ff).getResults();
-        List<ProviderBundle> allProviders = Stream.concat(activeProviders.stream(), pendingProviders.stream()).collect(Collectors.toList());
+        List<gr.madgik.catalogue.openaire.domain.ProviderBundle> allProviders = Stream.concat(activeProviders.stream(), pendingProviders.stream()).collect(Collectors.toList());
         List<ServiceBundle> allServices = Stream.concat(activeServices.stream(), pendingServices.stream()).collect(Collectors.toList());
-        List<Bundle> allResources = Stream.concat(allProviders.stream(), allServices.stream()).collect(Collectors.toList());
+        List<gr.madgik.catalogue.openaire.domain.Bundle> allResources = Stream.concat(allProviders.stream(), allServices.stream()).collect(Collectors.toList());
 
         // New & Updated Providers, Resources
-        for (Bundle bundle : allResources) {
+        for (gr.madgik.catalogue.openaire.domain.Bundle bundle : allResources) {
             Timestamp modified;
             Timestamp registered;
             if (bundle.getMetadata() != null) {
@@ -443,7 +443,7 @@ public class ProviderMailService {
         List<LoggingInfo> loggingInfoProviderList = new ArrayList<>();
         List<LoggingInfo> loggingInfoServiceList = new ArrayList<>();
         Timestamp timestamp;
-        for (ProviderBundle providerBundle : activeProviders) {
+        for (gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle : activeProviders) {
             loggingInfoProviderList = new ArrayList<>();
             boolean providerHasLoggingChanges = false;
             if (providerBundle.getLoggingInfo() != null) {
@@ -551,7 +551,7 @@ public class ProviderMailService {
         }
     }
 
-    private String getProviderSubject(ProviderBundle providerBundle, Service serviceTemplate) {
+    private String getProviderSubject(gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle, Service serviceTemplate) {
         if (providerBundle == null || providerBundle.getProvider() == null) {
             logger.error("Provider is null");
             return String.format("[%s]", this.projectName);
@@ -648,7 +648,7 @@ public class ProviderMailService {
     }
 
 
-    private String getRegTeamSubject(ProviderBundle providerBundle, Service serviceTemplate) {
+    private String getRegTeamSubject(gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle, Service serviceTemplate) {
         if (providerBundle == null || providerBundle.getProvider() == null) {
             logger.error("Provider is null");
             return String.format("[%s]", this.projectName);
@@ -922,7 +922,7 @@ public class ProviderMailService {
 
     public void notifyProviderAdminsForResourceAuditing(ServiceBundle infraService) {
 
-        ProviderBundle providerBundle = providerRepository.get(infraService.getService().getResourceOrganisation());
+        gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle = providerRepository.get(infraService.getService().getResourceOrganisation());
 
         Map<String, Object> root = new HashMap<>();
         root.put("project", projectName);

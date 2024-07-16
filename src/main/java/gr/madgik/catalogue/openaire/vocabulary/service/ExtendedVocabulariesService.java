@@ -5,7 +5,7 @@ import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
 import gr.uoa.di.madgik.registry.domain.Browsing;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
-import gr.madgik.catalogue.BundleResourceOperations;
+import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
 import gr.madgik.catalogue.dto.Value;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;

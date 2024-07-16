@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
-@XmlType
+@XmlType(name = "datasource")
 @XmlRootElement(namespace = "http://openaire.eu")
 public class Datasource implements Identifiable {
 

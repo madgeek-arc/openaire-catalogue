@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
-@XmlType
+@XmlType(name = "provider")
 @XmlRootElement(namespace = "http://openaire.eu")
 public class Provider implements Identifiable {
 

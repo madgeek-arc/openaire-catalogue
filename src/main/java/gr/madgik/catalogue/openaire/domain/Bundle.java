@@ -34,9 +34,6 @@ public abstract class Bundle<T extends Identifiable> implements Identifiable {
     private boolean draft;
 
     @XmlElement
-    private boolean legacy;
-
-    @XmlElement
     private Identifiers identifiers;
 
     @XmlElement
@@ -111,14 +108,6 @@ public abstract class Bundle<T extends Identifiable> implements Identifiable {
         this.draft = draft;
     }
 
-    public boolean isLegacy() {
-        return legacy;
-    }
-
-    public void setLegacy(boolean legacy) {
-        this.legacy = legacy;
-    }
-
     public Identifiers getIdentifiers() {
         return identifiers;
     }
@@ -175,7 +164,6 @@ public abstract class Bundle<T extends Identifiable> implements Identifiable {
                 ", active=" + active +
                 ", suspended=" + suspended +
                 ", draft=" + draft +
-                ", legacy=" + legacy +
                 ", identifiers=" + identifiers +
                 ", migrationStatus=" + migrationStatus +
                 ", loggingInfo=" + loggingInfo +
@@ -190,11 +178,11 @@ public abstract class Bundle<T extends Identifiable> implements Identifiable {
         if (this == o) return true;
         if (!(o instanceof Bundle)) return false;
         Bundle<?> bundle = (Bundle<?>) o;
-        return active == bundle.active && suspended == bundle.suspended && draft == bundle.draft && legacy == bundle.legacy && Objects.equals(payload, bundle.payload) && Objects.equals(metadata, bundle.metadata) && Objects.equals(identifiers, bundle.identifiers) && Objects.equals(migrationStatus, bundle.migrationStatus) && Objects.equals(loggingInfo, bundle.loggingInfo) && Objects.equals(latestAuditInfo, bundle.latestAuditInfo) && Objects.equals(latestOnboardingInfo, bundle.latestOnboardingInfo) && Objects.equals(latestUpdateInfo, bundle.latestUpdateInfo);
+        return active == bundle.active && suspended == bundle.suspended && draft == bundle.draft && Objects.equals(payload, bundle.payload) && Objects.equals(metadata, bundle.metadata) && Objects.equals(identifiers, bundle.identifiers) && Objects.equals(migrationStatus, bundle.migrationStatus) && Objects.equals(loggingInfo, bundle.loggingInfo) && Objects.equals(latestAuditInfo, bundle.latestAuditInfo) && Objects.equals(latestOnboardingInfo, bundle.latestOnboardingInfo) && Objects.equals(latestUpdateInfo, bundle.latestUpdateInfo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(payload, metadata, active, suspended, draft, legacy, identifiers, migrationStatus, loggingInfo, latestAuditInfo, latestOnboardingInfo, latestUpdateInfo);
+        return Objects.hash(payload, metadata, active, suspended, draft, identifiers, migrationStatus, loggingInfo, latestAuditInfo, latestOnboardingInfo, latestUpdateInfo);
     }
 }

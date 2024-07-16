@@ -213,15 +213,6 @@ public class Service implements Identifiable {
     @VocabularyValidation(type = Vocabulary.Type.MARKETPLACE_LOCATION)
     private List<String> marketplaceLocations;
 
-    /**
-     * The tier of a service in the EOSC EU Node.
-     */
-    @XmlElement(required = true)
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-    @FieldValidation
-    @ClassTierValidation
-    private ServiceClassTier classTier;
-
 
     // Geographical and Language Availability Information
     /**
@@ -725,14 +716,6 @@ public class Service implements Identifiable {
 
     public void setMarketplaceLocations(List<String> marketplaceLocations) {
         this.marketplaceLocations = marketplaceLocations;
-    }
-
-    public ServiceClassTier getClassTier() {
-        return classTier;
-    }
-
-    public void setClassTier(ServiceClassTier classTier) {
-        this.classTier = classTier;
     }
 
     public List<String> getGeographicalAvailabilities() {

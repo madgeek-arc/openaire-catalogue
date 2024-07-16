@@ -6,7 +6,7 @@ import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.uoa.di.madgik.registry.service.ServiceException;
 import gr.athenarc.catalogue.exception.ResourceNotFoundException;
-import gr.madgik.catalogue.BundleResourceOperations;
+import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
 import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.slf4j.Logger;
