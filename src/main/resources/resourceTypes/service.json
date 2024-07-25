@@ -366,6 +366,13 @@
       "label": "Portfolios",
       "path": "$.service.extras.portfolios.*",
       "type": "java.lang.String"
+    },
+    {
+      "multivalued": true,
+      "name": "users",
+      "label": "Users",
+      "path": "$.service.extras.users.*",
+      "type": "java.lang.String"
     }
   ],
   "indexMapperClass": "gr.uoa.di.madgik.registry.index.DefaultIndexMapper",
