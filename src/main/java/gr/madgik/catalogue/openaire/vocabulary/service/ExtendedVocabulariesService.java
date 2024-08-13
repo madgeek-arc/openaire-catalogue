@@ -6,14 +6,12 @@ import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
 import gr.uoa.di.madgik.registry.domain.Browsing;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
-import gr.madgik.catalogue.dto.Value;
+import gr.madgik.catalogue.openaire.dto.Value;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.repository.VocabularyRepository;
-import gr.madgik.catalogue.service.VocabularyService;
+import gr.madgik.catalogue.openaire.vocabulary.VocabularyRepository;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;

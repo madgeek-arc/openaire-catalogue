@@ -6,7 +6,7 @@ import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
-import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.invitations.Invitation;
 import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.openaire.provider.ProviderService;

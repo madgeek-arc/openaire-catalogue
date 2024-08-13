@@ -1,0 +1,54 @@
+package gr.madgik.catalogue.openaire;
+
+import gr.madgik.catalogue.openaire.vocabulary.service.VocabularyOperations;
+import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
+import gr.uoa.di.madgik.resourcecatalogue.dto.VocabularyTree;
+import gr.madgik.catalogue.openaire.dto.BulkOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(path = "vocabularies", produces = MediaType.APPLICATION_JSON_VALUE)
+public class VocabularyController extends AbstractResourceController<Vocabulary> {
+
+    private final VocabularyOperations vocabularyService;
+
+    public VocabularyController(VocabularyOperations vocabularyService) {
+        super(vocabularyService);
+        this.vocabularyService = vocabularyService;
+    }
+
+    @PostMapping("bulk")
+    ResponseEntity<BulkOperation<Vocabulary>> addMany(@RequestBody List<Vocabulary> vocabularyList) {
+        return new ResponseEntity<>(vocabularyService.bulkAdd(vocabularyList), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Returns a list of Vocabulary types")
+    @GetMapping(path = "types", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<String>> getVocabularyTypes() {
+        return new ResponseEntity<>(vocabularyService.getTypes(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "vocabularyTree/{type}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<VocabularyTree> getVocabularyTree(@PathVariable("type") String type) {
+        return new ResponseEntity<>(vocabularyService.getVocabulariesTree(type), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Get a Map of vocabulary types and their respective entries")
+    @GetMapping(path = "/byType", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Map<String, List<Vocabulary>>> getByType() {
+        return new ResponseEntity<>(vocabularyService.getByType(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Get vocabularies by type")
+    @GetMapping(path = "/byType/{type}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<Vocabulary>> getByType(@PathVariable(value = "type") String type) {
+        return new ResponseEntity<>(vocabularyService.getByType(type), HttpStatus.OK);
+    }
+}

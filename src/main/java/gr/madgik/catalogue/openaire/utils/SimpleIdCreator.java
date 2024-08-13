@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import gr.madgik.catalogue.exception.ValidationException;
+import gr.madgik.catalogue.openaire.exception.ValidationException;
 import gr.madgik.catalogue.openaire.domain.Provider;
 import gr.madgik.catalogue.openaire.domain.Service;
 import org.apache.commons.lang3.StringUtils;

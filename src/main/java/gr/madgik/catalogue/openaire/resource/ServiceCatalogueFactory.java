@@ -2,17 +2,16 @@ package gr.madgik.catalogue.openaire.resource;
 
 import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
-import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.uoa.di.madgik.registry.service.ServiceException;
-import gr.madgik.catalogue.ActionHandler;
-import gr.madgik.catalogue.Catalogue;
-import gr.madgik.catalogue.Context;
+import gr.madgik.catalogue.openaire.ActionHandler;
+import gr.madgik.catalogue.openaire.Catalogue;
+import gr.madgik.catalogue.openaire.Context;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
-import gr.madgik.catalogue.service.sync.ServiceSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +28,6 @@ public class ServiceCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceCatalogueFactory.class);
     private final ServiceRepository resourceRepository;
-    private final ServiceSync serviceSync;
     private final FieldValidator fieldValidator;
     private final ProviderResourcesCommonMethods commonMethods;
     private final SimpleIdCreator idCreator;
@@ -37,12 +35,10 @@ public class ServiceCatalogueFactory {
     private String catalogueName;
 
     public ServiceCatalogueFactory(ServiceRepository resourceRepository,
-                                   ServiceSync serviceSync,
                                    FieldValidator fieldValidator,
                                    ProviderResourcesCommonMethods commonMethods,
                                    SimpleIdCreator idCreator) {
         this.resourceRepository = resourceRepository;
-        this.serviceSync = serviceSync;
         this.fieldValidator = fieldValidator;
         this.commonMethods = commonMethods;
         this.idCreator = idCreator;
@@ -70,7 +66,6 @@ public class ServiceCatalogueFactory {
             @Override
             public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service registration postHandle");
-//                serviceSync.syncAdd(serviceBundle.getService());
             }
 
             @Override
@@ -139,7 +134,6 @@ public class ServiceCatalogueFactory {
             @Override
             public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service update postHandle");
-//                serviceSync.syncUpdate(serviceBundle.getService());
             }
 
             @Override
@@ -159,7 +153,6 @@ public class ServiceCatalogueFactory {
             @Override
             public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service delete postHandle");
-//                serviceSync.syncDelete(serviceBundle.getService());
             }
 
             @Override

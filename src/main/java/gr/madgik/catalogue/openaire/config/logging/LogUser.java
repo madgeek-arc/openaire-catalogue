@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.config.logging;
 
 import gr.athenarc.catalogue.config.logging.AbstractLogContextFilter;
-import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.domain.User;
 import org.slf4j.spi.MDCAdapter;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;

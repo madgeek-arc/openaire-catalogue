@@ -5,7 +5,7 @@ import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.invitations.InvitationService;
-import gr.madgik.catalogue.repository.RegistryCoreRepository;
+import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

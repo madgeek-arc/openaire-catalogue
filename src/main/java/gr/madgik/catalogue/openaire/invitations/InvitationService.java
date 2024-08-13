@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.invitations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.domain.User;
 
 import java.util.Date;
 

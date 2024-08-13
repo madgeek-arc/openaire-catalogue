@@ -9,14 +9,14 @@ import gr.uoa.di.madgik.registry.domain.Resource;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.service.GenericItemService;
 import gr.athenarc.catalogue.utils.PagingUtils;
-import gr.madgik.catalogue.service.FacetLabelService;
+import gr.madgik.catalogue.openaire.FacetLabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-import static gr.madgik.catalogue.service.VocabularyService.logger;
+import static gr.madgik.catalogue.openaire.vocabulary.service.VocabularyService.logger;
 
 @RestController
 @RequestMapping("catalogue-resources")

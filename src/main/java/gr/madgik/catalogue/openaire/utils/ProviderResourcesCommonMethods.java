@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.domain.*;
-import gr.madgik.catalogue.exception.ValidationException;
+import gr.madgik.catalogue.openaire.exception.ValidationException;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;

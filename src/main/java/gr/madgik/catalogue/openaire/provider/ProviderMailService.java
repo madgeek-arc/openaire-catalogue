@@ -1,18 +1,20 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.*;
+import gr.madgik.catalogue.openaire.domain.ProviderBundle;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import gr.athenarc.catalogue.exception.ResourceNotFoundException;
-import gr.madgik.catalogue.Mailer;
+import gr.madgik.catalogue.openaire.Mailer;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.provider.repository.PendingProviderRepository;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.openaire.resource.repository.PendingResourceRepository;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
+import gr.uoa.di.madgik.resourcecatalogue.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -235,7 +237,7 @@ public class ProviderMailService {
                     regTeamSubject, regTeamMail);
 
             temp = cfg.getTemplate("catalogueMailTemplate.ftl");
-            for (User user : catalogueBundle.getCatalogue().getUsers()) {
+            for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
                 if (user.getEmail() == null || user.getEmail().equals("")) {
                     continue;
                 }
@@ -342,8 +344,8 @@ public class ProviderMailService {
 
         // emails to Admins
         userRole = "admin";
-        root.put("adminFullName", User.of(auth).getFullName());
-        root.put("adminEmail", User.of(auth).getEmail());
+        root.put("adminFullName", gr.uoa.di.madgik.resourcecatalogue.domain.User.of(auth).getFullName());
+        root.put("adminEmail", gr.uoa.di.madgik.resourcecatalogue.domain.User.of(auth).getEmail());
         sendMailsFromTemplate("resourceMovedEPOT.ftl", root, subject, registrationEmail, userRole);
     }
 
@@ -804,13 +806,13 @@ public class ProviderMailService {
         String subject = String.format("[%s Portal] Your email has been added as an Administrator for the Catalogue '%s'", projectName, catalogueBundle.getCatalogue().getName());
 
         if (admins == null) {
-            for (User user : catalogueBundle.getCatalogue().getUsers()) {
+            for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
                 root.put("user", user);
                 String userRole = "provider";
                 sendMailsFromTemplate("catalogueAdminAdded.ftl", root, subject, user.getEmail(), userRole);
             }
         } else {
-            for (User user : catalogueBundle.getCatalogue().getUsers()) {
+            for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
                 if (admins.contains(user.getEmail())) {
                     root.put("user", user);
                     String userRole = "provider";
@@ -829,7 +831,7 @@ public class ProviderMailService {
 
         String subject = String.format("[%s Portal] Your email has been deleted from the Administration Team of the Catalogue '%s'", projectName, catalogueBundle.getCatalogue().getName());
 
-        for (User user : catalogueBundle.getCatalogue().getUsers()) {
+        for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
             if (admins.contains(user.getEmail())) {
                 root.put("user", user);
                 String userRole = "provider";

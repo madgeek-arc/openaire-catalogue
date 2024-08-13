@@ -1,15 +1,14 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import gr.madgik.catalogue.domain.User;
-import gr.madgik.catalogue.ActionHandler;
-import gr.madgik.catalogue.Catalogue;
-import gr.madgik.catalogue.Context;
+import gr.madgik.catalogue.openaire.ActionHandler;
+import gr.madgik.catalogue.openaire.Catalogue;
+import gr.madgik.catalogue.openaire.Context;
 import gr.madgik.catalogue.openaire.domain.Provider;
 import gr.madgik.catalogue.openaire.domain.ProviderBundle;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
-import gr.madgik.catalogue.service.sync.ProviderSync;
 import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
 import org.slf4j.Logger;
@@ -30,19 +29,16 @@ public class ProviderCatalogueFactory {
     private static final Logger logger = LoggerFactory.getLogger(ProviderCatalogueFactory.class);
     private final ProviderRepository providerRepository;
     private final ProviderService providerService;
-    private final ProviderSync providerSync;
     private final ProviderResourcesCommonMethods commonMethods;
     private final SimpleIdCreator idCreator;
     @Value("${project.catalogue.name}")
     private String catalogueName;
 
     public ProviderCatalogueFactory(ProviderRepository providerRepository,
-                                    ProviderSync providerSync,
                                     @Lazy ProviderService providerService,
                                     ProviderResourcesCommonMethods commonMethods,
                                     SimpleIdCreator idCreator) {
         this.providerRepository = providerRepository;
-        this.providerSync = providerSync;
         this.providerService = providerService;
         this.commonMethods = commonMethods;
         this.idCreator = idCreator;
@@ -71,7 +67,6 @@ public class ProviderCatalogueFactory {
             @Override
             public void postHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider registration postHandle");
-//                serviceSync.syncAdd(providerBundle.getProvider());
             }
 
             @Override
@@ -113,7 +108,6 @@ public class ProviderCatalogueFactory {
             @Override
             public void postHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider update postHandle");
-//                serviceSync.syncUpdate(providerBundle.getProvider());
             }
 
             @Override
@@ -132,7 +126,6 @@ public class ProviderCatalogueFactory {
             @Override
             public void postHandle(ProviderBundle providerBundle, Context ctx) {
                 logger.info("Inside Provider delete postHandle");
-//                serviceSync.syncDelete(providerBundle.getProvider());
             }
 
             @Override
@@ -141,28 +134,18 @@ public class ProviderCatalogueFactory {
             }
         });
 
-
         return catalogue;
     }
 
     private void addAuthenticatedUser(Provider provider) {
-        List<gr.uoa.di.madgik.resourcecatalogue.domain.User> users = provider.getUsers();
+        List<User> users = provider.getUsers();
         User authUser = User.of(SecurityContextHolder.getContext().getAuthentication());
         if (users == null) {
             users = new ArrayList<>();
         }
         if (users.stream().noneMatch(u -> u.getEmail().equalsIgnoreCase(authUser.getEmail()))) {
-            users.add(transformUser(authUser));
+            users.add(authUser);
             provider.setUsers(users);
         }
-    }
-
-    private gr.uoa.di.madgik.resourcecatalogue.domain.User transformUser(User user) {
-        gr.uoa.di.madgik.resourcecatalogue.domain.User eicUser = new gr.uoa.di.madgik.resourcecatalogue.domain.User();
-        eicUser.setId(user.getSub());
-        eicUser.setName(user.getName());
-        eicUser.setSurname(user.getSurname());
-        eicUser.setEmail(user.getEmail());
-        return eicUser;
     }
 }
