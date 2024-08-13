@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.vocabulary.service;
 
 import gr.madgik.catalogue.openaire.AbstractResourceOperations;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
-import gr.uoa.di.madgik.resourcecatalogue.dto.VocabularyTree;
+import gr.madgik.catalogue.openaire.domain.Vocabulary;
+import gr.madgik.catalogue.openaire.dto.VocabularyTree;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.athenarc.catalogue.utils.SortUtils;
 import gr.madgik.catalogue.openaire.vocabulary.VocabularyRepository;

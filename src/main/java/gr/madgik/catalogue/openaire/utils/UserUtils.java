@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.User;
+import gr.madgik.catalogue.openaire.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -18,14 +18,14 @@ public class UserUtils {
         if (authentication == null) {
             throw new InsufficientAuthenticationException("You are not authenticated, please log in.");
         } else if (authentication.getPrincipal() instanceof OidcUser principal) {
-                user.setId(principal.getSubject());
+                user.setSub(principal.getSubject());
                 user.setEmail(principal.getEmail());
                 user.setName(principal.getGivenName());
                 user.setSurname(principal.getFamilyName());
         } else if (authentication instanceof OAuth2AuthenticationToken token) {
-            user.setId(token.getPrincipal().getAttribute("sub"));
-            if (user.getId() == null) {
-                user.setId("");
+            user.setSub(token.getPrincipal().getAttribute("sub"));
+            if (user.getSub() == null) {
+                user.setSub("");
             }
             user.setEmail(token.getPrincipal().getAttribute("email"));
             if (user.getEmail() == null) {

@@ -1,54 +1,36 @@
 package gr.madgik.catalogue.openaire.domain;
 
-import gr.uoa.di.madgik.resourcecatalogue.annotation.FieldValidation;
-import gr.uoa.di.madgik.resourcecatalogue.domain.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 import java.beans.Transient;
 import java.util.List;
 import java.util.Objects;
 
-@XmlType
-@XmlRootElement(namespace = "http://openaire.eu")
 public abstract class Bundle<T extends Identifiable> implements Identifiable {
 
     @Schema(hidden = true)
     @XmlTransient
-    @FieldValidation
     private T payload;
 
-    @XmlElement(name = "metadata")
     private Metadata metadata;
 
-    @XmlElement
     private boolean active;
 
-    @XmlElement
     private boolean suspended;
 
-    @XmlElement
     private boolean draft;
 
-    @XmlElement
     private Identifiers identifiers;
 
-    @XmlElement
     private MigrationStatus migrationStatus;
 
-    @XmlElement
     private List<LoggingInfo> loggingInfo;
 
-    @XmlElement
     private LoggingInfo latestAuditInfo;
 
-    @XmlElement
     private LoggingInfo latestOnboardingInfo;
 
-    @XmlElement
     private LoggingInfo latestUpdateInfo;
 
     public Bundle() {

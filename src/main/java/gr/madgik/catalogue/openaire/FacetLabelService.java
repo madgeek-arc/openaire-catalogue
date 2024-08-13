@@ -1,12 +1,12 @@
 package gr.madgik.catalogue.openaire;
 
+import gr.madgik.catalogue.openaire.domain.ProviderBundle;
+import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.vocabulary.service.VocabularyOperations;
 import gr.uoa.di.madgik.registry.domain.Facet;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
-import gr.uoa.di.madgik.registry.domain.Paging;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
 import gr.athenarc.catalogue.service.GenericItemService;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

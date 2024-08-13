@@ -1,20 +1,16 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import gr.madgik.catalogue.openaire.domain.ProviderBundle;
-import gr.madgik.catalogue.openaire.domain.User;
+import gr.madgik.catalogue.openaire.domain.*;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.madgik.catalogue.openaire.Mailer;
-import gr.madgik.catalogue.openaire.domain.Service;
-import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.provider.repository.PendingProviderRepository;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
 import gr.madgik.catalogue.openaire.resource.repository.PendingResourceRepository;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
-import gr.uoa.di.madgik.resourcecatalogue.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,15 +50,6 @@ public class ProviderMailService {
 
     @Value("${project.registration.email:registration@catalogue.eu}")
     private String registrationEmail;
-
-    @Value("${project.helpdesk.email}")
-    private String helpdeskEmail;
-
-    @Value("${project.helpdesk.cc}")
-    private String helpdeskCC;
-
-    @Value("${project.monitoring.email}")
-    private String monitoringEmail;
 
     @Value("${emails.send.admin.notifications}")
     private boolean enableEmailAdminNotifications;
@@ -185,82 +172,6 @@ public class ProviderMailService {
         }
     }
 
-    @Async
-    public void sendCatalogueMails(CatalogueBundle catalogueBundle) {
-        Map<String, Object> root = new HashMap<>();
-        StringWriter out = new StringWriter();
-        String catalogueMail;
-        String regTeamMail;
-
-        String catalogueSubject;
-        String regTeamSubject;
-
-        if (catalogueBundle == null || catalogueBundle.getCatalogue() == null) {
-            throw new ResourceNotFoundException("Cataogue is null");
-        }
-
-        catalogueSubject = getCatalogueSubject(catalogueBundle);
-        regTeamSubject = getRegTeamCatalogueSubject(catalogueBundle);
-
-        root.put("catalogueBundle", catalogueBundle);
-        root.put("endpoint", endpoint);
-        root.put("project", projectName);
-        root.put("registrationEmail", registrationEmail);
-        // get the first user's information for the registration team email
-        for (LoggingInfo loggingInfo : catalogueBundle.getLoggingInfo()) {
-            if (loggingInfo.getActionType().equals(LoggingInfo.ActionType.REGISTERED.getKey())) {
-                User user = new User();
-                if (loggingInfo.getUserEmail() != null && !loggingInfo.getUserEmail().equals("")) {
-                    user.setEmail(loggingInfo.getUserEmail());
-                }
-                if (loggingInfo.getUserFullName() != null && !loggingInfo.getUserFullName().equals("")) {
-                    String[] parts = loggingInfo.getUserFullName().split(" ");
-                    String name = parts[0];
-                    String surname = parts[1];
-                    user.setName(name);
-                    user.setSurname(surname);
-                }
-                root.put("user", user);
-                break;
-            }
-        }
-        if (!root.containsKey("user")) {
-            root.put("user", catalogueBundle.getCatalogue().getUsers().get(0));
-        }
-
-        try {
-            Template temp = cfg.getTemplate("registrationTeamMailCatalogueTemplate.ftl");
-            temp.process(root, out);
-            regTeamMail = out.getBuffer().toString();
-            mailService.sendMail(registrationEmail, regTeamSubject, regTeamMail);
-            logger.info("\nRecipient: {}\nTitle: {}\nMail body: \n{}", registrationEmail,
-                    regTeamSubject, regTeamMail);
-
-            temp = cfg.getTemplate("catalogueMailTemplate.ftl");
-            for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
-                if (user.getEmail() == null || user.getEmail().equals("")) {
-                    continue;
-                }
-                root.remove("user");
-                out.getBuffer().setLength(0);
-                root.put("user", user);
-                root.put("project", projectName);
-                temp.process(root, out);
-                catalogueMail = out.getBuffer().toString();
-                mailService.sendMail(user.getEmail(), catalogueSubject, catalogueMail);
-                logger.info("\nRecipient: {}\nTitle: {}\nMail body: \n{}", user.getEmail(), catalogueSubject, catalogueMail);
-            }
-
-            out.close();
-        } catch (IOException e) {
-            logger.error("Error finding mail template", e);
-        } catch (TemplateException e) {
-            logger.error("ERROR", e);
-        } catch (MessagingException e) {
-            logger.error("Could not send mail", e);
-        }
-    }
-
     //    @Scheduled(cron = "0 0 12 ? * 2/7") // At 12:00:00pm, every 7 days starting on Monday, every month
     public void sendEmailNotificationsToProviders() {
         FacetFilter ff = new FacetFilter();
@@ -344,8 +255,8 @@ public class ProviderMailService {
 
         // emails to Admins
         userRole = "admin";
-        root.put("adminFullName", gr.uoa.di.madgik.resourcecatalogue.domain.User.of(auth).getFullName());
-        root.put("adminEmail", gr.uoa.di.madgik.resourcecatalogue.domain.User.of(auth).getEmail());
+        root.put("adminFullName", User.of(auth).getFullname());
+        root.put("adminEmail", User.of(auth).getEmail());
         sendMailsFromTemplate("resourceMovedEPOT.ftl", root, subject, registrationEmail, userRole);
     }
 
@@ -618,38 +529,6 @@ public class ProviderMailService {
         return subject;
     }
 
-    private String getCatalogueSubject(CatalogueBundle catalogueBundle) {
-        if (catalogueBundle == null || catalogueBundle.getCatalogue() == null) {
-            logger.error("Catalogue is null");
-            return String.format("[%s]", this.projectName);
-        }
-
-        String subject;
-        String catalogueName = catalogueBundle.getCatalogue().getName();
-
-        switch (catalogueBundle.getStatus()) {
-            case "pending catalogue":
-                subject = String.format("[%s Portal] Your application for registering [%s] " +
-                                "as a new %s Catalogue to the %s Portal has been received and is under review",
-                        this.projectName, catalogueName, this.projectName, this.projectName);
-                break;
-            case "rejected catalogue":
-                subject = String.format("[%s Portal] Your application for registering [%s] " +
-                                "as a new %s Catalogue to the %s Portal has been rejected",
-                        this.projectName, catalogueName, this.projectName, this.projectName);
-                break;
-            case "approved catalogue":
-                subject = String.format("[%s Portal] Your application for registering [%s] " +
-                                "as a new %s Catalogue to the %s Portal has been approved",
-                        this.projectName, catalogueName, this.projectName, this.projectName);
-                break;
-            default:
-                subject = String.format("[%s Portal] Catalogue Registration", this.projectName);
-        }
-        return subject;
-    }
-
-
     private String getRegTeamSubject(gr.madgik.catalogue.openaire.domain.ProviderBundle providerBundle, Service serviceTemplate) {
         if (providerBundle == null || providerBundle.getProvider() == null) {
             logger.error("Provider is null");
@@ -719,39 +598,6 @@ public class ProviderMailService {
         return subject;
     }
 
-    private String getRegTeamCatalogueSubject(CatalogueBundle catalogueBundle) {
-        if (catalogueBundle == null || catalogueBundle.getCatalogue() == null) {
-            logger.error("Catalogue is null");
-            return String.format("[%s]", this.projectName);
-        }
-
-        String subject;
-        String catalogueName = catalogueBundle.getCatalogue().getName();
-        String catalogueId = catalogueBundle.getCatalogue().getId();
-
-        switch (catalogueBundle.getStatus()) {
-            case "pending catalogue":
-                subject = String.format("[%s Portal] A new application for registering [%s] - ([%s]) " +
-                                "as a new %s Catalogue to the %s Portal has been received and should be reviewed",
-                        this.projectName, catalogueName, catalogueId, this.projectName, this.projectName);
-                break;
-            case "approved catalogue":
-                subject = String.format("[%s Portal] The application of [%s] - ([%s]) for registering " +
-                                "as a new %s Catalogue has been approved",
-                        this.projectName, catalogueName, catalogueId, this.projectName);
-                break;
-            case "rejected catalogue":
-                subject = String.format("[%s Portal] The application of [%s] - ([%s]) for registering " +
-                                "as a new %s Catalogue has been rejected",
-                        this.projectName, catalogueName, catalogueId, this.projectName);
-                break;
-            default:
-                subject = String.format("[%s Portal] Catalogue Registration", this.projectName);
-        }
-
-        return subject;
-    }
-
     public void sendEmailsToNewlyAddedAdmins(ProviderBundle providerBundle, List<String> admins) {
 
         Map<String, Object> root = new HashMap<>();
@@ -796,50 +642,6 @@ public class ProviderMailService {
         }
     }
 
-    public void sendEmailsToNewlyAddedCatalogueAdmins(CatalogueBundle catalogueBundle, List<String> admins) {
-
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", projectName);
-        root.put("endpoint", endpoint);
-        root.put("catalogueBundle", catalogueBundle);
-
-        String subject = String.format("[%s Portal] Your email has been added as an Administrator for the Catalogue '%s'", projectName, catalogueBundle.getCatalogue().getName());
-
-        if (admins == null) {
-            for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
-                root.put("user", user);
-                String userRole = "provider";
-                sendMailsFromTemplate("catalogueAdminAdded.ftl", root, subject, user.getEmail(), userRole);
-            }
-        } else {
-            for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
-                if (admins.contains(user.getEmail())) {
-                    root.put("user", user);
-                    String userRole = "provider";
-                    sendMailsFromTemplate("catalogueAdminAdded.ftl", root, subject, user.getEmail(), userRole);
-                }
-            }
-        }
-    }
-
-    public void sendEmailsToNewlyDeletedCatalogueAdmins(CatalogueBundle catalogueBundle, List<String> admins) {
-
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", projectName);
-        root.put("endpoint", endpoint);
-        root.put("catalogueBundle", catalogueBundle);
-
-        String subject = String.format("[%s Portal] Your email has been deleted from the Administration Team of the Catalogue '%s'", projectName, catalogueBundle.getCatalogue().getName());
-
-        for (gr.uoa.di.madgik.resourcecatalogue.domain.User user : catalogueBundle.getCatalogue().getUsers()) {
-            if (admins.contains(user.getEmail())) {
-                root.put("user", user);
-                String userRole = "provider";
-                sendMailsFromTemplate("catalogueAdminDeleted.ftl", root, subject, user.getEmail(), userRole);
-            }
-        }
-    }
-
     public void informPortalAdminsForProviderDeletion(ProviderBundle provider, User user) {
         Map<String, Object> root = new HashMap<>();
         root.put("project", projectName);
@@ -862,47 +664,6 @@ public class ProviderMailService {
             root.put("user", user);
             String userRole = "provider";
             sendMailsFromTemplate("providerDeletion.ftl", root, subject, user.getEmail(), userRole);
-        }
-    }
-
-    public void sendVocabularyCurationEmails(VocabularyCuration vocabularyCuration, String userName) {
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", projectName);
-        root.put("vocabularyCuration", vocabularyCuration);
-        root.put("userName", userName);
-        root.put("userEmail", vocabularyCuration.getVocabularyEntryRequests().get(0).getUserId());
-
-        // send email to User
-        String subject = String.format("[%s] Your Vocabulary [%s]-[%s] has been submitted", projectName,
-                vocabularyCuration.getVocabulary(), vocabularyCuration.getEntryValueName());
-        String userRole = "provider";
-        sendMailsFromTemplate("vocabularyCurationUser.ftl", root, subject, vocabularyCuration.getVocabularyEntryRequests().get(0).getUserId(), userRole);
-
-        // send email to Admins
-        String adminSubject = String.format("[%s] A new Vocabulary Request [%s]-[%s] has been submitted", projectName,
-                vocabularyCuration.getVocabulary(), vocabularyCuration.getEntryValueName());
-        userRole = "admin";
-        sendMailsFromTemplate("vocabularyCurationAdmin.ftl", root, adminSubject, registrationEmail, userRole);
-    }
-
-    public void approveOrRejectVocabularyCurationEmails(VocabularyCuration vocabularyCuration) {
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", projectName);
-        root.put("vocabularyCuration", vocabularyCuration);
-        root.put("userEmail", vocabularyCuration.getVocabularyEntryRequests().get(0).getUserId());
-
-        if (vocabularyCuration.getStatus().equals(VocabularyCuration.Status.APPROVED.getKey())) {
-            // send email of Approval
-            String subject = String.format("[%s] Your Vocabulary [%s]-[%s] has been approved", projectName,
-                    vocabularyCuration.getVocabulary(), vocabularyCuration.getEntryValueName());
-            String userRole = "provider";
-            sendMailsFromTemplate("vocabularyCurationApproval.ftl", root, subject, vocabularyCuration.getVocabularyEntryRequests().get(0).getUserId(), userRole);
-        } else {
-            // send email of Rejection
-            String subject = String.format("[%s] Your Vocabulary [%s]-[%s] has been rejected", projectName,
-                    vocabularyCuration.getVocabulary(), vocabularyCuration.getEntryValueName());
-            String userRole = "provider";
-            sendMailsFromTemplate("vocabularyCurationRejection.ftl", root, subject, vocabularyCuration.getVocabularyEntryRequests().get(0).getUserId(), userRole);
         }
     }
 
@@ -953,19 +714,6 @@ public class ProviderMailService {
         sendMailsFromTemplate("invalidProviderUpdate.ftl", root, subject, registrationEmail, userRole);
     }
 
-    public void notifyPortalAdminsForInvalidCatalogueUpdate(CatalogueBundle catalogueBundle) {
-
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", projectName);
-        root.put("endpoint", endpoint);
-        root.put("catalogueBundle", catalogueBundle);
-
-        // send email to Admins
-        String subject = String.format("[%s Portal] The Catalogue [%s] previously marked as [invalid] has been updated", projectName, catalogueBundle.getCatalogue().getName());
-        String userRole = "admin";
-        sendMailsFromTemplate("invalidCatalogueUpdate.ftl", root, subject, registrationEmail, userRole);
-    }
-
     public void notifyPortalAdminsForInvalidResourceUpdate(ServiceBundle infraService) {
 
         Map<String, Object> root = new HashMap<>();
@@ -977,41 +725,5 @@ public class ProviderMailService {
         String subject = String.format("[%s Portal] The Resource [%s] previously marked as [invalid] has been updated", projectName, infraService.getService().getName());
         String userRole = "admin";
         sendMailsFromTemplate("invalidResourceUpdate.ftl", root, subject, registrationEmail, userRole);
-    }
-
-    public void sendEmailsForHelpdeskExtension(HelpdeskBundle helpdeskBundle, String action) {
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", projectName);
-        root.put("endpoint", endpoint);
-        root.put("helpdeskBundle", helpdeskBundle);
-        root.put("action", action);
-
-        // send email to help@eosc-future.eu
-        String userRole = "admin";
-        String subject = "";
-        if (action.equals("post")) {
-            subject = String.format("[%s Portal] The Service [%s] has created a new Helpdesk Extension", projectName, helpdeskBundle.getHelpdesk().getServiceId());
-        } else {
-            subject = String.format("[%s Portal] The Service [%s] updated its Helpdesk Extension", projectName, helpdeskBundle.getHelpdesk().getServiceId());
-        }
-        sendMailsFromTemplate("serviceExtensionsHelpdesk.ftl", root, subject, helpdeskEmail, Collections.singletonList(helpdeskCC), userRole);
-    }
-
-    public void sendEmailsForMonitoringExtension(MonitoringBundle monitoringBundle, String action) {
-        Map<String, Object> root = new HashMap<>();
-        root.put("project", projectName);
-        root.put("endpoint", endpoint);
-        root.put("monitoringBundle", monitoringBundle);
-        root.put("action", action);
-
-        // send email to argo@einfra.grnet.gr
-        String userRole = "admin";
-        String subject = "";
-        if (action.equals("post")) {
-            subject = String.format("[%s Portal] The Service [%s] has created a new Monitoring Extension", projectName, monitoringBundle.getMonitoring().getServiceId());
-        } else {
-            subject = String.format("[%s Portal] The Service [%s] updated its Monitoring Extension", projectName, monitoringBundle.getMonitoring().getServiceId());
-        }
-        sendMailsFromTemplate("serviceExtensionsMonitoring.ftl", root, subject, monitoringEmail, userRole);
     }
 }

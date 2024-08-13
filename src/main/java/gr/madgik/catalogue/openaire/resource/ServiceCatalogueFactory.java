@@ -1,17 +1,16 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
+import gr.madgik.catalogue.openaire.Catalogue;
+import gr.madgik.catalogue.openaire.domain.LoggingInfo;
+import gr.madgik.catalogue.openaire.domain.Metadata;
 import gr.madgik.catalogue.openaire.domain.User;
 import gr.uoa.di.madgik.registry.service.ServiceException;
 import gr.madgik.catalogue.openaire.ActionHandler;
-import gr.madgik.catalogue.openaire.Catalogue;
 import gr.madgik.catalogue.openaire.Context;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
-import gr.madgik.catalogue.openaire.validation.FieldValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,18 +27,15 @@ public class ServiceCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceCatalogueFactory.class);
     private final ServiceRepository resourceRepository;
-    private final FieldValidator fieldValidator;
     private final ProviderResourcesCommonMethods commonMethods;
     private final SimpleIdCreator idCreator;
     @Value("${project.catalogue.name}")
     private String catalogueName;
 
     public ServiceCatalogueFactory(ServiceRepository resourceRepository,
-                                   FieldValidator fieldValidator,
                                    ProviderResourcesCommonMethods commonMethods,
                                    SimpleIdCreator idCreator) {
         this.resourceRepository = resourceRepository;
-        this.fieldValidator = fieldValidator;
         this.commonMethods = commonMethods;
         this.idCreator = idCreator;
     }
@@ -58,7 +54,8 @@ public class ServiceCatalogueFactory {
                 serviceBundle.setMetadata(Metadata.createMetadata(user.getFullname(), user.getEmail()));
 
                 // validate
-                fieldValidator.validate(serviceBundle);
+//                fieldValidator.validate(serviceBundle); // TODO: replace with catalogue-lib validation
+                logger.error("Validation removed. Replace with catalogue form validation.");
 
                 return serviceBundle;
             }
@@ -85,7 +82,8 @@ public class ServiceCatalogueFactory {
 
                 // validate
                 commonMethods.prohibitCatalogueIdChange(serviceBundle.getService().getCatalogueId());
-                fieldValidator.validate(serviceBundle);
+//                fieldValidator.validate(serviceBundle); // TODO: replace with catalogue-lib validation
+                logger.error("Validation removed. Replace with catalogue form validation.");
 
                 User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 

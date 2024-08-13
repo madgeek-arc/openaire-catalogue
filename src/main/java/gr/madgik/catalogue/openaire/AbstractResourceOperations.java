@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire;
 
+import gr.madgik.catalogue.openaire.domain.Identifiable;
 import gr.madgik.catalogue.openaire.dto.BulkOperation;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import org.slf4j.Logger;

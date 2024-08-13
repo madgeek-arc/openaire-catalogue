@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire.resource;
 
+import gr.madgik.catalogue.openaire.Catalogue;
 import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
-import gr.madgik.catalogue.openaire.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;

@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
 import gr.madgik.catalogue.openaire.domain.Bundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
+import gr.madgik.catalogue.openaire.domain.Identifiable;
 import gr.madgik.catalogue.openaire.repository.Repository;
 import org.springframework.data.repository.NoRepositoryBean;
 

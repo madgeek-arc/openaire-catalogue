@@ -1,10 +1,6 @@
 package gr.madgik.catalogue.openaire.config;
 
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
-import gr.madgik.catalogue.openaire.domain.ProviderBundle;
-import gr.madgik.catalogue.openaire.domain.User;
-import gr.madgik.catalogue.openaire.domain.ServiceBundle;
+import gr.madgik.catalogue.openaire.domain.*;
 import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import org.slf4j.Logger;

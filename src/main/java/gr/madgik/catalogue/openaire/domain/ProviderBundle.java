@@ -1,25 +1,13 @@
 package gr.madgik.catalogue.openaire.domain;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.util.Objects;
 
-@XmlType
-@XmlRootElement(namespace = "http://openaire.eu")
 public class ProviderBundle extends Bundle<Provider> {
 
-    @XmlElement
-//    @VocabularyValidation(type = Vocabulary.Type.PROVIDER_STATE)
     private String status;
 
-    @XmlElement
-//    @VocabularyValidation(type = Vocabulary.Type.TEMPLATE_STATE)
     private String templateStatus;
 
-    @XmlElement
     private String auditState;
 
     public ProviderBundle() {
@@ -46,7 +34,6 @@ public class ProviderBundle extends Bundle<Provider> {
         super.setId(id);
     }
 
-    @XmlElement(name = "provider")
     public Provider getProvider() {
         return this.getPayload();
     }

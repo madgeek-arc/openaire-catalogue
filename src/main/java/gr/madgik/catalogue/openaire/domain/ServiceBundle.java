@@ -1,22 +1,10 @@
 package gr.madgik.catalogue.openaire.domain;
 
-import gr.uoa.di.madgik.resourcecatalogue.annotation.FieldValidation;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ResourceExtras;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType
-@XmlRootElement(namespace = "http://openaire.eu")
 public class ServiceBundle extends Bundle<Service> {
 
-    @XmlElement
     private String status;
 
-    @XmlElement
-    @FieldValidation(nullable = true)
     private ResourceExtras resourceExtras;
 
     public ServiceBundle() {
@@ -33,7 +21,6 @@ public class ServiceBundle extends Bundle<Service> {
         this.setMetadata(metadata);
     }
 
-    @XmlElement(name = "service")
     public Service getService() {
         return this.getPayload();
     }

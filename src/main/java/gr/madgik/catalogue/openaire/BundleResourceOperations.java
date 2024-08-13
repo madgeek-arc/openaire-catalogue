@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire;
 
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
+import gr.madgik.catalogue.openaire.domain.Bundle;
+import gr.madgik.catalogue.openaire.domain.Identifiable;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 

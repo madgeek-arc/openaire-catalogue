@@ -1,14 +1,10 @@
 package gr.madgik.catalogue.openaire.vocabulary.service;
 
-import gr.madgik.catalogue.openaire.domain.Provider;
-import gr.madgik.catalogue.openaire.domain.ProviderBundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Vocabulary;
+import gr.madgik.catalogue.openaire.domain.*;
 import gr.uoa.di.madgik.registry.domain.Browsing;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
 import gr.madgik.catalogue.openaire.dto.Value;
-import gr.madgik.catalogue.openaire.domain.Service;
-import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.vocabulary.VocabularyRepository;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
