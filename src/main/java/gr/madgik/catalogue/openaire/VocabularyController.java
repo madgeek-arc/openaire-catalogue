@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire;
 
 import gr.madgik.catalogue.openaire.domain.Vocabulary;
+import gr.madgik.catalogue.openaire.dto.BulkOperation;
 import gr.madgik.catalogue.openaire.dto.VocabularyTree;
 import gr.madgik.catalogue.openaire.vocabulary.service.VocabularyOperations;
-import gr.madgik.catalogue.openaire.dto.BulkOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

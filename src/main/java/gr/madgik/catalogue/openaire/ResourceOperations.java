@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire;
 
+import gr.madgik.catalogue.openaire.dto.BulkOperation;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
-import gr.madgik.catalogue.openaire.dto.BulkOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

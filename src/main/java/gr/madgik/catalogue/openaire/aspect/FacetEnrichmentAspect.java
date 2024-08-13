@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.aspect;
 
-import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.madgik.catalogue.openaire.FacetLabelService;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;

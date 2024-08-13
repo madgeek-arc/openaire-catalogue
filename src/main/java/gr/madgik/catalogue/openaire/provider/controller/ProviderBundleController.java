@@ -1,10 +1,10 @@
 package gr.madgik.catalogue.openaire.provider.controller;
 
-import gr.madgik.catalogue.openaire.domain.ProviderBundle;
-import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
+import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

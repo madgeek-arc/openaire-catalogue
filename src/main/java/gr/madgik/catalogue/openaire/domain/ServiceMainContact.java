@@ -1,6 +1,7 @@
 package gr.madgik.catalogue.openaire.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.Objects;
 
 public class ServiceMainContact {

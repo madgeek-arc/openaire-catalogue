@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.provider.handlers;
 
-import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.ActionHandler;
 import gr.madgik.catalogue.openaire.Context;
+import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 
 public class AddHandler implements ActionHandler<ProviderBundle, String> {
     @Override

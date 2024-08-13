@@ -1,17 +1,17 @@
 package gr.madgik.catalogue.openaire.resource;
 
+import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.Catalogue;
 import gr.madgik.catalogue.openaire.domain.Bundle;
-import gr.madgik.catalogue.openaire.domain.Vocabulary;
-import gr.uoa.di.madgik.registry.domain.FacetFilter;
-import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
-import gr.madgik.catalogue.openaire.AbstractBundleService;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
-import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
+import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
+import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
+import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
+import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.vocabulary.service.VocabularyService;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,11 +1,11 @@
 package gr.madgik.catalogue.openaire.vocabulary.service;
 
 import gr.madgik.catalogue.openaire.domain.*;
+import gr.madgik.catalogue.openaire.dto.Value;
+import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
+import gr.madgik.catalogue.openaire.vocabulary.VocabularyRepository;
 import gr.uoa.di.madgik.registry.domain.Browsing;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
-import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
-import gr.madgik.catalogue.openaire.dto.Value;
-import gr.madgik.catalogue.openaire.vocabulary.VocabularyRepository;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +31,7 @@ public class ExtendedVocabulariesService extends VocabularyService implements Ex
         this.providerService = providerService;
     }
 
-//    @Scheduled(fixedRate = 600000) // refresh cache every 10 minutes
+    //    @Scheduled(fixedRate = 600000) // refresh cache every 10 minutes
     @CachePut(value = CACHE_UI_VOCABULARIES)
     public Map<String, List<Value>> cacheVocabularies() {
         return getControlValuesMap();

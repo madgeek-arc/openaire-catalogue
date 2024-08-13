@@ -1,6 +1,5 @@
 package gr.madgik.catalogue.openaire.config;
 
-import com.google.common.cache.CacheBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.cache.CacheManager;
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableCaching

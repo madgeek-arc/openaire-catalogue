@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import gr.madgik.catalogue.openaire.Catalogue;
-import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.ActionHandler;
+import gr.madgik.catalogue.openaire.Catalogue;
 import gr.madgik.catalogue.openaire.Context;
+import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.domain.LoggingInfo;
 import gr.madgik.catalogue.openaire.domain.Metadata;
 import gr.madgik.catalogue.openaire.domain.User;

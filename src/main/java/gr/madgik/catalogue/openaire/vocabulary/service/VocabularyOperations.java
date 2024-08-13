@@ -1,7 +1,7 @@
 package gr.madgik.catalogue.openaire.vocabulary.service;
 
-import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.ResourceOperations;
+import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.dto.VocabularyTree;
 
 import java.util.List;

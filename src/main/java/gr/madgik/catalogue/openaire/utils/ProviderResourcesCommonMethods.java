@@ -1,9 +1,7 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.domain.*;
 import gr.madgik.catalogue.openaire.exception.ValidationException;
-import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,11 +1,11 @@
 package gr.madgik.catalogue.openaire;
 
+import gr.athenarc.catalogue.service.GenericItemService;
 import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.vocabulary.service.VocabularyOperations;
 import gr.uoa.di.madgik.registry.domain.Facet;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
-import gr.athenarc.catalogue.service.GenericItemService;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,7 +38,7 @@ public class FacetLabelService {
     }
 
     String toProperCase(String str, String delimiter, String newDelimiter) {
-        if (str.equals("")){
+        if (str.equals("")) {
             str = "-";
         }
         StringJoiner joiner = new StringJoiner(newDelimiter);

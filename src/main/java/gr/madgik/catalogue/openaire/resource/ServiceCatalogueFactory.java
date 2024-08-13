@@ -1,16 +1,16 @@
 package gr.madgik.catalogue.openaire.resource;
 
+import gr.madgik.catalogue.openaire.ActionHandler;
 import gr.madgik.catalogue.openaire.Catalogue;
+import gr.madgik.catalogue.openaire.Context;
 import gr.madgik.catalogue.openaire.domain.LoggingInfo;
 import gr.madgik.catalogue.openaire.domain.Metadata;
-import gr.madgik.catalogue.openaire.domain.User;
-import gr.uoa.di.madgik.registry.service.ServiceException;
-import gr.madgik.catalogue.openaire.ActionHandler;
-import gr.madgik.catalogue.openaire.Context;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
+import gr.uoa.di.madgik.registry.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

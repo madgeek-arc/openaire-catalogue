@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.vocabulary;
 
-import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
-import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.athenarc.catalogue.service.GenericItemService;
+import gr.madgik.catalogue.openaire.domain.Vocabulary;
+import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

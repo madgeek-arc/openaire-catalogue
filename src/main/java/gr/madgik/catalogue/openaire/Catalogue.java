@@ -22,9 +22,12 @@ public final class Catalogue<T, ID> {
     private final Repository<T, ID> repository;
 
     public Catalogue(Repository<T, ID> repository) {
-        handlers.put(Action.REGISTER, new ActionHandler<>(){});
-        handlers.put(Action.UPDATE, new ActionHandler<>(){});
-        handlers.put(Action.DELETE, new ActionHandler<>(){});
+        handlers.put(Action.REGISTER, new ActionHandler<>() {
+        });
+        handlers.put(Action.UPDATE, new ActionHandler<>() {
+        });
+        handlers.put(Action.DELETE, new ActionHandler<>() {
+        });
 
         this.repository = repository;
     }
