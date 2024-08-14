@@ -204,7 +204,7 @@
   "aliases": ["resourceTypes"],
   "payloadType": "json",
   "properties": {
-    "class": "gr.uoa.di.madgik.resourcecatalogue.domain.CatalogueBundle"
+    "class": "gr.madgik.catalogue.openaire.domain.CatalogueBundle"
   },
   "schema": "{\n\t\"$schema\": \"https://json-schema.org/draft/2019-09/schema\"\n}"
 }
