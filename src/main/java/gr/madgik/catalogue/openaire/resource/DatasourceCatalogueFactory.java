@@ -82,7 +82,7 @@ public class DatasourceCatalogueFactory {
 
                 User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 
-                datasourceBundle.setMetadata(Metadata.updateMetadata(datasourceBundle.getMetadata(), user.getFullname(),
+                datasourceBundle.setMetadata(Metadata.updateMetadata(existing.getMetadata(), user.getFullname(),
                         user.getEmail()));
 
                 List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(datasourceBundle, user);

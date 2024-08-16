@@ -87,7 +87,7 @@ public class ServiceCatalogueFactory {
 
                 User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 
-                serviceBundle.setMetadata(Metadata.updateMetadata(serviceBundle.getMetadata(), user.getFullname(),
+                serviceBundle.setMetadata(Metadata.updateMetadata(existingService.getMetadata(), user.getFullname(),
                         user.getEmail()));
                 serviceBundle.setResourceExtras(existingService.getResourceExtras());
                 serviceBundle.setIdentifiers(existingService.getIdentifiers());

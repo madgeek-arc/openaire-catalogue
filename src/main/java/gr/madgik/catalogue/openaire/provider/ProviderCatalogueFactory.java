@@ -87,7 +87,7 @@ public class ProviderCatalogueFactory {
 
                 User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 
-                providerBundle.setMetadata(Metadata.updateMetadata(providerBundle.getMetadata(), user.getFullname(),
+                providerBundle.setMetadata(Metadata.updateMetadata(existing.getMetadata(), user.getFullname(),
                         user.getEmail()));
 
                 List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(providerBundle, user);
