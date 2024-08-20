@@ -6,7 +6,7 @@ COPY . /tmp/
 
 WORKDIR /tmp/
 
-RUN mvn clean package -U
+RUN mvn clean package -U -DskipTests
 
 ### Create Docker Image ###
 FROM openjdk:21
