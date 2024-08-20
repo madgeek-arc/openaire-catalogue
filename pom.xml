@@ -108,6 +108,31 @@
 
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>madgik-snapshots</id>
+            <layout>default</layout>
+            <url>https://repo.madgik.di.uoa.gr/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>madgik-releases</id>
+            <layout>default</layout>
+            <url>https://repo.madgik.di.uoa.gr/content/repositories/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
