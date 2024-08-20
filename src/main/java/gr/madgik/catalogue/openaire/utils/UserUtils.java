@@ -18,14 +18,14 @@ public class UserUtils {
         if (authentication == null) {
             throw new InsufficientAuthenticationException("You are not authenticated, please log in.");
         } else if (authentication.getPrincipal() instanceof OidcUser principal) {
-            user.setSub(principal.getSubject());
+            user.setId(principal.getSubject());
             user.setEmail(principal.getEmail());
             user.setName(principal.getGivenName());
             user.setSurname(principal.getFamilyName());
         } else if (authentication instanceof OAuth2AuthenticationToken token) {
-            user.setSub(token.getPrincipal().getAttribute("sub"));
-            if (user.getSub() == null) {
-                user.setSub("");
+            user.setId(token.getPrincipal().getAttribute("sub"));
+            if (user.getId() == null) {
+                user.setId("");
             }
             user.setEmail(token.getPrincipal().getAttribute("email"));
             if (user.getEmail() == null) {

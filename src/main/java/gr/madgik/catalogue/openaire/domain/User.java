@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class User {
     private static final Logger logger = LoggerFactory.getLogger(User.class);
 
-    private String sub;
+    private String id;
     private String email;
     private String name;
     private String surname;
@@ -32,7 +32,7 @@ public class User {
             throw new InsufficientAuthenticationException("You are not authenticated, please log in.");
         } else if (auth.getPrincipal() instanceof OidcUser) {
             OidcUser principal = ((OidcUser) auth.getPrincipal());
-            user.sub = principal.getSubject();
+            user.id = principal.getSubject();
             user.email = principal.getEmail();
             user.name = principal.getGivenName();
             user.surname = principal.getFamilyName();
@@ -40,7 +40,7 @@ public class User {
             user.roles = auth.getAuthorities().stream().map(Objects::toString).collect(Collectors.toList());
         } else if (auth instanceof OAuth2AuthenticationToken) {
             OAuth2User principal = ((OAuth2AuthenticationToken) auth).getPrincipal();
-            user.sub = principal.getAttribute("subject");
+            user.id = principal.getAttribute("subject");
             user.email = principal.getAttribute("email");
             user.name = principal.getAttribute("givenName");
             user.surname = principal.getAttribute("familyName");
@@ -53,12 +53,12 @@ public class User {
         return user;
     }
 
-    public String getSub() {
-        return sub;
+    public String getId() {
+        return id;
     }
 
-    public void setSub(String sub) {
-        this.sub = sub;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -121,7 +121,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "sub='" + sub + '\'' +
+                "id='" + id + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
