@@ -70,7 +70,7 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
         Map<String, Object> orderBy = new HashMap<>();
         Map<String, String> orderDirection = new HashMap<>();
         orderDirection.put("order", "asc");
-        orderBy.put("id", orderDirection);
+        orderBy.put("name", orderDirection);
         return orderBy;
     }
 

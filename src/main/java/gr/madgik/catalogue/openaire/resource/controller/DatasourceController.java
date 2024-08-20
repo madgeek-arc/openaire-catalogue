@@ -6,6 +6,7 @@ import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
+import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,9 +24,12 @@ public class DatasourceController {
     private static final Logger logger = LoggerFactory.getLogger(DatasourceController.class);
 
     private final DatasourceBundleService datasourceBundleService;
+    private final RegistryCoreRepository<DatasourceBundle, String> datasourceRepository;
 
-    public DatasourceController(DatasourceBundleService datasourceBundleService) {
+    public DatasourceController(DatasourceBundleService datasourceBundleService,
+                                RegistryCoreRepository<DatasourceBundle, String> datasourceRepository) {
         this.datasourceBundleService = datasourceBundleService;
+        this.datasourceRepository = datasourceRepository;
     }
 
     @GetMapping("{id}")
@@ -54,7 +58,7 @@ public class DatasourceController {
     @Browse
     @GetMapping
     public Paging<Datasource> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
+        return datasourceRepository.get(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
     }
 
     @PostMapping("validate")

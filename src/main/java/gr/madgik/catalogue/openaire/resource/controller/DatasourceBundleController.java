@@ -37,7 +37,7 @@ public class DatasourceBundleController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
     public Paging<DatasourceBundle> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        return datasourceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
+        return datasourceRepository.get(PagingUtils.createFacetFilter(allRequestParams));
     }
 
     @GetMapping("{id}")
