@@ -1,13 +1,13 @@
 package gr.madgik.catalogue.openaire.provider;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Provider;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
-import gr.madgik.catalogue.BundleResourceOperations;
-import gr.madgik.catalogue.Catalogue;
 import gr.madgik.catalogue.openaire.AbstractBundleService;
+import gr.madgik.catalogue.openaire.Catalogue;
+import gr.madgik.catalogue.openaire.domain.Provider;
+import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.provider.repository.ProviderRepository;
+import gr.madgik.catalogue.openaire.repository.Repository;
+import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
-import gr.madgik.catalogue.repository.Repository;
 import org.springframework.stereotype.Service;
 
 @Service

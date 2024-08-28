@@ -149,7 +149,7 @@
   "name": "datasource",
   "payloadType": "json",
   "properties": {
-    "class": "gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle"
+    "class": "gr.madgik.catalogue.openaire.domain.DatasourceBundle"
   },
   "schema": "{\n\t\"$schema\": \"https://json-schema.org/draft/2019-09/schema\"\n}"
 }

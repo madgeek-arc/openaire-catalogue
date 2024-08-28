@@ -1,10 +1,10 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
-import gr.uoa.di.madgik.registry.domain.FacetFilter;
-import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.service.GenericItemService;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.repository.RegistryCoreRepository;
+import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;

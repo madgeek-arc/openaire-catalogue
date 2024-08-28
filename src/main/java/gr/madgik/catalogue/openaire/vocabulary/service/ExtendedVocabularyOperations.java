@@ -1,8 +1,7 @@
 package gr.madgik.catalogue.openaire.vocabulary.service;
 
 
-import gr.madgik.catalogue.dto.Value;
-import gr.madgik.catalogue.service.VocabularyOperations;
+import gr.madgik.catalogue.openaire.dto.Value;
 
 import java.util.List;
 import java.util.Map;

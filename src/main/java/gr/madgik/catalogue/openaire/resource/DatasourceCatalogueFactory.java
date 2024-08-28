@@ -1,16 +1,14 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
-import gr.madgik.catalogue.ActionHandler;
-import gr.madgik.catalogue.Catalogue;
-import gr.madgik.catalogue.Context;
-import gr.madgik.catalogue.domain.User;
+import gr.madgik.catalogue.openaire.ActionHandler;
+import gr.madgik.catalogue.openaire.Catalogue;
+import gr.madgik.catalogue.openaire.Context;
+import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
+import gr.madgik.catalogue.openaire.domain.LoggingInfo;
+import gr.madgik.catalogue.openaire.domain.Metadata;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.resource.repository.DatasourceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
-import gr.madgik.catalogue.openaire.validation.FieldValidator;
-import gr.madgik.catalogue.service.sync.DatasourceSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,19 +24,13 @@ public class DatasourceCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(DatasourceCatalogueFactory.class);
     private final DatasourceRepository resourceRepository;
-    private final DatasourceSync datasourceSync;
-    private final FieldValidator fieldValidator;
     private final ProviderResourcesCommonMethods commonMethods;
     @Value("${project.catalogue.name}")
     private String catalogueName;
 
     public DatasourceCatalogueFactory(DatasourceRepository resourceRepository,
-                                      DatasourceSync dataSourceSync,
-                                      FieldValidator fieldValidator,
                                       ProviderResourcesCommonMethods commonMethods) {
         this.resourceRepository = resourceRepository;
-        this.datasourceSync = dataSourceSync;
-        this.fieldValidator = fieldValidator;
         this.commonMethods = commonMethods;
     }
 
@@ -56,7 +48,8 @@ public class DatasourceCatalogueFactory {
                 datasourceBundle.setMetadata(Metadata.createMetadata(user.getFullname(), user.getEmail()));
 
                 // validate
-                fieldValidator.validate(datasourceBundle);
+//                fieldValidator.validate(datasourceBundle); // TODO: replace with catalogue-lib validation
+                logger.error("Validation removed. Replace with catalogue form validation.");
 
                 return datasourceBundle;
             }
@@ -64,7 +57,6 @@ public class DatasourceCatalogueFactory {
             @Override
             public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource registration postHandle");
-//                datasourceSync.syncAdd(datasourceBundle.getDatasource());
             }
 
             @Override
@@ -85,11 +77,12 @@ public class DatasourceCatalogueFactory {
 
                 // validate
                 commonMethods.prohibitCatalogueIdChange(datasourceBundle.getDatasource().getCatalogueId());
-                fieldValidator.validate(datasourceBundle);
+//                fieldValidator.validate(datasourceBundle); // TODO: replace with catalogue-lib validation
+                logger.error("Validation removed. Replace with catalogue form validation.");
 
                 User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 
-                datasourceBundle.setMetadata(Metadata.updateMetadata(datasourceBundle.getMetadata(), user.getFullname(),
+                datasourceBundle.setMetadata(Metadata.updateMetadata(existing.getMetadata(), user.getFullname(),
                         user.getEmail()));
 
                 List<LoggingInfo> loggingInfoList = commonMethods.returnLoggingInfoListAndCreateRegistrationInfoIfEmpty(datasourceBundle, user);
@@ -106,7 +99,6 @@ public class DatasourceCatalogueFactory {
             @Override
             public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource update postHandle");
-//                datasourceSync.syncUpdate(datasourceBundle.getDatasource());
             }
 
             @Override
@@ -125,7 +117,6 @@ public class DatasourceCatalogueFactory {
             @Override
             public void postHandle(DatasourceBundle datasourceBundle, Context ctx) {
                 logger.info("Inside Datasource delete postHandle");
-//                datasourceSync.syncDelete(datasourceBundle.getDatasource());
             }
 
             @Override

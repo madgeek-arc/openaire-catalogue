@@ -1,14 +1,13 @@
 package gr.madgik.catalogue.openaire;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
+import gr.athenarc.catalogue.exception.ResourceNotFoundException;
+import gr.madgik.catalogue.openaire.domain.Bundle;
+import gr.madgik.catalogue.openaire.domain.Identifiable;
+import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
+import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.uoa.di.madgik.registry.service.ServiceException;
-import gr.athenarc.catalogue.exception.ResourceNotFoundException;
-import gr.madgik.catalogue.BundleResourceOperations;
-import gr.madgik.catalogue.Catalogue;
-import gr.madgik.catalogue.repository.RegistryCoreRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +70,7 @@ public abstract class AbstractBundleService<T extends Identifiable, B extends Bu
         Map<String, Object> orderBy = new HashMap<>();
         Map<String, String> orderDirection = new HashMap<>();
         orderDirection.put("order", "asc");
-        orderBy.put("id", orderDirection);
+        orderBy.put("name", orderDirection);
         return orderBy;
     }
 

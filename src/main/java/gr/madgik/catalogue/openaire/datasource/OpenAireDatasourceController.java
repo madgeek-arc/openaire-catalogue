@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire.datasource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;

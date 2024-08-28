@@ -1,6 +1,6 @@
 package gr.madgik.catalogue.openaire.vocabulary.controller;
 
-import gr.madgik.catalogue.dto.Value;
+import gr.madgik.catalogue.openaire.dto.Value;
 import gr.madgik.catalogue.openaire.vocabulary.service.ExtendedVocabularyOperations;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

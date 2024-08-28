@@ -1,16 +1,15 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
-import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.athenarc.catalogue.annotations.Browse;
 import gr.athenarc.catalogue.utils.PagingUtils;
+import gr.madgik.catalogue.openaire.domain.Bundle;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.ServiceBundleService;
+import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

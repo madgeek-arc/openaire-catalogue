@@ -1,18 +1,16 @@
 package gr.madgik.catalogue.openaire.resource;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Metadata;
-import gr.madgik.catalogue.domain.User;
-import gr.uoa.di.madgik.registry.service.ServiceException;
-import gr.madgik.catalogue.ActionHandler;
-import gr.madgik.catalogue.Catalogue;
-import gr.madgik.catalogue.Context;
+import gr.madgik.catalogue.openaire.ActionHandler;
+import gr.madgik.catalogue.openaire.Catalogue;
+import gr.madgik.catalogue.openaire.Context;
+import gr.madgik.catalogue.openaire.domain.LoggingInfo;
+import gr.madgik.catalogue.openaire.domain.Metadata;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
+import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.resource.repository.ServiceRepository;
 import gr.madgik.catalogue.openaire.utils.ProviderResourcesCommonMethods;
 import gr.madgik.catalogue.openaire.utils.SimpleIdCreator;
-import gr.madgik.catalogue.openaire.validation.FieldValidator;
-import gr.madgik.catalogue.service.sync.ServiceSync;
+import gr.uoa.di.madgik.registry.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,21 +27,15 @@ public class ServiceCatalogueFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceCatalogueFactory.class);
     private final ServiceRepository resourceRepository;
-    private final ServiceSync serviceSync;
-    private final FieldValidator fieldValidator;
     private final ProviderResourcesCommonMethods commonMethods;
     private final SimpleIdCreator idCreator;
     @Value("${project.catalogue.name}")
     private String catalogueName;
 
     public ServiceCatalogueFactory(ServiceRepository resourceRepository,
-                                   ServiceSync serviceSync,
-                                   FieldValidator fieldValidator,
                                    ProviderResourcesCommonMethods commonMethods,
                                    SimpleIdCreator idCreator) {
         this.resourceRepository = resourceRepository;
-        this.serviceSync = serviceSync;
-        this.fieldValidator = fieldValidator;
         this.commonMethods = commonMethods;
         this.idCreator = idCreator;
     }
@@ -62,7 +54,8 @@ public class ServiceCatalogueFactory {
                 serviceBundle.setMetadata(Metadata.createMetadata(user.getFullname(), user.getEmail()));
 
                 // validate
-                fieldValidator.validate(serviceBundle);
+//                fieldValidator.validate(serviceBundle); // TODO: replace with catalogue-lib validation
+                logger.error("Validation removed. Replace with catalogue form validation.");
 
                 return serviceBundle;
             }
@@ -70,7 +63,6 @@ public class ServiceCatalogueFactory {
             @Override
             public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service registration postHandle");
-//                serviceSync.syncAdd(serviceBundle.getService());
             }
 
             @Override
@@ -90,11 +82,12 @@ public class ServiceCatalogueFactory {
 
                 // validate
                 commonMethods.prohibitCatalogueIdChange(serviceBundle.getService().getCatalogueId());
-                fieldValidator.validate(serviceBundle);
+//                fieldValidator.validate(serviceBundle); // TODO: replace with catalogue-lib validation
+                logger.error("Validation removed. Replace with catalogue form validation.");
 
                 User user = User.of(SecurityContextHolder.getContext().getAuthentication());
 
-                serviceBundle.setMetadata(Metadata.updateMetadata(serviceBundle.getMetadata(), user.getFullname(),
+                serviceBundle.setMetadata(Metadata.updateMetadata(existingService.getMetadata(), user.getFullname(),
                         user.getEmail()));
                 serviceBundle.setResourceExtras(existingService.getResourceExtras());
                 serviceBundle.setIdentifiers(existingService.getIdentifiers());
@@ -139,7 +132,6 @@ public class ServiceCatalogueFactory {
             @Override
             public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service update postHandle");
-//                serviceSync.syncUpdate(serviceBundle.getService());
             }
 
             @Override
@@ -159,7 +151,6 @@ public class ServiceCatalogueFactory {
             @Override
             public void postHandle(ServiceBundle serviceBundle, Context ctx) {
                 logger.info("Inside Service delete postHandle");
-//                serviceSync.syncDelete(serviceBundle.getService());
             }
 
             @Override

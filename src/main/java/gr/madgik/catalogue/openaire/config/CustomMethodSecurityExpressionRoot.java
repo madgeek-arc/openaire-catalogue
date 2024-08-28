@@ -1,12 +1,8 @@
 package gr.madgik.catalogue.openaire.config;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.Identifiable;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
-import gr.madgik.catalogue.domain.User;
-import gr.madgik.catalogue.openaire.domain.ServiceBundle;
+import gr.madgik.catalogue.openaire.domain.*;
 import gr.madgik.catalogue.openaire.invitations.InvitationService;
-import gr.madgik.catalogue.repository.RegistryCoreRepository;
+import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

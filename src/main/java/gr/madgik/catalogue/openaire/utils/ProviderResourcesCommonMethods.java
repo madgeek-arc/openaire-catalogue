@@ -1,14 +1,9 @@
 package gr.madgik.catalogue.openaire.utils;
 
-import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.DatasourceBundle;
-import gr.uoa.di.madgik.resourcecatalogue.domain.LoggingInfo;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ProviderBundle;
-import gr.madgik.catalogue.domain.User;
-import gr.madgik.catalogue.exception.ValidationException;
-import gr.madgik.catalogue.openaire.domain.ServiceBundle;
-import gr.madgik.catalogue.openaire.validation.FieldValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import gr.madgik.catalogue.openaire.domain.*;
+import gr.madgik.catalogue.openaire.exception.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,10 +15,12 @@ import java.util.List;
 @Component
 public class ProviderResourcesCommonMethods {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProviderResourcesCommonMethods.class);
+
     @Value("${project.catalogue.name}")
     private String catalogueName;
-    @Autowired
-    private FieldValidator fieldValidator;
+//    @Autowired
+//    private FieldValidator fieldValidator;
 
     public ProviderResourcesCommonMethods() {
     }
@@ -124,7 +121,8 @@ public class ProviderResourcesCommonMethods {
     }
 
     public boolean validate(Object resource) {
-        fieldValidator.validate(resource);
+//        fieldValidator.validate(resource); // TODO: replace with catalogue-lib validation
+        logger.error("Validation removed. Replace with catalogue form validation.");
         return true;
     }
 }
