@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .logout(logout -> logout
 //                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
                         .logoutSuccessUrl(applicationProperties.getLogoutRedirect())
-                        .deleteCookies()
+                        .deleteCookies(applicationProperties.getCookie().getName())
                         .clearAuthentication(true)
                         .invalidateHttpSession(true))
 
