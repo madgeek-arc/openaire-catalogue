@@ -40,8 +40,9 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Cookie cookie = new Cookie(applicationProperties.getCookie().getName(), ((OidcUser) authentication.getPrincipal()).getIdToken().getTokenValue());
         cookie.setMaxAge(createCookieMaxAge(authentication));
-        cookie.setPath("/");
+        cookie.setPath(applicationProperties.getCookie().getPath());
         cookie.setDomain(applicationProperties.getCookie().getDomain());
+        cookie.setSecure(request.isSecure());
 
         if (logger.isDebugEnabled()) {
             logger.debug("Assigning Cookie: {}", objectMapper.writeValueAsString(cookie));

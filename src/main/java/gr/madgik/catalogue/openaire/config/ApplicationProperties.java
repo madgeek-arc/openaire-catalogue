@@ -75,6 +75,7 @@ public class ApplicationProperties {
     public static class Cookie {
         private String name;
         private String domain;
+        private String path = "/";
 
         public String getName() {
             return name;
@@ -90,6 +91,14 @@ public class ApplicationProperties {
 
         public void setDomain(String domain) {
             this.domain = domain;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
         }
     }
 }
