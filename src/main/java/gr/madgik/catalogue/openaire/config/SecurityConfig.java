@@ -50,16 +50,20 @@ public class SecurityConfig {
                         .antMatchers(HttpMethod.GET, "/forms/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/vocabularies/**").permitAll()
                         .regexMatchers("/dump/.*", "/restore/", "/resources.*", "/version.*", "/items.*", "/resourceType.*", "/search.*", "/logs.*", "/forms.*", "/vocabularies.*").hasAnyAuthority("ADMIN")
-                        .anyRequest().permitAll())
+                        .anyRequest().permitAll()
+                )
 
                 .oauth2Login(oauth2login -> oauth2login
-                        .successHandler(authSuccessHandler))
+                        .successHandler(authSuccessHandler)
+                )
 
                 .logout(logout -> logout
-                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
+//                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
+                        .logoutSuccessUrl(applicationProperties.getLogoutRedirect())
                         .deleteCookies(applicationProperties.getCookie().getName())
                         .clearAuthentication(true)
-                        .invalidateHttpSession(true))
+                        .invalidateHttpSession(true)
+                )
 
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable);
@@ -67,7 +71,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private LogoutSuccessHandler oidcLogoutSuccessHandler() {
+    @Bean
+    public LogoutSuccessHandler oidcLogoutSuccessHandler() {
         OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
                 new OidcClientInitiatedLogoutSuccessHandler(
                         this.clientRegistrationRepository);
