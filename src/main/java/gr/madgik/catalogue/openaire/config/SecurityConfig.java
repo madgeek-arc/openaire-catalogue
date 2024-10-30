@@ -63,11 +63,11 @@ public class SecurityConfig {
 
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable);
+
         return http.build();
     }
 
-    @Bean
-    public LogoutSuccessHandler oidcLogoutSuccessHandler() {
+    private LogoutSuccessHandler oidcLogoutSuccessHandler() {
         OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
                 new OidcClientInitiatedLogoutSuccessHandler(
                         this.clientRegistrationRepository);
