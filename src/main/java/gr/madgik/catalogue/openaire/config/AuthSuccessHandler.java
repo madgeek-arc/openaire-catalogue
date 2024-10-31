@@ -42,7 +42,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
         cookie.setMaxAge(createCookieMaxAge(authentication));
         cookie.setPath(applicationProperties.getCookie().getPath());
         cookie.setDomain(applicationProperties.getCookie().getDomain());
-        cookie.setSecure(request.isSecure());
+        cookie.setSecure(applicationProperties.getCookie().isSecure());
 
         if (logger.isDebugEnabled()) {
             logger.debug("Assigning Cookie: {}", objectMapper.writeValueAsString(cookie));

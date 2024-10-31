@@ -76,6 +76,7 @@ public class ApplicationProperties {
         private String name;
         private String domain;
         private String path = "/";
+        private boolean secure = true;
 
         public String getName() {
             return name;
@@ -99,6 +100,14 @@ public class ApplicationProperties {
 
         public void setPath(String path) {
             this.path = path;
+        }
+
+        public boolean isSecure() {
+            return secure;
+        }
+
+        public void setSecure(boolean secure) {
+            this.secure = secure;
         }
     }
 }
