@@ -16,8 +16,6 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import java.util.HashSet;
@@ -64,8 +62,7 @@ public class SecurityConfig {
 
                 .logout(logout -> logout
                         .addLogoutHandler(customLogoutHandler)
-//                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
-                        .logoutSuccessUrl(applicationProperties.getLogoutRedirect())
+                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
                         .clearAuthentication(true)
                         .invalidateHttpSession(true)
                 )
