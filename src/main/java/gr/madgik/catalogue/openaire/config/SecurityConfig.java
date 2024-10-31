@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import java.util.HashSet;
@@ -28,13 +30,16 @@ public class SecurityConfig {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private final AuthenticationSuccessHandler authSuccessHandler;
+    private final CustomLogoutHandler customLogoutHandler;
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final ApplicationProperties applicationProperties;
 
     public SecurityConfig(AuthenticationSuccessHandler authSuccessHandler,
+                          CustomLogoutHandler customLogoutHandler,
                           ClientRegistrationRepository clientRegistrationRepository,
                           ApplicationProperties applicationProperties) {
         this.authSuccessHandler = authSuccessHandler;
+        this.customLogoutHandler = customLogoutHandler;
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.applicationProperties = applicationProperties;
     }
@@ -58,9 +63,9 @@ public class SecurityConfig {
                 )
 
                 .logout(logout -> logout
+                        .addLogoutHandler(customLogoutHandler)
 //                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
                         .logoutSuccessUrl(applicationProperties.getLogoutRedirect())
-                        .deleteCookies(applicationProperties.getCookie().getName())
                         .clearAuthentication(true)
                         .invalidateHttpSession(true)
                 )
