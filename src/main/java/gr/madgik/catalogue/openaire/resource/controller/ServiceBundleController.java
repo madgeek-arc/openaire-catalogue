@@ -1,21 +1,21 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
-import gr.athenarc.catalogue.annotations.Browse;
-import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.dto.BulkOperation;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.openaire.resource.ServiceBundleService;
+import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/bundles/services")
@@ -34,11 +34,11 @@ public class ServiceBundleController {
     }
 
 
-    @Browse
+    @BrowseParameters
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
-    public Paging<ServiceBundle> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
+    public Paging<ServiceBundle> getAll(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) {
+        return serviceBundleService.getWithEnrichedFacets(FacetFilter.from(allRequestParams));
     }
 
     @GetMapping("{id}")

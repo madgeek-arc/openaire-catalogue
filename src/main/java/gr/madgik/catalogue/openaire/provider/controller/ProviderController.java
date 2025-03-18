@@ -1,13 +1,12 @@
 package gr.madgik.catalogue.openaire.provider.controller;
 
-import gr.athenarc.catalogue.annotations.Browse;
-import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.Provider;
 import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.domain.User;
 import gr.madgik.catalogue.openaire.invitations.Invitation;
 import gr.madgik.catalogue.openaire.invitations.InvitationService;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
+import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,10 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/providers")
@@ -62,18 +61,18 @@ public class ProviderController {
         providerService.delete(id);
     }
 
-    @Browse
-    @GetMapping
-    public Paging<Provider> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        return providerService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(ProviderBundle::getPayload);
-    }
-
     @GetMapping("my")
     public List<Provider> getMy(@Parameter(hidden = true) Authentication authentication) {
         FacetFilter filter = new FacetFilter();
         filter.setQuantity(10000);
         filter.addFilter("users", User.of(authentication).getEmail());
         return providerService.get(filter).map(ProviderBundle::getPayload).getResults();
+    }
+
+    @BrowseParameters
+    @GetMapping
+    public Paging<Provider> getAll(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) {
+        return providerService.getWithEnrichedFacets(FacetFilter.from(allRequestParams)).map(ProviderBundle::getPayload);
     }
 
     @PostMapping("validate")

@@ -1,17 +1,17 @@
 package gr.madgik.catalogue.openaire.datasource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gr.athenarc.catalogue.annotations.Browse;
-import gr.athenarc.catalogue.utils.PagingUtils;
+import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.json.simple.parser.ParseException;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 
 @RestController
 public class OpenAireDatasourceController {
@@ -23,10 +23,10 @@ public class OpenAireDatasourceController {
     }
 
 
-    @Browse
+    @BrowseParameters
     @GetMapping("dsm/datasources")
-    public Paging<?> get(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) throws ParseException, JsonProcessingException {
-        return this.openAireDatasourceService.getOpenAIREDatasourcesAsJSON(PagingUtils.createFacetFilter(allRequestParams));
+    public Paging<?> get(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) throws ParseException, JsonProcessingException {
+        return this.openAireDatasourceService.getOpenAIREDatasourcesAsJSON(FacetFilter.from(allRequestParams));
     }
 
     @GetMapping("provide/datasources/{id}")

@@ -1,12 +1,12 @@
 package gr.madgik.catalogue.openaire;
 
-import gr.athenarc.catalogue.exception.ResourceNotFoundException;
 import gr.madgik.catalogue.openaire.domain.Bundle;
 import gr.madgik.catalogue.openaire.domain.Identifiable;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.openaire.utils.BundleResourceOperations;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
+import gr.uoa.di.madgik.registry.exception.ResourceNotFoundException;
 import gr.uoa.di.madgik.registry.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

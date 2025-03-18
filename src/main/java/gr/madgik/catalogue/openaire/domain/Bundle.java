@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.xml.bind.annotation.XmlTransient;
 
-import javax.xml.bind.annotation.XmlTransient;
 import java.beans.Transient;
 import java.util.List;
 import java.util.Objects;

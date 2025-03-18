@@ -1,10 +1,10 @@
 package gr.madgik.catalogue.openaire.vocabulary.service;
 
-import gr.athenarc.catalogue.utils.SortUtils;
 import gr.madgik.catalogue.openaire.AbstractResourceOperations;
 import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.dto.VocabularyTree;
 import gr.madgik.catalogue.openaire.vocabulary.VocabularyRepository;
+import gr.uoa.di.madgik.catalogue.utils.SortUtils;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

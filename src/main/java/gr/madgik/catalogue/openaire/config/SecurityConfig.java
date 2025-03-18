@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -46,13 +47,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .headers()
-                .xssProtection();
+                .xssProtection(HeadersConfigurer.XXssConfig::disable);
 
         http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers(HttpMethod.GET, "/forms/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/vocabularies/**").permitAll()
-                        .regexMatchers("/dump/.*", "/restore/", "/resources.*", "/version.*", "/items.*", "/resourceType.*", "/search.*", "/logs.*", "/forms.*", "/vocabularies.*").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/forms/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/vocabularies/**").permitAll()
+                        .requestMatchers("/dump/.*", "/restore/", "/resources.*", "/version.*", "/items.*", "/resourceType.*", "/search.*", "/logs.*", "/forms.*", "/vocabularies.*").hasAnyAuthority("ADMIN")
                         .anyRequest().permitAll()
                 )
 

@@ -1,13 +1,12 @@
 package gr.madgik.catalogue.openaire.config;
 
-import gr.athenarc.catalogue.controller.GenericExceptionController;
-import gr.athenarc.catalogue.exception.ServerError;
+import gr.uoa.di.madgik.catalogue.controller.GenericExceptionController;
+import gr.uoa.di.madgik.catalogue.exception.ServerError;
 import io.sentry.Sentry;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice extends GenericExceptionController {

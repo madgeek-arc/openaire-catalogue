@@ -1,22 +1,20 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
-
-import gr.athenarc.catalogue.annotations.Browse;
-import gr.athenarc.catalogue.exception.ResourceNotFoundException;
-import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.Datasource;
 import gr.madgik.catalogue.openaire.domain.DatasourceBundle;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
 import gr.madgik.catalogue.openaire.resource.DatasourceBundleService;
+import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
+import gr.uoa.di.madgik.registry.exception.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/datasources")
@@ -55,10 +53,10 @@ public class DatasourceController {
         datasourceBundleService.delete(id);
     }
 
-    @Browse
+    @BrowseParameters
     @GetMapping
-    public Paging<Datasource> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        return datasourceRepository.get(PagingUtils.createFacetFilter(allRequestParams)).map(DatasourceBundle::getPayload);
+    public Paging<Datasource> getAll(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) {
+        return datasourceRepository.get(FacetFilter.from(allRequestParams)).map(DatasourceBundle::getPayload);
     }
 
     @PostMapping("validate")

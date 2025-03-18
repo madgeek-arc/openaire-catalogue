@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.4.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>gr.madgik</groupId>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-spring-boot-starter</artifactId>
-            <version>7.10.0</version>
+            <version>7.22.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -91,13 +91,13 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-log4j2</artifactId>
-            <version>7.10.0</version>
+            <version>7.22.3</version>
         </dependency>
 
         <dependency>
-            <groupId>gr.athenarc</groupId>
+            <groupId>gr.uoa.di.madgik</groupId>
             <artifactId>catalogue</artifactId>
-            <version>7.0.0-SNAPSHOT</version>
+            <version>7.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

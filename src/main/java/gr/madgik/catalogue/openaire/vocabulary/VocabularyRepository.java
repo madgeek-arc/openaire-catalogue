@@ -1,14 +1,14 @@
 package gr.madgik.catalogue.openaire.vocabulary;
 
-import gr.athenarc.catalogue.service.GenericItemService;
 import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
+import gr.uoa.di.madgik.catalogue.service.GenericResourceService;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class VocabularyRepository extends RegistryCoreRepository<Vocabulary, String> {
 
-    public VocabularyRepository(GenericItemService itemService) {
+    public VocabularyRepository(GenericResourceService itemService) {
         super(itemService);
     }
 

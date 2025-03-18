@@ -1,19 +1,19 @@
 package gr.madgik.catalogue.openaire.provider.controller;
 
-import gr.athenarc.catalogue.annotations.Browse;
-import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.provider.ProviderService;
+import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/bundles/providers")
@@ -55,11 +55,11 @@ public class ProviderBundleController {
 //        return
     }
 
-    @Browse
+    @BrowseParameters
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'ONBOARDING_TEAM')")
-    public Paging<ProviderBundle> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        return providerService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams));
+    public Paging<ProviderBundle> getAll(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) {
+        return providerService.getWithEnrichedFacets(FacetFilter.from(allRequestParams));
     }
 
     @GetMapping("{id}")

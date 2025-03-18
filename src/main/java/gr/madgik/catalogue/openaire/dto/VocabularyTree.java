@@ -1,8 +1,8 @@
 package gr.madgik.catalogue.openaire.dto;
 
 import gr.madgik.catalogue.openaire.domain.Vocabulary;
+import jakarta.xml.bind.annotation.XmlTransient;
 
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
 @XmlTransient

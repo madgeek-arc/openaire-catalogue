@@ -2,16 +2,16 @@ package gr.madgik.catalogue.openaire.resource.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gr.athenarc.catalogue.annotations.Browse;
-import gr.athenarc.catalogue.service.GenericItemService;
-import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.FacetLabelService;
 import gr.madgik.catalogue.openaire.domain.Bundle;
+import gr.uoa.di.madgik.catalogue.service.GenericResourceService;
+import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import gr.uoa.di.madgik.registry.domain.Resource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -22,14 +22,14 @@ import static gr.madgik.catalogue.openaire.vocabulary.service.VocabularyService.
 @RequestMapping("catalogue-resources")
 public class CatalogueResourcesController {
 
-    private final GenericItemService genericItemService;
+    private final GenericResourceService genericResourceService;
     private final FacetLabelService facetLabelService;
     private final ObjectMapper objectMapper;
 
 
-    public CatalogueResourcesController(GenericItemService genericItemService,
+    public CatalogueResourcesController(GenericResourceService genericResourceService,
                                         FacetLabelService facetLabelService) {
-        this.genericItemService = genericItemService;
+        this.genericResourceService = genericResourceService;
         this.facetLabelService = facetLabelService;
         this.objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -37,39 +37,39 @@ public class CatalogueResourcesController {
 
     @GetMapping("{id}")
     public <T extends Bundle<?>> Object get(@PathVariable("id") String id) {
-        T bundle = genericItemService.get("resources", id);
+        T bundle = genericResourceService.get("resources", id);
         return bundle.getPayload();
     }
 
     @GetMapping("{id}/resourceType")
     public Map.Entry<String, String> getResourceType(@PathVariable("id") String id) {
-        Resource resource = genericItemService.searchResource("resources", id, true);
+        Resource resource = genericResourceService.searchResource("resources", id, true);
         return new AbstractMap.SimpleEntry<>("resourceType", resource.getResourceTypeName());
     }
 
-    @Browse
+    @BrowseParameters
     @Operation(summary = "Browse Catalogue Resources.")
     @GetMapping
-    public Paging<?> getCatalogueResources(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
+    public Paging<?> getCatalogueResources(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) {
+        FacetFilter filter = FacetFilter.from(allRequestParams);
         filter.setResourceType("resources");
-        Paging<?> paging = genericItemService.getResults(filter).map(r -> ((Bundle<?>) r).getPayload());
+        Paging<?> paging = genericResourceService.getResults(filter).map(r -> ((Bundle<?>) r).getPayload());
         paging.setFacets(facetLabelService.createLabels(paging.getFacets()));
         return paging;
     }
 
     @GetMapping("bundles/{id}")
     public <T extends Bundle<?>> Object getBundle(@PathVariable("id") String id) {
-        return genericItemService.get("resources", id);
+        return genericResourceService.get("resources", id);
     }
 
-    @Browse
+    @BrowseParameters
     @Operation(summary = "Browse Catalogue Resource Bundles.")
     @GetMapping("bundles")
-    public Paging<?> getCatalogueResourceBundles(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
+    public Paging<?> getCatalogueResourceBundles(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) {
+        FacetFilter filter = FacetFilter.from(allRequestParams);
         filter.setResourceType("resources");
-        Paging<?> paging = genericItemService.getResults(filter);
+        Paging<?> paging = genericResourceService.getResults(filter);
         paging.setFacets(facetLabelService.createLabels(paging.getFacets()));
         return paging;
     }
@@ -77,12 +77,12 @@ public class CatalogueResourcesController {
     @Operation(summary = "Get all Resources in the catalogue organized by an attribute, e.g. get Resources organized in categories.")
     @GetMapping("by/{field}")
     public <T extends Bundle<? extends gr.madgik.catalogue.openaire.domain.Service>> Map<String, List<?>> getBy(@PathVariable(value = "field") String field,
-                                                                                                                @RequestParam Map<String, Object> allRequestParams) {
+                                                                                                                @RequestParam MultiValueMap<String, Object> allRequestParams) {
         Map<String, List<T>> results;
-        FacetFilter filter = PagingUtils.createFacetFilter(allRequestParams);
+        FacetFilter filter = FacetFilter.from(allRequestParams);
         filter.setQuantity(10_000);
         filter.setResourceType("resources");
-        results = genericItemService.getResultsGrouped(filter, field);
+        results = genericResourceService.getResultsGrouped(filter, field);
         Map<String, List<?>> resources = new TreeMap<>();
         results.forEach((key, value) ->
                 resources.put(getResourceName(key), value
@@ -98,7 +98,7 @@ public class CatalogueResourcesController {
     private String getResourceName(String key) {
         String name = key;
         try {
-            Object result = genericItemService.get("resourceTypes", key);
+            Object result = genericResourceService.get("resourceTypes", key);
             IdName idName = objectMapper.convertValue(result, IdName.class);
             name = idName.getName();
         } catch (Exception e) {

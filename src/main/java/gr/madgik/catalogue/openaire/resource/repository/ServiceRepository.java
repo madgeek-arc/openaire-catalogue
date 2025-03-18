@@ -1,19 +1,18 @@
 package gr.madgik.catalogue.openaire.resource.repository;
 
-import gr.athenarc.catalogue.service.GenericItemService;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.repository.RegistryCoreRepository;
+import gr.uoa.di.madgik.catalogue.service.GenericResourceService;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 @Component
 public class ServiceRepository extends RegistryCoreRepository<ServiceBundle, String> implements ResourceRepository<ServiceBundle, String> {
 
 
-    public ServiceRepository(GenericItemService itemService) {
+    public ServiceRepository(GenericResourceService itemService) {
         super(itemService);
     }
 

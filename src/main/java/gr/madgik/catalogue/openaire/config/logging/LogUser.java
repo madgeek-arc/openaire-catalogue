@@ -1,15 +1,14 @@
 package gr.madgik.catalogue.openaire.config.logging;
 
-import gr.athenarc.catalogue.config.logging.AbstractLogContextFilter;
 import gr.madgik.catalogue.openaire.domain.User;
+import gr.uoa.di.madgik.catalogue.config.logging.AbstractLogContextFilter;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import org.slf4j.spi.MDCAdapter;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 @Component
 public class LogUser extends AbstractLogContextFilter {

@@ -1,9 +1,9 @@
 package gr.madgik.catalogue.openaire;
 
-import gr.athenarc.catalogue.service.GenericItemService;
 import gr.madgik.catalogue.openaire.domain.ProviderBundle;
 import gr.madgik.catalogue.openaire.domain.Vocabulary;
 import gr.madgik.catalogue.openaire.vocabulary.service.VocabularyOperations;
+import gr.uoa.di.madgik.catalogue.service.GenericResourceService;
 import gr.uoa.di.madgik.registry.domain.Facet;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
@@ -25,15 +25,16 @@ import java.util.stream.Collectors;
 public class FacetLabelService {
 
     private static final Logger logger = LoggerFactory.getLogger(FacetLabelService.class);
-    private final GenericItemService genericItemService;
+    private final GenericResourceService genericResourceService;
     private final VocabularyOperations vocabularyOperations;
 
     @org.springframework.beans.factory.annotation.Value("${elastic.index.max_result_window:10000}")
     private int maxQuantity;
 
     @Autowired
-    FacetLabelService(GenericItemService genericItemService, @Qualifier("vocabularyService") VocabularyOperations vocabularyOperations) {
-        this.genericItemService = genericItemService;
+    FacetLabelService(GenericResourceService genericResourceService,
+                      @Qualifier("vocabularyService") VocabularyOperations vocabularyOperations) {
+        this.genericResourceService = genericResourceService;
         this.vocabularyOperations = vocabularyOperations;
     }
 
@@ -55,7 +56,7 @@ public class FacetLabelService {
         ff.setQuantity(maxQuantity);
         ff.setResourceType("provider");
         // TODO: get all final providers (after deduplication process)
-        Paging<ProviderBundle> allProviders = genericItemService.getResults(ff);
+        Paging<ProviderBundle> allProviders = genericResourceService.getResults(ff);
         Map<String, String> vocabularyValues = new TreeMap<>();
         vocabularyValues.putAll(allProviders.getResults().stream().collect(Collectors.toMap(ProviderBundle::getId, res -> res.getProvider().getName())));
 

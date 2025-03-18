@@ -1,11 +1,11 @@
 package gr.madgik.catalogue.openaire.repository;
 
-import gr.athenarc.catalogue.exception.ResourceAlreadyExistsException;
-import gr.athenarc.catalogue.exception.ResourceNotFoundException;
-import gr.athenarc.catalogue.service.GenericItemService;
-import gr.athenarc.catalogue.utils.ReflectUtils;
+import gr.uoa.di.madgik.catalogue.service.GenericResourceService;
+import gr.uoa.di.madgik.catalogue.utils.ReflectUtils;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
+import gr.uoa.di.madgik.registry.exception.ResourceAlreadyExistsException;
+import gr.uoa.di.madgik.registry.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -14,17 +14,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class RegistryCoreRepository<T, ID extends String> implements Repository<T, ID> {
 
     private static final Logger logger = LoggerFactory.getLogger(RegistryCoreRepository.class);
-    protected final GenericItemService itemService;
+    protected final GenericResourceService itemService;
 
     public abstract String getResourceTypeName();
 
-    public RegistryCoreRepository(GenericItemService itemService) {
+    public RegistryCoreRepository(GenericResourceService itemService) {
         this.itemService = itemService;
     }
 
@@ -61,15 +64,6 @@ public abstract class RegistryCoreRepository<T, ID extends String> implements Re
         return itemService.get(getResourceTypeName(), id);
     }
 
-//    @Override
-//    public Page<T> get(Pageable pageable) {
-//        FacetFilter ff = new FacetFilter();
-//        ff.setResourceType(getResourceTypeName());
-//        // pageable to ff
-//        Paging<T> paging = itemService.getResults(ff);
-//        return new PageImpl<>(paging.getResults()); // FIXME: set total size and page
-//    }
-
     //    @Override
     public Paging<T> get(FacetFilter filter) {
         filter.setResourceType(getResourceTypeName());
@@ -77,103 +71,16 @@ public abstract class RegistryCoreRepository<T, ID extends String> implements Re
         return paging;
     }
 
-
-    @Override
-    public <S extends T> S save(S entity) {
-        S resource;
-        try {
-            String id = ReflectUtils.getId(entity.getClass(), entity);
-            resource = itemService.update(getResourceTypeName(), id, entity);
-        } catch (RuntimeException e) {
-            resource = itemService.add(getResourceTypeName(), entity);
-        } catch (NoSuchFieldException e) {
-            logger.error("Could not find ID field..", e);
-            throw new RuntimeException(e.getMessage(), e);
-        } catch (InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-        return resource;
-    }
-
-    @Override
-    public <S extends T> Iterable<S> saveAll(Iterable<S> entities) {
-        List<S> resources = new ArrayList<>();
-        for (S entity : entities) {
-            resources.add(save(entity));
-        }
-        return resources;
-    }
-
-    @Override
     public Optional<T> findById(String s) {
         return Optional.of(itemService.get(getResourceTypeName(), s));
     }
 
-    @Override
-    public boolean existsById(String s) {
-        boolean exists = true;
-        try {
-            itemService.get(getResourceTypeName(), s);
-        } catch (ResourceNotFoundException e) {
-            exists = false;
-        }
-        return exists;
-    }
-
-    @Override
-    public Iterable<T> findAll() {
-        FacetFilter ff = new FacetFilter();
-        ff.setResourceType(getResourceTypeName());
-        ff.setQuantity(10000); // FIXME
-        return (Iterable<T>) itemService.getResults(ff).getResults();
-    }
-
-    @Override
-    public Iterable<T> findAllById(Iterable<ID> ids) {
-        List<T> resources = new ArrayList<>();
-        for (String id : ids) {
-            resources.add(itemService.get(getResourceTypeName(), id));
-        }
-        return resources;
-    }
-
-    @Override
-    public long count() {
-        int counter = 0;
-        for (Object i : findAll()) {
-            counter++;
-        }
-        return counter;
-    }
-
-    @Override
     public void delete(T entity) {
         try {
             String id = ReflectUtils.getId(entity.getClass(), entity);
             itemService.delete(getResourceTypeName(), id);
         } catch (NoSuchFieldException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void deleteAllById(Iterable<? extends ID> ids) {
-        for (String id : ids) {
-            itemService.delete(getResourceTypeName(), id);
-        }
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends T> entities) {
-        for (T entity : entities) {
-            delete(entity);
-        }
-    }
-
-    @Override
-    public void deleteAll() {
-        for (T entity : findAll()) {
-            delete(entity);
         }
     }
 

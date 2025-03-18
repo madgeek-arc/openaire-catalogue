@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Objects;
 
@@ -80,7 +81,7 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     /* ********************************************** */
 
     public boolean hasProviderInvitation(String invitationToken) {
-        return invitationService.processInvitation(invitationToken, User.of(this.authentication).getEmail());
+        return invitationService.processInvitation(invitationToken, User.of(SecurityContextHolder.getContext().getAuthentication()).getEmail());
     }
 
     public <T extends Identifiable> boolean isProviderAdmin(T resource) {
@@ -91,7 +92,7 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
         if (providerId == null) {
             return false;
         }
-        User user = User.of(this.authentication);
+        User user = User.of(SecurityContextHolder.getContext().getAuthentication());
         ProviderBundle providerBundle = providerRepository.get(providerId);
         if (providerBundle.getProvider().getUsers() == null) {
             return false;

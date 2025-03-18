@@ -1,11 +1,11 @@
 package gr.madgik.catalogue.openaire.resource.controller;
 
-import gr.athenarc.catalogue.annotations.Browse;
-import gr.athenarc.catalogue.utils.PagingUtils;
 import gr.madgik.catalogue.openaire.domain.Bundle;
 import gr.madgik.catalogue.openaire.domain.Service;
 import gr.madgik.catalogue.openaire.domain.ServiceBundle;
 import gr.madgik.catalogue.openaire.resource.ServiceBundleService;
+import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,10 +59,10 @@ public class ServiceController {
         serviceBundleService.delete(id);
     }
 
-    @Browse
+    @BrowseParameters
     @GetMapping
-    public Paging<Service> getAll(@Parameter(hidden = true) @RequestParam Map<String, Object> allRequestParams) {
-        return serviceBundleService.getWithEnrichedFacets(PagingUtils.createFacetFilter(allRequestParams)).map(Bundle::getPayload);
+    public Paging<Service> getAll(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> allRequestParams) {
+        return serviceBundleService.getWithEnrichedFacets(FacetFilter.from(allRequestParams)).map(Bundle::getPayload);
     }
 
     @PostMapping("validate")

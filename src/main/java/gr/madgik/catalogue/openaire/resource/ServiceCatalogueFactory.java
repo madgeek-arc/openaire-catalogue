@@ -68,7 +68,7 @@ public class ServiceCatalogueFactory {
             @Override
             public void handleError(ServiceBundle serviceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Service registration handleError");
-                throw new gr.athenarc.catalogue.exception.ResourceException(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new gr.uoa.di.madgik.registry.exception.ResourceException(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         });
 
@@ -137,7 +137,7 @@ public class ServiceCatalogueFactory {
             @Override
             public void handleError(ServiceBundle serviceBundle, Throwable throwable, Context ctx) {
                 logger.info("Inside Service update handleError");
-                throw new gr.athenarc.catalogue.exception.ResourceException(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new gr.uoa.di.madgik.registry.exception.ResourceException(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         });
 
