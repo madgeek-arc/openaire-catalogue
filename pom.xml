@@ -99,6 +99,11 @@
             <artifactId>catalogue</artifactId>
             <version>7.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>registry-starter-elasticsearch</artifactId>
+            <version>4.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
