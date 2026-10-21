@@ -22,6 +22,19 @@ public class OpenAIREProperties {
 
     private Invitations invitations = new Invitations();
 
+    /**
+     * Whether the OpenAIRE service and datasource models are stored at startup and applied to their resource types.
+     */
+    private boolean loadModels = true;
+
+    public boolean isLoadModels() {
+        return loadModels;
+    }
+
+    public void setLoadModels(boolean loadModels) {
+        this.loadModels = loadModels;
+    }
+
     public boolean isPendingResourcesActive() {
         return pendingResourcesActive;
     }
