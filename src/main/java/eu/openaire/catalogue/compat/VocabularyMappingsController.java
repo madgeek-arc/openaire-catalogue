@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.compat;
+package eu.openaire.catalogue.compat;
 
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;

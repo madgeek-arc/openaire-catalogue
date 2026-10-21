@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.extension;
+package eu.openaire.catalogue.extension;
 
 import gr.uoa.di.madgik.registry.domain.ResourceType;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.config;
+package eu.openaire.catalogue.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

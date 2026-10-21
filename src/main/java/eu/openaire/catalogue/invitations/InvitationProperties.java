@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.invitations;
+package eu.openaire.catalogue.invitations;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

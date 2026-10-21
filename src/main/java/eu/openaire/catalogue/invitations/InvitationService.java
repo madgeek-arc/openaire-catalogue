@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.invitations;
+package eu.openaire.catalogue.invitations;
 
 import java.time.Instant;
 

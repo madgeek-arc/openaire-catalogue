@@ -1,7 +1,7 @@
-package gr.madgik.catalogue.openaire.extension;
+package eu.openaire.catalogue.extension;
 
-import gr.madgik.catalogue.openaire.config.OpenAIREProperties;
-import gr.madgik.catalogue.openaire.invitations.InvitationService;
+import eu.openaire.catalogue.config.OpenAIREProperties;
+import eu.openaire.catalogue.invitations.InvitationService;
 import gr.uoa.di.madgik.registry.service.GenericResourceService;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Bundle;
 import gr.uoa.di.madgik.resourcecatalogue.dto.UserInfo;

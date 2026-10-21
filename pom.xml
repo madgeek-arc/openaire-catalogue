@@ -8,7 +8,7 @@
         <version>4.0.7</version>
         <relativePath/>
     </parent>
-    <groupId>gr.madgik</groupId>
+    <groupId>eu.openaire</groupId>
     <artifactId>openaire-catalogue</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>openaire-catalogue</name>

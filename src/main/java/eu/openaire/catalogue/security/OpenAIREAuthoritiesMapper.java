@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.security;
+package eu.openaire.catalogue.security;
 
 import gr.uoa.di.madgik.resourcecatalogue.config.security.InMemoryAuthoritiesMapper;
 import gr.uoa.di.madgik.resourcecatalogue.service.AuthoritiesMapper;

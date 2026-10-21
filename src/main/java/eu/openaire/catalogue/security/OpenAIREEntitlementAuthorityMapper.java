@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.security;
+package eu.openaire.catalogue.security;
 
 import gr.uoa.di.madgik.resourcecatalogue.extension.EntitlementAuthorityMapper;
 import org.springframework.security.core.GrantedAuthority;

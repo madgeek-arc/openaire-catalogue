@@ -1,9 +1,9 @@
-package gr.madgik.catalogue.openaire.mail;
+package eu.openaire.catalogue.mail;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import gr.madgik.catalogue.openaire.config.OpenAIREProperties;
+import eu.openaire.catalogue.config.OpenAIREProperties;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.resourcecatalogue.config.NodeProperties;
 import gr.uoa.di.madgik.resourcecatalogue.config.properties.CatalogueProperties;

@@ -1,6 +1,6 @@
-package gr.madgik.catalogue.openaire.config;
+package eu.openaire.catalogue.config;
 
-import gr.madgik.catalogue.openaire.invitations.InvitationProperties;
+import eu.openaire.catalogue.invitations.InvitationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

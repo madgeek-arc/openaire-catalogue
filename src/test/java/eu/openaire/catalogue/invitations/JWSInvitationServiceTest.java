@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.invitations;
+package eu.openaire.catalogue.invitations;
 
 import gr.uoa.di.madgik.registry.exception.ResourceException;
 import org.junit.jupiter.api.BeforeEach;

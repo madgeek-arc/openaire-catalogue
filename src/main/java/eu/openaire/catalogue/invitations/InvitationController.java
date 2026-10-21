@@ -1,4 +1,4 @@
-package gr.madgik.catalogue.openaire.invitations;
+package eu.openaire.catalogue.invitations;
 
 import gr.uoa.di.madgik.resourcecatalogue.dto.UserInfo;
 import io.swagger.v3.oas.annotations.Parameter;
