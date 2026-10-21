@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * OpenAIRE rules applied around bundle operations:
  * <ul>
- *     <li>organisations can be registered by non-privileged users only with a valid invitation;</li>
+ *     <li>organisations can be registered, or finalized from a draft, by non-privileged users only with a valid invitation;</li>
  *     <li>services and datasources get a default resource owner, and the {@code resourceOrganisation} and
  *     {@code resourceOwner} properties are kept consistent;</li>
  *     <li>an empty {@code extras} object is dropped;</li>
@@ -68,6 +68,13 @@ public class OpenAIREBundleCustomizer implements BundleCustomizer {
             bundle.setActive(true);
             genericResourceService.update(resourceType, bundle, false);
             logger.info("Activated pending {} '{}'", resourceType, bundle.getId());
+        }
+    }
+
+    @Override
+    public void beforeFinalizeDraft(String resourceType, Bundle bundle, Authentication auth) {
+        if (ORGANISATION.equals(resourceType)) {
+            requireInvitation(auth);
         }
     }
 
