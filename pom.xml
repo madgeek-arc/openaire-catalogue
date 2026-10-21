@@ -5,22 +5,173 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.6</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>4.0.7</version>
+        <relativePath/>
     </parent>
     <groupId>gr.madgik</groupId>
     <artifactId>openaire-catalogue</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>openaire-catalogue</name>
-    <description>OpenAIRE Catalogue Project</description>
+    <description>OpenAIRE Catalogue: OpenAIRE-specific extensions on top of the Resource Catalogue</description>
+
     <properties>
-        <java.version>17</java.version>
-        <elasticsearch.version>7.4.2</elasticsearch.version> <!-- Spring-Boot override -->
+        <java.version>25</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <resource-catalogue.version>6.4.1-SNAPSHOT</resource-catalogue.version>
+
+        <!-- Overrides of Spring Boot managed versions, kept in line with the Resource Catalogue build -->
+        <elasticsearch.version>9.4.3</elasticsearch.version>
+        <netty.version>4.2.17.Final</netty.version>
+        <spring-framework.version>7.0.9</spring-framework.version>
+        <tomcat.version>11.0.25</tomcat.version>
+        <postgresql.version>42.7.13</postgresql.version>
+        <log4j2.version>2.26.1</log4j2.version>
+        <spring-security.version>7.0.7</spring-security.version>
+        <jackson.version>3.2.3</jackson.version>
+        <jackson2.annotations.version>2.22</jackson2.annotations.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Overrides of Spring Boot managed versions (CVE fixes and client versions matching the Resource Catalogue build) -->
+            <dependency>
+                <groupId>co.elastic.clients</groupId>
+                <artifactId>elasticsearch-java</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>co.elastic.clients</groupId>
+                <artifactId>elasticsearch-rest5-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson2.annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.22.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.22.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.6.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-bom</artifactId>
+                <version>6.2.7</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mozilla</groupId>
+                <artifactId>rhino</artifactId>
+                <version>1.7.15.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.semconv</groupId>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>1.41.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>2.3.35</version>
+            </dependency>
+
+            <!-- Version management of Resource Catalogue and registry artifacts -->
+            <dependency>
+                <groupId>gr.uoa.di.madgik</groupId>
+                <artifactId>resource-catalogue</artifactId>
+                <version>${resource-catalogue.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>madgik-snapshots</id>
+            <url>https://repo.madgik.di.uoa.gr/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>madgik-releases</id>
+            <url>https://repo.madgik.di.uoa.gr/content/repositories/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>resource-catalogue-service</artifactId>
+            <version>${resource-catalogue.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>resource-catalogue-elastic</artifactId>
+            <version>${resource-catalogue.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>resource-catalogue-jms</artifactId>
+            <version>${resource-catalogue.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>resource-catalogue-matomo</artifactId>
+            <version>${resource-catalogue.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -28,84 +179,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-hateoas</artifactId>
-        </dependency>
-
-        <!-- Redis Session -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-data-redis</artifactId>
-        </dependency>
-
-        <!-- Sentry Monitoring -->
-        <dependency>
-            <groupId>io.sentry</groupId>
-            <artifactId>sentry-spring-boot-starter</artifactId>
-            <version>7.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.sentry</groupId>
-            <artifactId>sentry-log4j2</artifactId>
-            <version>7.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>gr.madgik</groupId>
-            <artifactId>catalogue-starter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.einfracentral</groupId>
-            <artifactId>eic-registry-model</artifactId>
-            <version>4.1.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>eu.einfracentral</groupId>
-                    <artifactId>eic-registry</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.freemarker</groupId>-->
-<!--            <artifactId>freemarker</artifactId>-->
-<!--            <version>2.3.28</version>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -113,9 +186,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <layout>JAR</layout>
-                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

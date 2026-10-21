@@ -1,16 +1,26 @@
 package gr.madgik.catalogue.openaire.invitations;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import gr.madgik.catalogue.domain.User;
-
-import java.util.Date;
+import java.time.Instant;
 
 public interface InvitationService {
 
-    String create(User inviter, String inviteeEmail);
+    /**
+     * Creates an invitation that expires after the configured time to live.
+     *
+     * @return the signed invitation token
+     */
+    String create(String inviterEmail, String inviteeEmail);
 
-    String create(User inviter, String inviteeEmail, Date expiration) throws JsonProcessingException;
+    /**
+     * @return the signed invitation token
+     */
+    String create(String inviterEmail, String inviteeEmail, Instant expiration);
 
-    boolean accept(String invitation, String inviteeEmail);
-
+    /**
+     * Checks that the token is authentic, not expired and issued for the given invitee. Invitations are not
+     * stored, so a valid token verifies repeatedly until it expires.
+     *
+     * @throws gr.uoa.di.madgik.registry.exception.ResourceException when the token is not valid
+     */
+    void verify(String invitationToken, String inviteeEmail);
 }

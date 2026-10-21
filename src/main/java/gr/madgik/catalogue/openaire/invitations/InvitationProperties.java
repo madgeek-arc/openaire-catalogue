@@ -1,14 +1,19 @@
 package gr.madgik.catalogue.openaire.invitations;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Component
+import java.time.Duration;
+
 @ConfigurationProperties(prefix = "invitation")
 public class InvitationProperties {
 
-    String hashAlgorithm = "SHA3-256";
-    JWS jws;
+    private String hashAlgorithm = "SHA3-256";
+    private JWS jws = new JWS();
+
+    /**
+     * Validity of a newly created invitation.
+     */
+    private Duration ttl = Duration.ofDays(30);
 
     public String getHashAlgorithm() {
         return hashAlgorithm;
@@ -16,6 +21,14 @@ public class InvitationProperties {
 
     public void setHashAlgorithm(String hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
+    }
+
+    public Duration getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(Duration ttl) {
+        this.ttl = ttl;
     }
 
     public JWS getJws() {
@@ -28,7 +41,10 @@ public class InvitationProperties {
 
     public static class JWS {
 
-        String secret;
+        /**
+         * HMAC secret used to sign invitation tokens. At least 32 characters.
+         */
+        private String secret;
 
         public String getSecret() {
             return secret;

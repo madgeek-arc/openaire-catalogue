@@ -2,9 +2,8 @@ package gr.madgik.catalogue.openaire;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication
 public class OpenAIRECatalogueApplication {
 
     public static void main(String[] args) {

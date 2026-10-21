@@ -1,0 +1,85 @@
+{
+  "properties": {
+    "submissionPolicyURL": {
+      "type": "string"
+    },
+    "preservationPolicyURL": {
+      "type": "string"
+    },
+    "versionControl": {
+      "type": "boolean"
+    },
+    "persistentIdentitySystems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "persistentIdentityEntityType": {
+            "type": "string"
+          },
+          "persistentIdentityEntityTypeSchemes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "jurisdiction": {
+      "type": "string"
+    },
+    "datasourceClassification": {
+      "type": "string"
+    },
+    "researchEntityTypes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "thematic": {
+      "type": "boolean"
+    },
+    "harvestable": {
+      "type": "boolean"
+    },
+    "researchProductLicensings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "researchProductLicenseURL": {
+            "type": "string"
+          },
+          "researchProductLicenseName": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "researchProductAccessPolicies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "researchProductMetadataLicensing": {
+      "type": "object",
+      "properties": {
+        "researchProductMetadataLicenseURL": {
+          "type": "string"
+        },
+        "researchProductMetadataLicenseName": {
+          "type": "string"
+        }
+      }
+    },
+    "researchProductMetadataAccessPolicies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
