@@ -10,7 +10,7 @@
     </parent>
     <groupId>gr.madgik</groupId>
     <artifactId>openaire-catalogue</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>openaire-catalogue</name>
     <description>OpenAIRE Catalogue: OpenAIRE-specific extensions on top of the Resource Catalogue</description>
 
