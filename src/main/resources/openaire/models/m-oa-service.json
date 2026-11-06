@@ -3250,7 +3250,9 @@
                 "values": null,
                 "multiplicity": false,
                 "prefill": null,
-                "properties": {}
+                "properties": {
+                  "formatToString": true
+                }
               },
               "includedInSnippet": false,
               "deprecated": false,
@@ -8363,7 +8365,9 @@
                         "values": null,
                         "multiplicity": false,
                         "prefill": null,
-                        "properties": {}
+                        "properties": {
+                  "formatToString": true
+                }
                       },
                       "includedInSnippet": false,
                       "deprecated": false,
