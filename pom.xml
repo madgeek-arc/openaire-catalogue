@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.7</version>
+        <version>4.1.2</version>
         <relativePath/>
     </parent>
     <groupId>eu.openaire</groupId>
@@ -20,13 +20,8 @@
         <resource-catalogue.version>6.4.1-SNAPSHOT</resource-catalogue.version>
 
         <!-- Overrides of Spring Boot managed versions, kept in line with the Resource Catalogue build -->
-        <elasticsearch.version>9.4.3</elasticsearch.version>
-        <netty.version>4.2.17.Final</netty.version>
-        <spring-framework.version>7.0.9</spring-framework.version>
-        <tomcat.version>11.0.25</tomcat.version>
-        <postgresql.version>42.7.13</postgresql.version>
+        <elasticsearch.version>9.5.5</elasticsearch.version>
         <log4j2.version>2.26.1</log4j2.version>
-        <spring-security.version>7.0.7</spring-security.version>
         <jackson.version>3.2.3</jackson.version>
         <jackson2.annotations.version>2.22</jackson2.annotations.version>
     </properties>
@@ -83,13 +78,6 @@
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
                 <version>5.6.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-bom</artifactId>
-                <version>6.2.7</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.mozilla</groupId>
