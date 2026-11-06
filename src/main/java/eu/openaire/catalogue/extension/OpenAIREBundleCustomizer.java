@@ -1,5 +1,6 @@
 package eu.openaire.catalogue.extension;
 
+import eu.openaire.catalogue.api.ServiceChannels;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import eu.openaire.catalogue.invitations.InvitationService;
 import gr.uoa.di.madgik.registry.service.GenericResourceService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -60,6 +62,7 @@ public class OpenAIREBundleCustomizer implements BundleCustomizer {
         }
         applyResourceDefaults(bundle.getPayload());
         dropEmptyExtras(bundle.getPayload());
+        applyDefaultChannels(resourceType, bundle);
     }
 
     @Override
@@ -76,6 +79,7 @@ public class OpenAIREBundleCustomizer implements BundleCustomizer {
         if (ORGANISATION.equals(resourceType)) {
             requireInvitation(auth);
         }
+        applyDefaultChannels(resourceType, bundle);
     }
 
     @Override
@@ -85,6 +89,12 @@ public class OpenAIREBundleCustomizer implements BundleCustomizer {
         }
         applyResourceDefaults(bundle.getPayload());
         dropEmptyExtras(bundle.getPayload());
+    }
+
+    private void applyDefaultChannels(String resourceType, Bundle bundle) {
+        if ("service".equals(resourceType)) {
+            bundle.getProperties().putIfAbsent(ServiceChannels.PROPERTY, new ArrayList<>(properties.getDefaultChannels()));
+        }
     }
 
     private void applyResourceDefaults(Map<String, Object> payload) {

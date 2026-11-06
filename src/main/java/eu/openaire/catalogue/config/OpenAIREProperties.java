@@ -2,6 +2,8 @@ package eu.openaire.catalogue.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 @ConfigurationProperties(prefix = "openaire")
 public class OpenAIREProperties {
 
@@ -20,12 +22,25 @@ public class OpenAIREProperties {
      */
     private boolean pendingResourcesActive = true;
 
+    /**
+     * Channels of a newly created service.
+     */
+    private List<String> defaultChannels = List.of("oa");
+
     private Invitations invitations = new Invitations();
 
     /**
      * Whether the OpenAIRE service and datasource models are stored at startup and applied to their resource types.
      */
     private boolean loadModels = true;
+
+    public List<String> getDefaultChannels() {
+        return defaultChannels;
+    }
+
+    public void setDefaultChannels(List<String> defaultChannels) {
+        this.defaultChannels = defaultChannels;
+    }
 
     public boolean isLoadModels() {
         return loadModels;
