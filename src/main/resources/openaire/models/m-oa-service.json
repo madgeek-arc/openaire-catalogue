@@ -33,7 +33,7 @@
               "parentId": null,
               "parent": null,
               "label": {
-                "text": null,
+                "text": "Id",
                 "cssClasses": null,
                 "style": null,
                 "showLess": false
@@ -402,6 +402,190 @@
                 "style": null
               },
               "subFields": []
+            },
+            {
+              "id": "156",
+              "name": "alternativeIdentifiers",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Alternative Identifiers",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "composite",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": "basic",
+                "description": {
+                  "text": "Other types of Identifiers for the specific Service (eg. PID).",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 7,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": [
+                {
+                  "id": "154",
+                  "name": "type",
+                  "parentId": "156",
+                  "parent": "alternativeIdentifiers",
+                  "label": {
+                    "text": "Type",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "string",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": false,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "basic",
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": false,
+                    "immutable": true,
+                    "display": {
+                      "placement": null,
+                      "order": 1,
+                      "visible": false,
+                      "hasBorder": false,
+                      "cssClasses": "uk-disabled",
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                },
+                {
+                  "id": "155",
+                  "name": "value",
+                  "parentId": "156",
+                  "parent": "alternativeIdentifiers",
+                  "label": {
+                    "text": "Value",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "string",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": false,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "basic",
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": false,
+                    "immutable": true,
+                    "display": {
+                      "placement": null,
+                      "order": 2,
+                      "visible": false,
+                      "hasBorder": false,
+                      "cssClasses": "uk-disabled",
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                }
+              ]
             }
           ]
         },
@@ -1629,6 +1813,503 @@
                       "visible": false,
                       "hasBorder": false,
                       "cssClasses": null,
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                }
+              ]
+            },
+            {
+              "id": "157",
+              "name": "horizontalService",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Horizontal Service",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "bool",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": "classification",
+                "description": {
+                  "text": "Whether the Service is a generic service or resource bringing significant value to two or more research infrastructures.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 7,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "158",
+              "name": "serviceCategories",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Service Categories",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "vocabulary",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {
+                  "url": "/api/vocabulary/types/Service%20category",
+                  "idField": "id",
+                  "labelField": "name"
+                }
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": "classification",
+                "description": {
+                  "text": "A named group of Resources that offer access to the same type of Resources.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 8,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "159",
+              "name": "marketplaceLocations",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Marketplace Locations",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "vocabulary",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {
+                  "url": "/api/vocabulary/types/Marketplace%20location",
+                  "idField": "id",
+                  "labelField": "name"
+                }
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": "classification",
+                "description": {
+                  "text": "Placement of the Service in the different sections of the EOSC Marketplace.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 9,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "164",
+              "name": "classTier",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Class Tier",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "composite",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": "classification",
+                "description": {
+                  "text": "The tier of a service in the EOSC EU Node.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 10,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": [
+                {
+                  "id": "160",
+                  "name": "level",
+                  "parentId": "164",
+                  "parent": "classTier",
+                  "label": {
+                    "text": "Level",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "number",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": false,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "classification",
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": false,
+                    "immutable": true,
+                    "display": {
+                      "placement": null,
+                      "order": 1,
+                      "visible": false,
+                      "hasBorder": false,
+                      "cssClasses": "uk-disabled",
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                },
+                {
+                  "id": "161",
+                  "name": "accessPolicy",
+                  "parentId": "164",
+                  "parent": "classTier",
+                  "label": {
+                    "text": "Access Policy",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "string",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": false,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "classification",
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": false,
+                    "immutable": true,
+                    "display": {
+                      "placement": null,
+                      "order": 2,
+                      "visible": false,
+                      "hasBorder": false,
+                      "cssClasses": "uk-disabled",
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                },
+                {
+                  "id": "162",
+                  "name": "costModel",
+                  "parentId": "164",
+                  "parent": "classTier",
+                  "label": {
+                    "text": "Cost Model",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "string",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": false,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "classification",
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": false,
+                    "immutable": true,
+                    "display": {
+                      "placement": null,
+                      "order": 3,
+                      "visible": false,
+                      "hasBorder": false,
+                      "cssClasses": "uk-disabled",
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                },
+                {
+                  "id": "163",
+                  "name": "offerings",
+                  "parentId": "164",
+                  "parent": "classTier",
+                  "label": {
+                    "text": "Offerings",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "string",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": true,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": false,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "classification",
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": false,
+                    "immutable": true,
+                    "display": {
+                      "placement": null,
+                      "order": 4,
+                      "visible": false,
+                      "hasBorder": false,
+                      "cssClasses": "uk-disabled",
                       "style": null
                     }
                   },
@@ -4685,7 +5366,7 @@
               "parentId": null,
               "parent": null,
               "label": {
-                "text": null,
+                "text": "Extras",
                 "cssClasses": null,
                 "style": null,
                 "showLess": false
@@ -8366,8 +9047,8 @@
                         "multiplicity": false,
                         "prefill": null,
                         "properties": {
-                  "formatToString": true
-                }
+                          "formatToString": true
+                        }
                       },
                       "includedInSnippet": false,
                       "deprecated": false,

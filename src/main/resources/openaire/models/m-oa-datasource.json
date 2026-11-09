@@ -405,6 +405,180 @@
                   "subFields": []
                 }
               ]
+            },
+            {
+              "id": "201",
+              "name": "id",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Id",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "vocabulary": null,
+                "type": "string",
+                "defaultValue": null,
+                "values": null,
+                "properties": {
+                  "minLength": null,
+                  "maxLength": null
+                },
+                "multiplicity": false,
+                "prefill": null
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 5,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": null,
+              "subFields": []
+            },
+            {
+              "id": "204",
+              "name": "serviceId",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Service",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "vocabulary": null,
+                "type": "string",
+                "defaultValue": null,
+                "values": null,
+                "properties": {
+                  "minLength": null,
+                  "maxLength": null
+                },
+                "multiplicity": false,
+                "prefill": null
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 8,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": null,
+              "subFields": []
+            },
+            {
+              "id": "205",
+              "name": "catalogueId",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Catalogue",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "vocabulary": null,
+                "type": "string",
+                "defaultValue": null,
+                "values": null,
+                "properties": {
+                  "minLength": null,
+                  "maxLength": null
+                },
+                "multiplicity": false,
+                "prefill": null
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 9,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": null,
+              "subFields": []
             }
           ]
         },
