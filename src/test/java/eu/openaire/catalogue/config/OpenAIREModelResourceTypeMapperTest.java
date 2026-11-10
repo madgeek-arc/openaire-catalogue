@@ -1,51 +1,59 @@
 package eu.openaire.catalogue.config;
 
-import gr.uoa.di.madgik.catalogue.service.ModelResourceTypeMapper;
 import gr.uoa.di.madgik.registry.domain.ResourceType;
 import gr.uoa.di.madgik.registry.domain.index.IndexField;
-import gr.uoa.di.madgik.resourcecatalogue.config.ResourceCatalogueModelMapperConfig;
-import gr.uoa.di.madgik.resourcecatalogue.domain.ServiceBundle;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpenAIREModelResourceTypeMapperTest {
 
-    private static List<IndexField> fields(String name) {
+    private final OpenAIREModelResourceTypeMapper mapper = new OpenAIREModelResourceTypeMapper();
+
+    private List<IndexField> fields(String name) {
         ResourceType type = new ResourceType();
         type.setName(name);
-        type.setProperties(Map.of("class", ServiceBundle.class.getName()));
-        return new OpenAIREModelResourceTypeMapper().additionalIndexFields(null, type);
+        return mapper.additionalIndexFields(null, type);
+    }
+
+    private IndexField field(String type, String name) {
+        return fields(type).stream().filter(f -> name.equals(f.getName())).findFirst().orElseThrow();
     }
 
     @Test
-    void isTheMapperInjectedAlongsideTheResourceCatalogueOne() {
-        new ApplicationContextRunner()
-                .withUserConfiguration(ResourceCatalogueModelMapperConfig.class, OpenAIREConfiguration.class)
-                .run(context -> assertInstanceOf(OpenAIREModelResourceTypeMapper.class,
-                        context.getBean(ModelResourceTypeMapper.class)));
+    void recordsAreReadAsMaps() {
+        for (String name : List.of("provider", "service", "datasource")) {
+            ResourceType type = new ResourceType();
+            type.setName(name);
+            assertEquals(LinkedHashMap.class.getName(), mapper.customResourceTypeProperties(type).get("class"));
+        }
     }
 
     @Test
-    void addsAMultivaluedChannelsFieldToServices() {
-        IndexField field = fields("service").stream().filter(f -> "channels".equals(f.getName())).findFirst().orElseThrow();
-        assertTrue(field.isMultivalued());
-        assertTrue(field.getPath().equals("$.properties.channels[*]"));
+    void indexesTheBundleEnvelope() {
+        assertEquals("$.status", field("datasource", "status").getPath());
+        assertEquals("$.active", field("provider", "active").getPath());
+        assertEquals("$.metadata.registeredAt", field("service", "registeredAt").getPath());
     }
 
     @Test
-    void keepsTheBundleFields() {
-        assertTrue(fields("service").stream().anyMatch(f -> "catalogue_id".equals(f.getName())));
+    void addsAMultivaluedChannelsFieldToEveryRecordType() {
+        for (String type : List.of("provider", "service", "datasource")) {
+            IndexField field = field(type, "channels");
+            assertTrue(field.isMultivalued(), type);
+            assertEquals("$.properties.channels[*]", field.getPath(), type);
+        }
     }
 
     @Test
-    void leavesOtherTypesWithoutChannels() {
-        assertFalse(fields("datasource").stream().anyMatch(f -> "channels".equals(f.getName())));
+    void leavesOtherTypesAlone() {
+        ResourceType type = new ResourceType();
+        type.setName("vocabulary");
+        assertTrue(fields("vocabulary").isEmpty());
+        assertTrue(mapper.customResourceTypeProperties(type).isEmpty());
     }
 }

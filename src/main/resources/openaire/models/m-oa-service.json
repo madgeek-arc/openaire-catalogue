@@ -2355,7 +2355,7 @@
                 "multiplicity": true,
                 "prefill": null,
                 "properties": {
-                  "url": "/api/vocabulary/types/Country",
+                  "url": "/api/vocabulary/types/Geographical%20availability",
                   "idField": "id",
                   "labelField": "name"
                 }
@@ -3932,7 +3932,7 @@
                 "multiplicity": false,
                 "prefill": null,
                 "properties": {
-                  "formatToString": true
+                  "formatToString": false
                 }
               },
               "includedInSnippet": false,

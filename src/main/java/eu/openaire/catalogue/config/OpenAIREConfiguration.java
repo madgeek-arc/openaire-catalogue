@@ -6,9 +6,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
-@EnableConfigurationProperties({OpenAIREProperties.class, InvitationProperties.class})
+@EnableAsync
+@EnableConfigurationProperties({OpenAIREProperties.class, CatalogueProperties.class, InvitationProperties.class})
 public class OpenAIREConfiguration {
 
     @Bean

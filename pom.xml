@@ -10,25 +10,35 @@
     </parent>
     <groupId>eu.openaire</groupId>
     <artifactId>openaire-catalogue</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <name>openaire-catalogue</name>
-    <description>OpenAIRE Catalogue: OpenAIRE-specific extensions on top of the Resource Catalogue</description>
+    <description>OpenAIRE Catalogue: OpenAIRE services, providers and datasources on registry and catalogue, in the
+        lot1 model</description>
 
     <properties>
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <resource-catalogue.version>6.4.1-SNAPSHOT</resource-catalogue.version>
+        <registry.version>5.0.0-SNAPSHOT</registry.version>
+        <catalogue.version>10.0.0-SNAPSHOT</catalogue.version>
+        <resource-catalogue-model-lot1.version>6.4.1-SNAPSHOT</resource-catalogue-model-lot1.version>
 
-        <!-- Overrides of Spring Boot managed versions, kept in line with the Resource Catalogue build -->
+        <!-- Overrides of Spring Boot managed versions -->
         <elasticsearch.version>9.5.5</elasticsearch.version>
         <log4j2.version>2.26.1</log4j2.version>
         <jackson.version>3.2.3</jackson.version>
         <jackson2.annotations.version>2.22</jackson2.annotations.version>
+        <!-- Also written to springdoc.swagger-ui.version, which locates the Swagger UI files in the webjar -->
+        <swagger-ui.version>5.34.1</swagger-ui.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Overrides of Spring Boot managed versions (CVE fixes and client versions matching the Resource Catalogue build) -->
+            <!-- Overrides of Spring Boot managed versions (CVE fixes and client versions) -->
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>swagger-ui</artifactId>
+                <version>${swagger-ui.version}</version>
+            </dependency>
             <dependency>
                 <groupId>co.elastic.clients</groupId>
                 <artifactId>elasticsearch-java</artifactId>
@@ -95,11 +105,11 @@
                 <version>2.3.35</version>
             </dependency>
 
-            <!-- Version management of Resource Catalogue and registry artifacts -->
+            <!-- Version management of registry artifacts -->
             <dependency>
                 <groupId>gr.uoa.di.madgik</groupId>
-                <artifactId>resource-catalogue</artifactId>
-                <version>${resource-catalogue.version}</version>
+                <artifactId>registry-bom</artifactId>
+                <version>${registry.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -130,30 +140,97 @@
     </repositories>
 
     <dependencies>
+        <!-- Persistence, search and events -->
         <dependency>
             <groupId>gr.uoa.di.madgik</groupId>
-            <artifactId>resource-catalogue-service</artifactId>
-            <version>${resource-catalogue.version}</version>
+            <artifactId>registry-starter-service</artifactId>
         </dependency>
         <dependency>
             <groupId>gr.uoa.di.madgik</groupId>
-            <artifactId>resource-catalogue-elastic</artifactId>
-            <version>${resource-catalogue.version}</version>
+            <artifactId>registry-starter-elasticsearch</artifactId>
         </dependency>
         <dependency>
             <groupId>gr.uoa.di.madgik</groupId>
-            <artifactId>resource-catalogue-jms</artifactId>
-            <version>${resource-catalogue.version}</version>
+            <artifactId>registry-starter-jms</artifactId>
         </dependency>
         <dependency>
             <groupId>gr.uoa.di.madgik</groupId>
-            <artifactId>resource-catalogue-matomo</artifactId>
-            <version>${resource-catalogue.version}</version>
+            <artifactId>registry-core-rest</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
-            <artifactId>flowable-spring-boot-starter</artifactId>
-            <version>7.1.0</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <!-- Dynamic models, forms and model validation -->
+        <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>catalogue</artifactId>
+            <version>${catalogue.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- lot1 classes: the EOSC output and the user and logging helpers -->
+        <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>resource-catalogue-model-lot1</artifactId>
+            <version>${resource-catalogue-model-lot1.version}</version>
+        </dependency>
+
+        <!-- Web, security and sessions -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-session-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <!-- Notifications -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <dependency>
