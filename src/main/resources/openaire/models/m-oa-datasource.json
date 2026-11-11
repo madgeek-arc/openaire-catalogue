@@ -1,0 +1,1441 @@
+{
+  "id": "m-oa-datasource",
+  "name": "OpenAIRE datasource",
+  "description": "OpenAIRE datasource description",
+  "notice": null,
+  "type": "datasource",
+  "subType": null,
+  "series": null,
+  "resourceType": "datasource",
+  "creationDate": null,
+  "createdBy": null,
+  "modificationDate": "2024-05-20T12:00:04.582+00:00",
+  "modifiedBy": null,
+  "sections": [
+    {
+      "id": "datasource",
+      "name": "datasource",
+      "description": null,
+      "subType": null,
+      "order": 0,
+      "subSections": [
+        {
+          "id": "section-KaSsdLf",
+          "name": "Data Source Policies",
+          "description": null,
+          "subType": null,
+          "order": 12,
+          "subSections": null,
+          "fields": [
+            {
+              "id": "153",
+              "name": "submissionPolicyURL",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Submission Policy URL",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "url",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {
+                  "strictValidation": false
+                }
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": "This policy provides a comprehensive framework for the contribution of research products. Criteria for submitting content to the repository as well as product preparation guidelines can be stated. Concepts for quality assurance may be provided.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": "This policy provides a comprehensive framework for the contribution of research products. Criteria for submitting content to the repository as well as product preparation guidelines can be stated. Concepts for quality assurance may be provided.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": "use http:// or https://",
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 1,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "154",
+              "name": "preservationPolicyURL",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Preservation Policy URL",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "url",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {
+                  "strictValidation": false
+                }
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": "This policy provides a comprehensive framework for the long-term preservation of the research products. Principles aims and responsibilities must be clarified. An important aspect is the description of preservation concepts to ensure the technical and conceptual utility of the content.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": "This policy provides a comprehensive framework for the long-term preservation of the research products. Principles aims and responsibilities must be clarified. An important aspect is the description of preservation concepts to ensure the technical and conceptual utility of the content.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": "use http:// or https://",
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 2,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "155",
+              "name": "versionControl",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Is version control available?",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "bool",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": "If data versioning is supported: the data source explicitly allows the deposition of different versions of the same object.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 3,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": null,
+                "visible": null,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "156",
+              "name": "persistentIdentitySystems",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Persistent Identity Systems",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "composite",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 4,
+                  "visible": true,
+                  "hasBorder": true,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": null,
+                "visible": null,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": [
+                {
+                  "id": "157",
+                  "name": "persistentIdentityEntityType",
+                  "parentId": "156",
+                  "parent": "persistentIdentitySystems",
+                  "label": {
+                    "text": "Persistent Identity EntityType",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "vocabulary",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {
+                      "url": "/api/vocabulary/types/Research%20entity%20type",
+                      "idField": "id",
+                      "labelField": "name"
+                    }
+                  },
+                  "includedInSnippet": true,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "extras",
+                    "description": {
+                      "text": "Specify the EntityType to which the persistent identifier is referring to.",
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": true,
+                    "immutable": false,
+                    "display": {
+                      "placement": null,
+                      "order": 1,
+                      "visible": true,
+                      "hasBorder": false,
+                      "cssClasses": null,
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                },
+                {
+                  "id": "158",
+                  "name": "persistentIdentityEntityTypeSchemes",
+                  "parentId": "156",
+                  "parent": "persistentIdentitySystems",
+                  "label": {
+                    "text": "Persistent Identity EntityType Scheme",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "vocabulary",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": true,
+                    "prefill": null,
+                    "properties": {
+                      "url": "/api/vocabulary/types/Persistent%20identity%20scheme",
+                      "idField": "id",
+                      "labelField": "name"
+                    }
+                  },
+                  "includedInSnippet": true,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": "extras",
+                    "description": {
+                      "text": "Specify the list of persistent identifier schemes used to refer to EntityTypes.",
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": true,
+                    "immutable": false,
+                    "display": {
+                      "placement": null,
+                      "order": 2,
+                      "visible": true,
+                      "hasBorder": false,
+                      "cssClasses": null,
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                }
+              ]
+            },
+            {
+              "id": "201",
+              "name": "id",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Id",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "vocabulary": null,
+                "type": "string",
+                "defaultValue": null,
+                "values": null,
+                "properties": {
+                  "minLength": null,
+                  "maxLength": null
+                },
+                "multiplicity": false,
+                "prefill": null
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 5,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": null,
+              "subFields": []
+            },
+            {
+              "id": "204",
+              "name": "serviceId",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Service",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "vocabulary": null,
+                "type": "string",
+                "defaultValue": null,
+                "values": null,
+                "properties": {
+                  "minLength": null,
+                  "maxLength": null
+                },
+                "multiplicity": false,
+                "prefill": null
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 8,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": null,
+              "subFields": []
+            },
+            {
+              "id": "205",
+              "name": "catalogueId",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Catalogue",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "vocabulary": null,
+                "type": "string",
+                "defaultValue": null,
+                "values": null,
+                "properties": {
+                  "minLength": null,
+                  "maxLength": null
+                },
+                "multiplicity": false,
+                "prefill": null
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 9,
+                  "visible": false,
+                  "hasBorder": false,
+                  "cssClasses": "uk-disabled",
+                  "style": null
+                }
+              },
+              "display": null,
+              "subFields": []
+            }
+          ]
+        },
+        {
+          "id": "section-SkJDFgh",
+          "name": "Data Source Content",
+          "description": null,
+          "subType": null,
+          "order": 13,
+          "subSections": null,
+          "fields": [
+            {
+              "id": "159",
+              "name": "jurisdiction",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Jurisdiction",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "vocabulary",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {
+                  "url": "/api/vocabulary/types/Jurisdiction",
+                  "idField": "id",
+                  "labelField": "name"
+                }
+              },
+              "includedInSnippet": true,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": "The property defines the jurisdiction of the users of the data source, based on the vocabulary for this property.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": true,
+                "immutable": false,
+                "display": {
+                  "placement": null,
+                  "order": 1,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "160",
+              "name": "datasourceClassification",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Data Source Classification",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "vocabulary",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {
+                  "url": "/api/vocabulary/types/Classification",
+                  "idField": "id",
+                  "labelField": "name"
+                }
+              },
+              "includedInSnippet": true,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": "The specific type of the data source based on the vocabulary defined for this property.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": true,
+                "immutable": false,
+                "display": {
+                  "placement": null,
+                  "order": 2,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "161",
+              "name": "researchEntityTypes",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Research Entity Types",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "vocabulary",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {
+                  "url": "/api/vocabulary/types/Research%20entity%20type",
+                  "idField": "id",
+                  "labelField": "name"
+                }
+              },
+              "includedInSnippet": true,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": "The types of OpenAIRE entities managed by the data source, based on the vocabulary for this property.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": true,
+                "immutable": false,
+                "display": {
+                  "placement": null,
+                  "order": 3,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "162",
+              "name": "thematic",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Thematic",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "bool",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": "Boolean value specifying if the data source is dedicated to a given discipline or is instead discipline agnostic.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": true,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 4,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": null,
+                "visible": null,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            },
+            {
+              "id": "200",
+              "name": "harvestable",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Harvestable",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "bool",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": "Boolean value specifying whether the data source can be harvested by OpenAIRE.",
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 5,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": null,
+                "visible": null,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            }
+          ]
+        },
+        {
+          "id": "section-VCByufG",
+          "name": "Research Product Policies",
+          "description": null,
+          "subType": null,
+          "order": 14,
+          "subSections": null,
+          "fields": [
+            {
+              "id": "163",
+              "name": "researchProductLicensings",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Research Product Licensing",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "composite",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 1,
+                  "visible": true,
+                  "hasBorder": true,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": null,
+                "visible": null,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": [
+                {
+                  "id": "164",
+                  "name": "researchProductLicenseURL",
+                  "parentId": "163",
+                  "parent": "researchProductLicensings",
+                  "label": {
+                    "text": "Research Product License URL",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "url",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {
+                      "strictValidation": false
+                    }
+                  },
+                  "includedInSnippet": true,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": null,
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": "use http:// or https://",
+                    "mandatory": true,
+                    "immutable": false,
+                    "display": {
+                      "placement": null,
+                      "order": 1,
+                      "visible": true,
+                      "hasBorder": false,
+                      "cssClasses": null,
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                },
+                {
+                  "id": "165",
+                  "name": "researchProductLicenseName",
+                  "parentId": "163",
+                  "parent": "researchProductLicensings",
+                  "label": {
+                    "text": "Research Product License Name",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "string",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": true,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": null,
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": "Suggested length is 100 characters",
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": true,
+                    "immutable": false,
+                    "display": {
+                      "placement": null,
+                      "order": 1,
+                      "visible": true,
+                      "hasBorder": false,
+                      "cssClasses": null,
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                }
+              ]
+            },
+            {
+              "id": "166",
+              "name": "researchProductAccessPolicies",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Research Product Access Policy",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "vocabulary",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {
+                  "url": "/api/vocabulary/types/COAR%20access%20rights%201.0",
+                  "idField": "id",
+                  "labelField": "name"
+                }
+              },
+              "includedInSnippet": true,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": false,
+                "display": {
+                  "placement": null,
+                  "order": 2,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            }
+          ]
+        },
+        {
+          "id": "section-WYnijXc",
+          "name": "Research Product Metadata",
+          "description": null,
+          "subType": null,
+          "order": 15,
+          "subSections": null,
+          "fields": [
+            {
+              "id": "167",
+              "name": "researchProductMetadataLicensing",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Research Product Metadata Licensing",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "composite",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": false,
+                "prefill": null,
+                "properties": {}
+              },
+              "includedInSnippet": false,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": true,
+                "display": {
+                  "placement": null,
+                  "order": 1,
+                  "visible": true,
+                  "hasBorder": true,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": null,
+                "visible": null,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": [
+                {
+                  "id": "168",
+                  "name": "researchProductMetadataLicenseURL",
+                  "parentId": "167",
+                  "parent": "researchProductMetadataLicensing",
+                  "label": {
+                    "text": "Research Product Metadata License URL",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "url",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {
+                      "strictValidation": false
+                    }
+                  },
+                  "includedInSnippet": true,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": null,
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": "use http:// or https://",
+                    "mandatory": true,
+                    "immutable": false,
+                    "display": {
+                      "placement": null,
+                      "order": 1,
+                      "visible": true,
+                      "hasBorder": false,
+                      "cssClasses": null,
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                },
+                {
+                  "id": "169",
+                  "name": "researchProductMetadataLicenseName",
+                  "parentId": "167",
+                  "parent": "researchProductMetadataLicensing",
+                  "label": {
+                    "text": "Research Product Metadata License Name",
+                    "cssClasses": null,
+                    "style": null,
+                    "showLess": false
+                  },
+                  "accessPath": null,
+                  "kind": null,
+                  "typeInfo": {
+                    "type": "string",
+                    "defaultValue": null,
+                    "values": null,
+                    "multiplicity": false,
+                    "prefill": null,
+                    "properties": {}
+                  },
+                  "includedInSnippet": true,
+                  "deprecated": false,
+                  "form": {
+                    "dependsOn": null,
+                    "affects": null,
+                    "group": null,
+                    "description": {
+                      "text": null,
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "suggestion": {
+                      "text": "Suggested length is 100 characters",
+                      "cssClasses": null,
+                      "style": null,
+                      "showLess": false
+                    },
+                    "placeholder": null,
+                    "mandatory": true,
+                    "immutable": false,
+                    "display": {
+                      "placement": null,
+                      "order": 1,
+                      "visible": true,
+                      "hasBorder": false,
+                      "cssClasses": null,
+                      "style": null
+                    }
+                  },
+                  "display": {
+                    "placement": null,
+                    "order": 0,
+                    "visible": true,
+                    "hasBorder": false,
+                    "cssClasses": null,
+                    "style": null
+                  },
+                  "subFields": []
+                }
+              ]
+            },
+            {
+              "id": "170",
+              "name": "researchProductMetadataAccessPolicies",
+              "parentId": null,
+              "parent": null,
+              "label": {
+                "text": "Research Product Metadata Access Policy",
+                "cssClasses": null,
+                "style": null,
+                "showLess": false
+              },
+              "accessPath": null,
+              "kind": null,
+              "typeInfo": {
+                "type": "vocabulary",
+                "defaultValue": null,
+                "values": null,
+                "multiplicity": true,
+                "prefill": null,
+                "properties": {
+                  "url": "/api/vocabulary/types/COAR%20access%20rights%201.0",
+                  "idField": "id",
+                  "labelField": "name"
+                }
+              },
+              "includedInSnippet": true,
+              "deprecated": false,
+              "form": {
+                "dependsOn": null,
+                "affects": null,
+                "group": null,
+                "description": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "suggestion": {
+                  "text": null,
+                  "cssClasses": null,
+                  "style": null,
+                  "showLess": false
+                },
+                "placeholder": null,
+                "mandatory": false,
+                "immutable": false,
+                "display": {
+                  "placement": null,
+                  "order": 2,
+                  "visible": true,
+                  "hasBorder": false,
+                  "cssClasses": null,
+                  "style": null
+                }
+              },
+              "display": {
+                "placement": null,
+                "order": 0,
+                "visible": true,
+                "hasBorder": false,
+                "cssClasses": null,
+                "style": null
+              },
+              "subFields": []
+            }
+          ]
+        }
+      ],
+      "fields": null
+    }
+  ],
+  "configuration": null,
+  "locked": false,
+  "active": false
+}
