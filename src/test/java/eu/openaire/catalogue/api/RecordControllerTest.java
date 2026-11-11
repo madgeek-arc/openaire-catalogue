@@ -1,6 +1,5 @@
 package eu.openaire.catalogue.api;
 
-import eu.openaire.catalogue.config.CatalogueProperties;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import eu.openaire.catalogue.invitations.InvitationService;
 import eu.openaire.catalogue.resource.BundleService;
@@ -48,6 +47,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -67,13 +67,12 @@ class RecordControllerTest {
     private static final String OWNER = "owner@example.org";
     private static final String STRANGER = "stranger@example.org";
     private static final String ADMIN = "admin@example.org";
+    private static final String OA_ADMIN = "oa-admin@example.org";
 
     private static final BundleService bundles = mock(BundleService.class);
     private static final InvitationService invitations = mock(InvitationService.class);
     private static final OpenAIREProperties properties = new OpenAIREProperties();
-    private static final CatalogueProperties reviewers = new CatalogueProperties();
-
-    private final Roles roles = new Roles(reviewers);
+    private static final Roles roles = new Roles(properties);
     private AnnotationConfigApplicationContext context;
     private MockMvc mvc;
 
@@ -83,7 +82,7 @@ class RecordControllerTest {
 
         @Bean
         AccessRules access() {
-            return new AccessRules(bundles);
+            return new AccessRules(bundles, roles);
         }
 
         @Bean
@@ -115,7 +114,10 @@ class RecordControllerTest {
     @BeforeEach
     void setUp() {
         reset(bundles, invitations);
-        reviewers.setAdmins(List.of(ADMIN));
+        properties.getRoles().getAdmin().setEmails(List.of(ADMIN));
+        OpenAIREProperties.RoleScope oaAdmins = new OpenAIREProperties.RoleScope();
+        oaAdmins.setEmails(List.of(OA_ADMIN));
+        properties.getRoles().setChannels(Map.of("oa", oaAdmins));
         context = new AnnotationConfigApplicationContext(Controllers.class);
         mvc = MockMvcBuilders.standaloneSetup(
                         context.getBean(OaServiceController.class),
@@ -139,6 +141,11 @@ class RecordControllerTest {
         stub(ResourceKind.SERVICE, service("openaire.argos", "approved", true, List.of("oa")));
         stub(ResourceKind.SERVICE, service("openaire.graph", "approved", true, List.of("node")));
         stub(ResourceKind.SERVICE, service("openaire.openplato", "pending", false, List.of("oa")));
+        stub(ResourceKind.SERVICE, service("openaire.shared", "pending", false, List.of("oa", "node")));
+        Map<String, Object> nodeProvider = bundle(ResourceKind.PROVIDER, "nodeprov", "approved", true,
+                Map.of("name", "Node provider"));
+        nodeProvider.put("properties", Map.of("channels", List.of("node")));
+        stub(ResourceKind.PROVIDER, nodeProvider);
     }
 
     @AfterEach
@@ -414,6 +421,79 @@ class RecordControllerTest {
                         .content("{\"name\":\"Anonymous\"}"))
                 .andExpect(status().isForbidden());
         verify(bundles, never()).create(any(), any(), any(), any());
+    }
+
+    @Test
+    void aChannelAdministratorListsTheBundlesOfTheirChannelsWhateverTheirActivity() throws Exception {
+        when(bundles.search(eq(ResourceKind.SERVICE), any())).thenReturn(new Paging<>(0, 0, 0, List.of(), List.of()));
+
+        mvc.perform(as(get("/node/services/bundles").param("channels", "node"), OA_ADMIN)).andExpect(status().isOk());
+        mvc.perform(as(get("/node/services/bundles"), ADMIN)).andExpect(status().isOk());
+
+        ArgumentCaptor<FacetFilter> filter = ArgumentCaptor.forClass(FacetFilter.class);
+        verify(bundles, times(2)).search(eq(ResourceKind.SERVICE), filter.capture());
+        assertEquals(List.of("oa"), filter.getAllValues().get(0).getFilter().get("channels"));
+        assertNull(filter.getAllValues().get(0).getFilter().get("active"));
+        assertNull(filter.getAllValues().get(1).getFilter().get("channels"));
+    }
+
+    @Test
+    void aChannelAdministratorReviewsRecordsListedOnTheirChannel() throws Exception {
+        when(bundles.approve(eq(ResourceKind.SERVICE), any(), any(), any()))
+                .thenReturn(service("openaire.openplato", "approved", true, List.of("oa")));
+
+        mvc.perform(as(post("/oa/services/bundles/openaire.openplato/approve"), OA_ADMIN)).andExpect(status().isOk());
+        mvc.perform(as(post("/node/services/bundles/openaire.shared/approve"), OA_ADMIN)).andExpect(status().isOk());
+        mvc.perform(as(post("/oa/services/bundles/openaire.graph/approve"), OA_ADMIN))
+                .andExpect(status().isForbidden());
+        mvc.perform(as(get("/oa/services/bundles/openaire.openplato"), OA_ADMIN)).andExpect(status().isOk());
+        mvc.perform(as(get("/node/services/bundles/openaire.graph"), OA_ADMIN)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void aChannelAdministratorChangesOnlyTheirOwnChannelAndKeepsOneListed() throws Exception {
+        when(bundles.setChannel(any(), any(), any(), anyBoolean(), any())).thenReturn(List.of("node"));
+
+        mvc.perform(as(delete("/oa/services/bundles/openaire.shared/channels/oa"), OA_ADMIN))
+                .andExpect(status().isOk());
+        mvc.perform(as(delete("/oa/services/bundles/openaire.argos/channels/oa"), OA_ADMIN))
+                .andExpect(status().isForbidden());
+        mvc.perform(as(put("/oa/services/bundles/openaire.argos/channels/node"), OA_ADMIN))
+                .andExpect(status().isForbidden());
+        mvc.perform(as(put("/node/services/bundles/openaire.graph/channels/oa"), OA_ADMIN))
+                .andExpect(status().isForbidden());
+        mvc.perform(as(delete("/oa/services/bundles/openaire.argos/channels/oa"), ADMIN)).andExpect(status().isOk());
+    }
+
+    @Test
+    void aChannelAdministratorAddsAndMovesServicesUnderProvidersOfTheirChannelOnly() throws Exception {
+        when(bundles.create(eq(ResourceKind.SERVICE), any(), any(), any()))
+                .thenReturn(service("openaire.new", "pending", false, List.of("oa")));
+        when(bundles.update(eq(ResourceKind.SERVICE), any(), any(), any(), anyBoolean(), any()))
+                .thenReturn(service("openaire.argos", "approved", true, List.of("oa")));
+
+        mvc.perform(as(post("/oa/services"), OA_ADMIN).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"New\",\"resourceOrganisation\":\"openaire\"}"))
+                .andExpect(status().isCreated());
+        mvc.perform(as(post("/oa/services"), OA_ADMIN).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"New\",\"resourceOrganisation\":\"nodeprov\"}"))
+                .andExpect(status().isForbidden());
+
+        mvc.perform(as(put("/oa/services/openaire.argos"), OA_ADMIN).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Argos\",\"resourceOrganisation\":\"nodeprov\"}"))
+                .andExpect(status().isOk());
+        verify(bundles).update(eq(ResourceKind.SERVICE), any(), any(), any(), eq(false), any());
+    }
+
+    @Test
+    void aChannelAdministratorRegistersProvidersWithoutAnInvitation() throws Exception {
+        when(bundles.create(eq(ResourceKind.PROVIDER), any(), any(), any()))
+                .thenReturn(bundle(ResourceKind.PROVIDER, "new", "pending", false, Map.of("name", "New")));
+
+        mvc.perform(as(post("/oa/providers"), OA_ADMIN).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"New\",\"abbreviation\":\"new\"}"))
+                .andExpect(status().isCreated());
+        verify(invitations, never()).verify(any(), any());
     }
 
     private void stub(ResourceKind kind, Map<String, Object> bundle) {

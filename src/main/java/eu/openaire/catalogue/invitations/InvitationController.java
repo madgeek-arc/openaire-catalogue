@@ -24,7 +24,7 @@ public class InvitationController {
 
     @PostMapping(produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_EPOT')")
+    @PreAuthorize("@access.isReviewer(authentication)")
     public String create(@RequestParam String email, @Parameter(hidden = true) Authentication authentication) {
         return invitationService.create(UserInfo.of(authentication).email(), email);
     }

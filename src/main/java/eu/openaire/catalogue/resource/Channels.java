@@ -51,6 +51,15 @@ public final class Channels {
     }
 
     /**
+     * Limits a listing to the records listed on any of the channels, whatever their activity, overriding any channel
+     * the client sent.
+     */
+    public static FacetFilter listedOn(FacetFilter filter, Collection<String> channels) {
+        filter.addFilter(PROPERTY, new ArrayList<>(channels));
+        return filter;
+    }
+
+    /**
      * @return the given bundle
      * @throws ResourceNotFoundException if the bundle is not listed on the channel
      */

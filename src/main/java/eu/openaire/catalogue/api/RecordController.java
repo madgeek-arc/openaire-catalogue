@@ -87,13 +87,18 @@ public abstract class RecordController {
     }
 
     @Operation(summary = "Returns the bundles of every record, whatever its status or channels, based on a set of "
-            + "filters. Reviewers only.")
+            + "filters. Reviewers only; channel administrators get the records listed on their channels.")
     @BrowseParameters
     @GetMapping("bundles")
     @PreAuthorize("@access.isReviewer(authentication)")
     public Paging<Map<String, Object>> getAllBundles(
-            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
-        return bundles.search(kind, FacetFilter.from(params));
+            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params,
+            @Parameter(hidden = true) Authentication auth) {
+        FacetFilter filter = FacetFilter.from(params);
+        if (!access.isGlobalReviewer(auth)) {
+            Channels.listedOn(filter, access.adminChannels(auth));
+        }
+        return bundles.search(kind, filter);
     }
 
     @Operation(summary = "Registers a new record, listed on the channel of this API. It stays pending, and hidden, "
@@ -129,8 +134,8 @@ public abstract class RecordController {
                     HttpStatus.BAD_REQUEST);
         }
         payload.put(Bundles.ID, id);
-        Map<String, Object> stored = bundles.update(kind, payload, comment, UserInfo.of(auth), access.isReviewer(auth),
-                unquote(ifMatch));
+        Map<String, Object> stored = bundles.update(kind, payload, comment, UserInfo.of(auth),
+                access.canMove(auth, kind, payload), unquote(ifMatch));
         return withVersion(ResponseEntity.ok(), stored).body(Bundles.payload(stored, kind));
     }
 
@@ -154,7 +159,7 @@ public abstract class RecordController {
     @Operation(summary = "Approves the record with the given id, which makes it active. A service or datasource is "
             + "approved only under an approved, active provider or service. Reviewers only.")
     @PostMapping("bundles/{id}/approve")
-    @PreAuthorize("@access.isReviewer(authentication)")
+    @PreAuthorize("@access.reviews(authentication, #root.this.kind, #id)")
     public Map<String, Object> approve(@PathVariable String id, @RequestBody(required = false) ActionRequest request,
                                        @Parameter(hidden = true) Authentication auth) {
         return bundles.approve(kind, id, ActionRequest.commentOf(request), UserInfo.of(auth));
@@ -162,7 +167,7 @@ public abstract class RecordController {
 
     @Operation(summary = "Rejects the record with the given id, which makes it inactive. Reviewers only.")
     @PostMapping("bundles/{id}/reject")
-    @PreAuthorize("@access.isReviewer(authentication)")
+    @PreAuthorize("@access.reviews(authentication, #root.this.kind, #id)")
     public Map<String, Object> reject(@PathVariable String id, @RequestBody(required = false) ActionRequest request,
                                       @Parameter(hidden = true) Authentication auth) {
         return bundles.reject(kind, id, ActionRequest.commentOf(request), UserInfo.of(auth));
@@ -171,7 +176,7 @@ public abstract class RecordController {
     @Operation(summary = "Activates the record with the given id. Only an approved record can be activated. "
             + "Reviewers only.")
     @PostMapping("bundles/{id}/activate")
-    @PreAuthorize("@access.isReviewer(authentication)")
+    @PreAuthorize("@access.reviews(authentication, #root.this.kind, #id)")
     public Map<String, Object> activate(@PathVariable String id, @RequestBody(required = false) ActionRequest request,
                                         @Parameter(hidden = true) Authentication auth) {
         return bundles.setActive(kind, id, true, ActionRequest.commentOf(request), UserInfo.of(auth));
@@ -179,25 +184,26 @@ public abstract class RecordController {
 
     @Operation(summary = "Deactivates the record with the given id. Reviewers only.")
     @PostMapping("bundles/{id}/deactivate")
-    @PreAuthorize("@access.isReviewer(authentication)")
+    @PreAuthorize("@access.reviews(authentication, #root.this.kind, #id)")
     public Map<String, Object> deactivate(@PathVariable String id, @RequestBody(required = false) ActionRequest request,
                                           @Parameter(hidden = true) Authentication auth) {
         return bundles.setActive(kind, id, false, ActionRequest.commentOf(request), UserInfo.of(auth));
     }
 
     @Operation(summary = "Adds the record to a channel. Adding it to a channel it is on changes nothing. Reviewers "
-            + "only.")
+            + "only; a channel administrator adds their own channel to records they review.")
     @PutMapping("bundles/{id}/channels/{channel}")
-    @PreAuthorize("@access.isReviewer(authentication)")
+    @PreAuthorize("@access.canChangeChannel(authentication, #root.this.kind, #id, #channel, true)")
     public List<String> addChannel(@PathVariable String id, @PathVariable String channel,
                                    @Parameter(hidden = true) Authentication auth) {
         return bundles.setChannel(kind, id, channel, true, UserInfo.of(auth));
     }
 
     @Operation(summary = "Removes the record from a channel. Removing it from a channel it is not on changes nothing. "
-            + "Reviewers only.")
+            + "Reviewers only; a channel administrator removes their own channel from records they review, unless it "
+            + "is the last one.")
     @DeleteMapping("bundles/{id}/channels/{channel}")
-    @PreAuthorize("@access.isReviewer(authentication)")
+    @PreAuthorize("@access.canChangeChannel(authentication, #root.this.kind, #id, #channel, false)")
     public List<String> removeChannel(@PathVariable String id, @PathVariable String channel,
                                       @Parameter(hidden = true) Authentication auth) {
         return bundles.setChannel(kind, id, channel, false, UserInfo.of(auth));
