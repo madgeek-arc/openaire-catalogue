@@ -2,11 +2,18 @@ package eu.openaire.catalogue.vocabulary;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
@@ -15,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Vocabulary reads, under both {@code vocabulary} and {@code vocabularies}. {@code types/{type}/{id}} answers 200 or
- * 404.
+ * Vocabulary routes, under both {@code vocabulary} and {@code vocabularies}: public reads, and writes for admins.
+ * {@code types/{type}/{id}} answers 200 or 404.
  */
 @RestController
 @RequestMapping(path = {"vocabulary", "vocabularies"}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -68,8 +75,63 @@ public class VocabularyController {
         return vocabularies.byTypeAndId(type, prefix + "/" + suffix);
     }
 
+    @Operation(summary = "Adds a vocabulary entry. Admins only.")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Map<String, Object> add(@RequestBody Map<String, Object> entry) {
+        try {
+            return vocabularies.add(entry);
+        } finally {
+            mappings = null;
+        }
+    }
+
+    @Operation(summary = "Adds several vocabulary entries, in order; those before an invalid one stay stored. Admins "
+            + "only.")
+    @PostMapping(path = "bulk", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<Map<String, Object>> addAll(@RequestBody List<Map<String, Object>> entries) {
+        try {
+            return vocabularies.addAll(entries);
+        } finally {
+            mappings = null;
+        }
+    }
+
+    @Operation(summary = "Replaces the vocabulary entry with the given id. Admins only.")
+    @PutMapping(path = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Map<String, Object> update(@PathVariable String id, @RequestBody Map<String, Object> entry) {
+        try {
+            return vocabularies.update(id, entry);
+        } finally {
+            mappings = null;
+        }
+    }
+
+    @Operation(summary = "Deletes the vocabulary entry with the given id. Admins only.")
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Map<String, Object> delete(@PathVariable String id) {
+        try {
+            return vocabularies.delete(id);
+        } finally {
+            mappings = null;
+        }
+    }
+
+    @Operation(summary = "Checks a vocabulary entry without storing it: it needs an id, a name, a type whose entries "
+            + "are not derived, and an existing parent when one is given. Admins only.")
+    @PostMapping(path = "validate", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Map<String, Object> validate(@RequestBody Map<String, Object> entry) {
+        return vocabularies.validate(entry);
+    }
+
     /**
-     * Results are cached for ten minutes.
+     * Results are cached for ten minutes, or until an entry is written.
      */
     @Operation(summary = "Returns every vocabulary, with the providers and services, as type name to values: the "
             + "format consumed by the OpenAIRE form models.")

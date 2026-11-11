@@ -5,10 +5,12 @@ import eu.openaire.catalogue.resource.Bundles;
 import eu.openaire.catalogue.resource.ResourceKind;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
+import gr.uoa.di.madgik.registry.exception.ResourceException;
 import gr.uoa.di.madgik.registry.exception.ResourceNotFoundException;
 import gr.uoa.di.madgik.registry.service.GenericResourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -114,6 +116,78 @@ public class VocabularyService {
         }
         result.values().forEach(entries -> entries.sort(Comparator.comparing(e -> String.valueOf(e.get("name")))));
         return result;
+    }
+
+    /**
+     * Stores a new entry.
+     *
+     * @throws ResourceException if the entry is not valid, see {@link #validate(Map)}
+     */
+    public Map<String, Object> add(Map<String, Object> entry) {
+        return resources.add(RESOURCE_TYPE, validate(entry), true);
+    }
+
+    /**
+     * Stores several new entries, in order. Entries before an invalid one stay stored.
+     */
+    public List<Map<String, Object>> addAll(List<Map<String, Object>> entries) {
+        return entries.stream().map(this::add).toList();
+    }
+
+    /**
+     * Replaces the entry with the id.
+     *
+     * @throws ResourceException         if the entry is not valid, or its id differs from the given one
+     * @throws ResourceNotFoundException if no entry has the id
+     */
+    public Map<String, Object> update(String id, Map<String, Object> entry) {
+        Map<String, Object> updated = new LinkedHashMap<>(entry);
+        Object payloadId = updated.putIfAbsent("id", id);
+        if (payloadId != null && !id.equals(payloadId.toString())) {
+            throw new ResourceException("The entry id '" + payloadId + "' differs from '" + id + "'",
+                    HttpStatus.BAD_REQUEST);
+        }
+        get(id);
+        return resources.update(RESOURCE_TYPE, validate(updated), true);
+    }
+
+    /**
+     * @return the deleted entry
+     * @throws ResourceNotFoundException if no entry has the id
+     */
+    public Map<String, Object> delete(String id) {
+        return resources.delete(RESOURCE_TYPE, id);
+    }
+
+    /**
+     * An entry needs an id, a name and a type that is not a reference or combined type; its parent, when given, must
+     * exist.
+     *
+     * @return the entry
+     * @throws ResourceException if the entry is not valid
+     */
+    public Map<String, Object> validate(Map<String, Object> entry) {
+        for (String field : List.of("id", "name", "type")) {
+            Object value = entry.get(field);
+            if (value == null || value.toString().isBlank()) {
+                throw new ResourceException("The entry has no " + field, HttpStatus.BAD_REQUEST);
+            }
+        }
+        String type = entry.get("type").toString();
+        if (REFERENCE_TYPES.containsKey(type) || COMBINED_TYPES.containsKey(type)) {
+            throw new ResourceException("The entries of '" + type + "' are derived and cannot be stored",
+                    HttpStatus.BAD_REQUEST);
+        }
+        Object parentId = entry.get("parentId");
+        if (parentId != null && !parentId.toString().isBlank()) {
+            try {
+                get(parentId.toString());
+            } catch (ResourceNotFoundException e) {
+                throw new ResourceException("The parent entry '" + parentId + "' does not exist",
+                        HttpStatus.BAD_REQUEST);
+            }
+        }
+        return entry;
     }
 
     /**

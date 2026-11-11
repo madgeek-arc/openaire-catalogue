@@ -4,6 +4,7 @@ import eu.openaire.catalogue.resource.BundleService;
 import eu.openaire.catalogue.resource.ResourceKind;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
+import gr.uoa.di.madgik.registry.exception.ResourceException;
 import gr.uoa.di.madgik.registry.exception.ResourceNotFoundException;
 import gr.uoa.di.madgik.registry.service.GenericResourceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class VocabularyServiceTest {
@@ -33,8 +40,11 @@ class VocabularyServiceTest {
 
     @BeforeEach
     void setUp() {
+        when(resources.get(eq("vocabulary"), anyString())).thenAnswer(call -> {
+            throw new ResourceNotFoundException(call.<String>getArgument(1), "vocabulary");
+        });
         for (Map<String, Object> entry : ENTRIES) {
-            when(resources.get("vocabulary", (String) entry.get("id"))).thenReturn(entry);
+            doReturn(entry).when(resources).get("vocabulary", (String) entry.get("id"));
         }
         when(resources.getResults(any(FacetFilter.class))).thenAnswer(call -> {
             Object type = call.<FacetFilter>getArgument(0).getFilter().get("type");
@@ -70,5 +80,37 @@ class VocabularyServiceTest {
         assertEquals("OpenAIRE", service.byTypeAndId("Provider", "openaire").get("name"));
         assertEquals("OpenAIRE", service.byTypeAndId("resourceProviders", "openaire").get("name"));
         assertThrows(ResourceNotFoundException.class, () -> service.byTypeAndId("Service", "openaire.openplato"));
+    }
+
+    @Test
+    void anEntryNeedsAnIdANameAndAStoredType() {
+        assertEquals(400, assertThrows(ResourceException.class,
+                () -> service.add(Map.of("id", "FR", "type", "Country"))).getStatus().value());
+        assertThrows(ResourceException.class, () -> service.add(Map.of("id", "x", "name", "X", "type", "Provider")));
+        assertThrows(ResourceException.class,
+                () -> service.add(Map.of("id", "x", "name", "X", "type", "Geographical availability")));
+        verify(resources, never()).add(anyString(), anyMap(), anyBoolean());
+
+        service.add(Map.of("id", "FR", "name", "France", "type", "Country"));
+        verify(resources).add("vocabulary", Map.of("id", "FR", "name", "France", "type", "Country"), true);
+    }
+
+    @Test
+    void theParentOfAnEntryMustExist() {
+        assertThrows(ResourceException.class,
+                () -> service.validate(Map.of("id", "x", "name", "X", "type", "Country", "parentId", "nowhere")));
+        assertEquals("x", service.validate(Map.of("id", "x", "name", "X", "type", "Country", "parentId", "WW"))
+                .get("id"));
+    }
+
+    @Test
+    void anUpdateKeepsTheIdOfThePath() {
+        assertThrows(ResourceException.class,
+                () -> service.update("GR", Map.of("id", "FR", "name", "France", "type", "Country")));
+        assertThrows(ResourceNotFoundException.class,
+                () -> service.update("FR", Map.of("name", "France", "type", "Country")));
+
+        service.update("GR", Map.of("name", "Hellas", "type", "Country"));
+        verify(resources).update("vocabulary", Map.of("id", "GR", "name", "Hellas", "type", "Country"), true);
     }
 }
