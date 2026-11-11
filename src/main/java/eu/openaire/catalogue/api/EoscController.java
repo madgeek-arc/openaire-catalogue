@@ -34,7 +34,7 @@ import tools.jackson.databind.introspect.BeanPropertyDefinition;
 
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,10 +44,12 @@ import java.util.stream.Collectors;
  * {@link Service} or {@link Datasource} and written from it, so fields outside those classes are left out. Only the
  * active records on the channel set by {@code openaire.eosc-channel} are shown. Providers are shown without their
  * users, whose emails are personal data. Search facets are limited to the index fields whose path is a lot1 field.
+ * The output follows the lot1 classes on the classpath, so a new lot1 version changes version 1 of this API unless it
+ * is pinned.
  */
 @RestController
-@RequestMapping(path = "eosc", produces = MediaType.APPLICATION_JSON_VALUE)
-@Tag(name = "EOSC", description = "Active providers, services and datasources in the lot1 format")
+@RequestMapping(path = "eosc/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "EOSC", description = "Active providers, services and datasources in the lot1 format, version 1")
 public class EoscController {
 
     private static final String LOT1_PACKAGE = Service.class.getPackageName();
@@ -59,7 +61,7 @@ public class EoscController {
     private final ObjectReader services;
     private final ObjectReader providers;
     private final ObjectReader datasources;
-    private final Map<ResourceKind, Set<String>> lot1Paths = new EnumMap<>(ResourceKind.class);
+    private final Map<ResourceKind, Map<String, String>> lot1Fields = new EnumMap<>(ResourceKind.class);
 
     public EoscController(BundleService bundles, ResourceTypeService resourceTypes, ObjectMapper mapper,
                           OpenAIREProperties properties) {
@@ -70,11 +72,11 @@ public class EoscController {
         this.services = reader(Service.class);
         this.providers = reader(Provider.class);
         this.datasources = reader(Datasource.class);
-        Set<String> providerPaths = paths(Provider.class);
-        providerPaths.removeIf(path -> path.equals("users") || path.startsWith("users."));
-        lot1Paths.put(ResourceKind.PROVIDER, providerPaths);
-        lot1Paths.put(ResourceKind.SERVICE, paths(Service.class));
-        lot1Paths.put(ResourceKind.DATASOURCE, paths(Datasource.class));
+        Map<String, String> providerFields = fields(Provider.class);
+        providerFields.keySet().removeIf(path -> path.equals("users") || path.startsWith("users."));
+        lot1Fields.put(ResourceKind.PROVIDER, providerFields);
+        lot1Fields.put(ResourceKind.SERVICE, fields(Service.class));
+        lot1Fields.put(ResourceKind.DATASOURCE, fields(Datasource.class));
     }
 
     @Operation(summary = "Returns the provider with the given id.")
@@ -152,6 +154,13 @@ public class EoscController {
     }
 
     /**
+     * @return the fields a record of {@code kind} can have in the output: dotted path to Java type
+     */
+    Map<String, String> lot1Fields(ResourceKind kind) {
+        return lot1Fields.get(kind);
+    }
+
+    /**
      * @return the names of the index fields of {@code kind} whose path, inside the payload, is a lot1 field
      */
     Set<String> lot1IndexFields(ResourceKind kind) {
@@ -159,7 +168,7 @@ public class EoscController {
         if (type == null || type.getIndexFields() == null) {
             return Set.of();
         }
-        Set<String> paths = lot1Paths.get(kind);
+        Set<String> paths = lot1Fields.get(kind).keySet();
         String prefix = "$." + kind.type() + ".";
         return type.getIndexFields().stream()
                 .filter(field -> field.getPath() != null && field.getPath().startsWith(prefix))
@@ -171,21 +180,21 @@ public class EoscController {
     /**
      * @return the dotted paths of every property of {@code type}, descending into collections and lot1 classes
      */
-    private Set<String> paths(Class<?> type) {
-        Set<String> paths = new LinkedHashSet<>();
+    private Map<String, String> fields(Class<?> type) {
+        Map<String, String> paths = new LinkedHashMap<>();
         collectPaths(mapper.constructType(type), "", paths, new HashSet<>());
         return paths;
     }
 
-    private void collectPaths(JavaType type, String prefix, Set<String> paths, Set<Class<?>> visiting) {
+    private void collectPaths(JavaType type, String prefix, Map<String, String> paths, Set<Class<?>> visiting) {
         if (!visiting.add(type.getRawClass())) {
             return;
         }
         for (BeanPropertyDefinition property : mapper._serializationContext().introspectBeanDescription(type)
                 .findProperties()) {
             String path = prefix + property.getName();
-            paths.add(path);
             JavaType propertyType = property.getPrimaryType();
+            paths.put(path, propertyType.toCanonical());
             while (propertyType != null && propertyType.isContainerType() && !propertyType.isMapLikeType()) {
                 propertyType = propertyType.getContentType();
             }

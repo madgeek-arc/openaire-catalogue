@@ -93,7 +93,7 @@ class SecurityConfigTest {
     void publicRoutesAreOpenToEveryone() throws Exception {
         expect(status().isOk(), get("/oa/services"), get("/oa/providers/openaire"), post("/oa/services"),
                 get("/node/services"), get("/node/datasources/x"), post("/node/providers"),
-                get("/eosc/services"), get("/vocabularies/byType"), get("/vocabulary/types/Provider"),
+                get("/eosc/v1/services"), get("/vocabularies/byType"), get("/vocabulary/types/Provider"),
                 get("/dsm/datasources"), get("/forms/models"), get("/models/m-oa-service"),
                 get("/v3/api-docs"), get("/actuator/health"));
     }
