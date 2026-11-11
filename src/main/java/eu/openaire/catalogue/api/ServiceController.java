@@ -4,6 +4,7 @@ import eu.openaire.catalogue.resource.BundleService;
 import eu.openaire.catalogue.resource.Bundles;
 import eu.openaire.catalogue.resource.ResourceKind;
 import eu.openaire.catalogue.security.AccessRules;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,14 @@ public abstract class ServiceController extends RecordController {
 
     protected ServiceController(String channel, BundleService bundles, AccessRules access) {
         super(ResourceKind.SERVICE, channel, bundles, access);
+    }
+
+    /**
+     * Lists services by name.
+     */
+    @Override
+    protected void defaultOrder(FacetFilter filter) {
+        filter.addOrderBy("name", "asc");
     }
 
     @Operation(summary = "Returns every service of a provider, whatever its status or channels, to those who manage "

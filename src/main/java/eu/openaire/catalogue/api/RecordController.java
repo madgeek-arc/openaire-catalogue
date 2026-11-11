@@ -72,6 +72,9 @@ public abstract class RecordController {
     @GetMapping
     public Paging<Map<String, Object>> getAll(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
         FacetFilter filter = publicFilter(FacetFilter.from(params));
+        if (filter.getOrderBy() == null || filter.getOrderBy().isEmpty()) {
+            defaultOrder(filter);
+        }
         return bundles.search(kind, filter).map(bundle -> publicView(Bundles.payload(bundle, kind)));
     }
 
@@ -230,6 +233,12 @@ public abstract class RecordController {
      */
     protected FacetFilter publicFilter(FacetFilter filter) {
         return Channels.restrict(filter, channel);
+    }
+
+    /**
+     * Sets the order of a public listing whose client asked for none. Unordered by default.
+     */
+    protected void defaultOrder(FacetFilter filter) {
     }
 
     /**

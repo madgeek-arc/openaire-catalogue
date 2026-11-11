@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -177,6 +178,26 @@ class RecordControllerTest {
         verify(bundles).search(eq(ResourceKind.SERVICE), filter.capture());
         assertEquals(true, filter.getValue().getFilter().get("active"));
         assertEquals("oa", filter.getValue().getFilter().get("channels"));
+    }
+
+    @Test
+    void providersAndServicesAreListedByNameUnlessTheClientSetsAnOrder() throws Exception {
+        when(bundles.search(any(), any())).thenReturn(new Paging<>(0, 0, 0, List.of(), List.of()));
+
+        mvc.perform(get("/oa/providers")).andExpect(status().isOk());
+        mvc.perform(get("/oa/services").param("sort", "abbreviation").param("order", "desc"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/node/datasources")).andExpect(status().isOk());
+
+        ArgumentCaptor<FacetFilter> provider = ArgumentCaptor.forClass(FacetFilter.class);
+        ArgumentCaptor<FacetFilter> service = ArgumentCaptor.forClass(FacetFilter.class);
+        ArgumentCaptor<FacetFilter> datasource = ArgumentCaptor.forClass(FacetFilter.class);
+        verify(bundles).search(eq(ResourceKind.PROVIDER), provider.capture());
+        verify(bundles).search(eq(ResourceKind.SERVICE), service.capture());
+        verify(bundles).search(eq(ResourceKind.DATASOURCE), datasource.capture());
+        assertEquals(Map.of("name", Map.of("order", "asc")), provider.getValue().getOrderBy());
+        assertEquals(Map.of("abbreviation", Map.of("order", "desc")), service.getValue().getOrderBy());
+        assertNull(datasource.getValue().getOrderBy());
     }
 
     @Test

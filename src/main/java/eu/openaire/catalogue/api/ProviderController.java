@@ -6,6 +6,7 @@ import eu.openaire.catalogue.resource.BundleService;
 import eu.openaire.catalogue.resource.Bundles;
 import eu.openaire.catalogue.resource.ResourceKind;
 import eu.openaire.catalogue.security.AccessRules;
+import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.exception.ResourceException;
 import gr.uoa.di.madgik.resourcecatalogue.dto.UserInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,6 +45,14 @@ public abstract class ProviderController extends RecordController {
                 .filter(bundle -> Bundles.userEmails(Bundles.payload(bundle, kind)).contains(email))
                 .map(bundle -> Bundles.payload(bundle, kind))
                 .toList();
+    }
+
+    /**
+     * Lists providers by name.
+     */
+    @Override
+    protected void defaultOrder(FacetFilter filter) {
+        filter.addOrderBy("name", "asc");
     }
 
     /**
