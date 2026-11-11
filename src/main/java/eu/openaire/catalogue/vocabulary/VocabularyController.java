@@ -78,7 +78,7 @@ public class VocabularyController {
     @Operation(summary = "Adds a vocabulary entry. Admins only.")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, Object> add(@RequestBody Map<String, Object> entry) {
         try {
             return vocabularies.add(entry);
@@ -91,7 +91,7 @@ public class VocabularyController {
             + "only.")
     @PostMapping(path = "bulk", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Map<String, Object>> addAll(@RequestBody List<Map<String, Object>> entries) {
         try {
             return vocabularies.addAll(entries);
@@ -102,7 +102,7 @@ public class VocabularyController {
 
     @Operation(summary = "Replaces the vocabulary entry with the given id. Admins only.")
     @PutMapping(path = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, Object> update(@PathVariable String id, @RequestBody Map<String, Object> entry) {
         try {
             return vocabularies.update(id, entry);
@@ -113,7 +113,7 @@ public class VocabularyController {
 
     @Operation(summary = "Deletes the vocabulary entry with the given id. Admins only.")
     @DeleteMapping("{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, Object> delete(@PathVariable String id) {
         try {
             return vocabularies.delete(id);
@@ -125,7 +125,7 @@ public class VocabularyController {
     @Operation(summary = "Checks a vocabulary entry without storing it: it needs an id, a name, a type whose entries "
             + "are not derived, and an existing parent when one is given. Admins only.")
     @PostMapping(path = "validate", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, Object> validate(@RequestBody Map<String, Object> entry) {
         return vocabularies.validate(entry);
     }

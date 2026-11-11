@@ -35,7 +35,7 @@ class BundleServiceTest {
     private static final UserInfo OWNER = new UserInfo("sub", "owner@example.org", "Owner", "User",
             List.of("ROLE_USER"));
     private static final UserInfo REVIEWER = new UserInfo("sub2", "admin@example.org", "Admin", "User",
-            List.of("ADMIN", "ROLE_ADMIN", "ROLE_USER"));
+            List.of("ROLE_ADMIN", "ROLE_USER"));
 
     private final Map<String, Map<String, Map<String, Object>>> store = new HashMap<>();
     private final List<BundleEvent> events = new ArrayList<>();

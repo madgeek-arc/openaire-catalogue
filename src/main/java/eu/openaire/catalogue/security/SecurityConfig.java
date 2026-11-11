@@ -12,12 +12,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
-import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.security.oauth2.core.DefaultOAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -32,14 +35,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Browsers sign in through OIDC ({@code /oauth2/authorization/{registration}}) and keep a session; API clients send an
- * opaque bearer token, when an introspection endpoint is configured. Authorities come from {@link Roles}.
+ * opaque bearer token, when an introspection endpoint is configured. Authorities come from {@link Roles}. Login and
+ * logout return the browser to the frontend that started them, as chosen by {@link RedirectTargets}.
  * Every route needs an administrator unless it is listed here, so routes added by libraries are closed by default.
  * The public routes are open at the URL level only. Unauthenticated calls get 401 rather than a login redirect.
  */
@@ -82,7 +85,7 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_ROUTES).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_READ_ROUTES).permitAll()
                         .requestMatchers(AUTHENTICATED_ROUTES).authenticated()
-                        .anyRequest().hasAuthority(Roles.ROLE_ADMIN))
+                        .anyRequest().hasRole("ADMIN"))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .cors(Customizer.withDefaults())
@@ -90,12 +93,19 @@ public class SecurityConfig {
 
         ClientRegistrationRepository repository = registrations.getIfAvailable();
         if (repository != null) {
+            RedirectTargets targets = new RedirectTargets(properties.getAllowedOrigins());
             http
                     .oauth2Login(login -> login
-                            .successHandler((request, response, auth) ->
-                                    response.sendRedirect(properties.getLoginRedirect())))
+                            .authorizationEndpoint(endpoint -> endpoint
+                                    .authorizationRequestResolver(LoginRedirects.resolver(repository, targets))
+                                    .authorizationRequestRepository(LoginRedirects.repository()))
+                            .userInfoEndpoint(userInfo -> userInfo
+                                    .oidcUserService(new RoleOidcUserService(roles,
+                                            !properties.getRoles().getIdpRoleClaims().isEmpty()))
+                                    .userService(oauth2UserService()))
+                            .successHandler(LoginRedirects.successHandler(properties.getLoginRedirect())))
                     .logout(logout -> logout
-                            .logoutSuccessHandler(logoutSuccessHandler(repository))
+                            .logoutSuccessHandler(logoutSuccessHandler(repository, targets))
                             .clearAuthentication(true)
                             .invalidateHttpSession(true));
         }
@@ -107,42 +117,37 @@ public class SecurityConfig {
     }
 
     /**
-     * Replaces the authorities of an OIDC or OAuth2 login with those {@link Roles} grants to the user's email.
+     * Loads users of plain OAuth2 providers with the authorities {@link Roles} grants to their email.
      */
-    @Bean
-    GrantedAuthoritiesMapper userAuthoritiesMapper() {
-        return authorities -> {
-            Set<GrantedAuthority> mapped = new HashSet<>();
-            for (GrantedAuthority authority : authorities) {
-                String email = null;
-                if (authority instanceof OidcUserAuthority oidc) {
-                    email = oidc.getUserInfo() != null ? oidc.getUserInfo().getEmail()
-                            : (String) oidc.getAttributes().get("email");
-                } else if (authority instanceof OAuth2UserAuthority oauth2) {
-                    email = (String) oauth2.getAttributes().get("email");
-                }
-                if (email != null) {
-                    mapped.addAll(roles.authorities(email));
-                }
-            }
-            return mapped;
+    private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
+        DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
+        return request -> {
+            OAuth2User user = delegate.loadUser(request);
+            Object email = user.getAttributes().get("email");
+            String nameAttribute = request.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
+                    .getUserNameAttributeName();
+            return new DefaultOAuth2User(roles.authorities(email != null ? email.toString() : null),
+                    user.getAttributes(), nameAttribute);
         };
     }
 
     /**
-     * Grants the authorities of a bearer token from the email in its introspection result. A token without an email is
-     * refused.
+     * Grants the authorities of a bearer token from the email and identity provider roles in its introspection result.
+     * A token without an email is refused. A {@code {client}} segment of a role claim path stands for the
+     * introspection client id.
      */
     @Bean
     @ConditionalOnProperty(prefix = "spring.security.oauth2.resourceserver.opaquetoken", name = "introspection-uri")
-    OpaqueTokenAuthenticationConverter opaqueTokenAuthenticationConverter() {
+    OpaqueTokenAuthenticationConverter opaqueTokenAuthenticationConverter(
+            @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id:}") String clientId) {
         return (token, principal) -> {
             Map<String, Object> attributes = principal.getAttributes();
             Object email = attributes.get("email");
             if (email == null || email.toString().isBlank()) {
                 throw new InvalidBearerTokenException("The token has no email");
             }
-            Set<GrantedAuthority> authorities = roles.authorities(email.toString());
+            Set<GrantedAuthority> authorities = roles.authorities(email.toString(),
+                    roles.idpRoles(attributes, clientId));
             DefaultOAuth2AuthenticatedPrincipal enriched =
                     new DefaultOAuth2AuthenticatedPrincipal(principal.getName(), attributes, authorities);
             Instant issuedAt = enriched.getAttribute(OAuth2TokenIntrospectionClaimNames.IAT);
@@ -167,10 +172,21 @@ public class SecurityConfig {
         return source;
     }
 
-    private LogoutSuccessHandler logoutSuccessHandler(ClientRegistrationRepository repository) {
-        OidcClientInitiatedLogoutSuccessHandler handler = new OidcClientInitiatedLogoutSuccessHandler(repository);
-        handler.setPostLogoutRedirectUri(properties.getLogoutRedirect());
-        handler.setDefaultTargetUrl(properties.getLogoutRedirect());
-        return handler;
+    /**
+     * Ends the session at the provider, which then returns the browser to the origin of the frontend that asked for the
+     * logout, or else to {@code openaire.logout-redirect}. Only the origin is passed on, because the provider must
+     * know each return address in advance.
+     */
+    private LogoutSuccessHandler logoutSuccessHandler(ClientRegistrationRepository repository,
+                                                      RedirectTargets targets) {
+        return (request, response, authentication) -> {
+            String target = targets.resolve(request)
+                    .map(RedirectTargets::origin)
+                    .orElse(properties.getLogoutRedirect());
+            OidcClientInitiatedLogoutSuccessHandler handler = new OidcClientInitiatedLogoutSuccessHandler(repository);
+            handler.setPostLogoutRedirectUri(target);
+            handler.setDefaultTargetUrl(target);
+            handler.onLogoutSuccess(request, response, authentication);
+        };
     }
 }

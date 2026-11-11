@@ -1,5 +1,6 @@
 package eu.openaire.catalogue.invitations;
 
+import eu.openaire.catalogue.config.OpenAIREProperties;
 import gr.uoa.di.madgik.registry.exception.ResourceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,8 @@ class JWSInvitationServiceTest {
 
     @BeforeEach
     void setUp() {
-        InvitationProperties properties = new InvitationProperties();
-        properties.getJws().setSecret("0123456789abcdef0123456789abcdef");
+        OpenAIREProperties properties = new OpenAIREProperties();
+        properties.getInvitations().getJws().setSecret("0123456789abcdef0123456789abcdef");
         service = new JWSInvitationService(properties);
     }
 

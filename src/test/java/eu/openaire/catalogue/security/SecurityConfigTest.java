@@ -1,6 +1,5 @@
 package eu.openaire.catalogue.security;
 
-import eu.openaire.catalogue.config.CatalogueProperties;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import jakarta.servlet.Filter;
 import org.junit.jupiter.api.AfterEach;
@@ -58,12 +57,7 @@ class SecurityConfigTest {
         }
 
         @Bean
-        CatalogueProperties catalogueProperties() {
-            return new CatalogueProperties();
-        }
-
-        @Bean
-        Roles roles(CatalogueProperties properties) {
+        Roles roles(OpenAIREProperties properties) {
             return new Roles(properties);
         }
 

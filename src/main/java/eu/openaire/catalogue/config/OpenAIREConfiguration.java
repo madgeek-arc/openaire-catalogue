@@ -1,6 +1,5 @@
 package eu.openaire.catalogue.config;
 
-import eu.openaire.catalogue.invitations.InvitationProperties;
 import gr.uoa.di.madgik.catalogue.service.ModelResourceTypeMapper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
 @EnableAsync
-@EnableConfigurationProperties({OpenAIREProperties.class, CatalogueProperties.class, InvitationProperties.class})
+@EnableConfigurationProperties(OpenAIREProperties.class)
 public class OpenAIREConfiguration {
 
     @Bean

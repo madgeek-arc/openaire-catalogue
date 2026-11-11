@@ -17,12 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "user")
 public class UserController {
 
-    @Operation(summary = "Returns the signed-in user, with their authorities.")
+    private static final String ROLE_PREFIX = "ROLE_";
+
+    @Operation(summary = "Returns the signed-in user, with their roles without the ROLE_ prefix, such as ADMIN.")
     @GetMapping("info")
     public UserInfo info(@Parameter(hidden = true) Authentication auth) {
         if (auth == null || auth instanceof AnonymousAuthenticationToken) {
             throw new AccessDeniedException("Not signed in");
         }
-        return UserInfo.of(auth);
+        UserInfo user = UserInfo.of(auth);
+        return new UserInfo(user.sub(), user.email(), user.name(), user.surname(), user.roles().stream()
+                .map(role -> role.startsWith(ROLE_PREFIX) ? role.substring(ROLE_PREFIX.length()) : role)
+                .toList());
     }
 }

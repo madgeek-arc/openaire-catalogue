@@ -2,8 +2,11 @@ package eu.openaire.catalogue.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "openaire")
 public class OpenAIREProperties {
@@ -34,7 +37,8 @@ public class OpenAIREProperties {
     private String logoutRedirect = "/";
 
     /**
-     * Origins allowed to call the API from a browser. Empty disables cross-origin requests.
+     * Origins allowed to call the API from a browser. Empty disables cross-origin requests. Login and logout redirect
+     * only to these origins.
      */
     private List<String> allowedOrigins = new ArrayList<>();
 
@@ -53,6 +57,8 @@ public class OpenAIREProperties {
      * Whether the OpenAIRE models are stored at startup and applied to their resource types.
      */
     private boolean loadModels = true;
+
+    private RoleSettings roles = new RoleSettings();
 
     private Invitations invitations = new Invitations();
 
@@ -132,6 +138,14 @@ public class OpenAIREProperties {
         this.loadModels = loadModels;
     }
 
+    public RoleSettings getRoles() {
+        return roles;
+    }
+
+    public void setRoles(RoleSettings roles) {
+        this.roles = roles;
+    }
+
     public Invitations getInvitations() {
         return invitations;
     }
@@ -156,6 +170,102 @@ public class OpenAIREProperties {
         this.dsm = dsm;
     }
 
+    /**
+     * Who gets each role, by email or by identity provider role.
+     */
+    public static class RoleSettings {
+
+        /**
+         * Paths of the claims that carry the roles a user has at the identity provider, such as
+         * {@code realm_access.roles}, with segments separated by dots. A {@code {client}} segment stands for the client
+         * id of the application. Empty ignores identity provider roles.
+         */
+        private List<String> idpRoleClaims = new ArrayList<>();
+
+        /**
+         * Administrators of every record and route.
+         */
+        private RoleScope admin = new RoleScope(List.of("Super Administrator"));
+
+        /**
+         * Reviewers of every record, alongside the administrators.
+         */
+        private RoleScope onboardingTeam = new RoleScope();
+
+        /**
+         * Administrators of the records listed on a channel, by channel name.
+         */
+        private Map<String, RoleScope> channels = new LinkedHashMap<>();
+
+        public List<String> getIdpRoleClaims() {
+            return idpRoleClaims;
+        }
+
+        public void setIdpRoleClaims(List<String> idpRoleClaims) {
+            this.idpRoleClaims = idpRoleClaims;
+        }
+
+        public RoleScope getAdmin() {
+            return admin;
+        }
+
+        public void setAdmin(RoleScope admin) {
+            this.admin = admin;
+        }
+
+        public RoleScope getOnboardingTeam() {
+            return onboardingTeam;
+        }
+
+        public void setOnboardingTeam(RoleScope onboardingTeam) {
+            this.onboardingTeam = onboardingTeam;
+        }
+
+        public Map<String, RoleScope> getChannels() {
+            return channels;
+        }
+
+        public void setChannels(Map<String, RoleScope> channels) {
+            this.channels = channels;
+        }
+    }
+
+    public static class RoleScope {
+
+        /**
+         * Emails of the users given the role.
+         */
+        private List<String> emails = new ArrayList<>();
+
+        /**
+         * Identity provider roles that give the role, read from {@code openaire.roles.idp-role-claims}.
+         */
+        private List<String> idpRoles = new ArrayList<>();
+
+        public RoleScope() {
+        }
+
+        public RoleScope(List<String> idpRoles) {
+            this.idpRoles = new ArrayList<>(idpRoles);
+        }
+
+        public List<String> getEmails() {
+            return emails;
+        }
+
+        public void setEmails(List<String> emails) {
+            this.emails = emails;
+        }
+
+        public List<String> getIdpRoles() {
+            return idpRoles;
+        }
+
+        public void setIdpRoles(List<String> idpRoles) {
+            this.idpRoles = idpRoles;
+        }
+    }
+
     public static class Invitations {
 
         /**
@@ -168,6 +278,18 @@ public class OpenAIREProperties {
          * Name of the request parameter carrying the invitation token.
          */
         private String parameter = "invitation";
+
+        /**
+         * Hash algorithm applied to the invitee email carried in a token.
+         */
+        private String hashAlgorithm = "SHA3-256";
+
+        /**
+         * Validity of a newly created invitation.
+         */
+        private Duration ttl = Duration.ofDays(30);
+
+        private Jws jws = new Jws();
 
         public boolean isRequired() {
             return required;
@@ -183,6 +305,46 @@ public class OpenAIREProperties {
 
         public void setParameter(String parameter) {
             this.parameter = parameter;
+        }
+
+        public String getHashAlgorithm() {
+            return hashAlgorithm;
+        }
+
+        public void setHashAlgorithm(String hashAlgorithm) {
+            this.hashAlgorithm = hashAlgorithm;
+        }
+
+        public Duration getTtl() {
+            return ttl;
+        }
+
+        public void setTtl(Duration ttl) {
+            this.ttl = ttl;
+        }
+
+        public Jws getJws() {
+            return jws;
+        }
+
+        public void setJws(Jws jws) {
+            this.jws = jws;
+        }
+    }
+
+    public static class Jws {
+
+        /**
+         * HMAC secret used to sign invitation tokens. At least 32 characters.
+         */
+        private String secret;
+
+        public String getSecret() {
+            return secret;
+        }
+
+        public void setSecret(String secret) {
+            this.secret = secret;
         }
     }
 

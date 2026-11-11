@@ -10,6 +10,7 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.util.Base64URL;
+import eu.openaire.catalogue.config.OpenAIREProperties;
 import gr.uoa.di.madgik.registry.exception.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,13 @@ public class JWSInvitationService implements InvitationService {
 
     private static final Logger logger = LoggerFactory.getLogger(JWSInvitationService.class);
 
-    private final InvitationProperties properties;
+    private final OpenAIREProperties.Invitations properties;
 
     private volatile JWSSigner signer;
     private volatile JWSVerifier verifier;
 
-    public JWSInvitationService(InvitationProperties properties) {
-        this.properties = properties;
+    public JWSInvitationService(OpenAIREProperties properties) {
+        this.properties = properties.getInvitations();
     }
 
     @Override
@@ -128,13 +129,13 @@ public class JWSInvitationService implements InvitationService {
     private void initCrypto() {
         String secret = properties.getJws().getSecret();
         if (secret == null || secret.isBlank()) {
-            throw new IllegalStateException("Property 'invitation.jws.secret' is not set");
+            throw new IllegalStateException("Property 'openaire.invitations.jws.secret' is not set");
         }
         try {
             this.verifier = new MACVerifier(secret);
             this.signer = new MACSigner(secret);
         } catch (JOSEException e) {
-            throw new IllegalStateException("Invalid 'invitation.jws.secret'", e);
+            throw new IllegalStateException("Invalid 'openaire.invitations.jws.secret'", e);
         }
     }
 
