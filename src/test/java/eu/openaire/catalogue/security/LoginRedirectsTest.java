@@ -35,11 +35,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Runs the real security filter chain with an OIDC registration, to check where login and logout return the browser.
+ * Runs the real security filter chain with OAuth2 registrations, to check the login page and where login and logout
+ * return the browser.
  */
 class LoginRedirectsTest {
 
@@ -60,6 +62,7 @@ class LoginRedirectsTest {
             properties.setAllowedOrigins(List.of(OA, NODE));
             properties.setLoginRedirect("https://default.example/in");
             properties.setLogoutRedirect("https://default.example");
+            properties.setLoginPage(true);
             return properties;
         }
 
@@ -80,15 +83,45 @@ class LoginRedirectsTest {
                     .tokenUri("https://idp.example/token")
                     .jwkSetUri("https://idp.example/certs")
                     .providerConfigurationMetadata(Map.of("end_session_endpoint", "https://idp.example/logout"))
-                    .build());
+                    .build(),
+                    ClientRegistration.withRegistrationId("other")
+                            .clientName("Other IdP")
+                            .clientId("catalogue")
+                            .clientSecret("secret")
+                            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                            .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                            .authorizationUri("https://other.example/auth")
+                            .tokenUri("https://other.example/token")
+                            .userInfoUri("https://other.example/userinfo")
+                            .userNameAttributeName("sub")
+                            .build());
+        }
+    }
+
+    @Configuration
+    static class AppWithoutLoginPage extends App {
+
+        @Override
+        @Bean
+        OpenAIREProperties properties() {
+            OpenAIREProperties properties = super.properties();
+            properties.setLoginPage(false);
+            return properties;
         }
     }
 
     @BeforeEach
     void setUp() {
+        start(App.class);
+    }
+
+    private void start(Class<?> app) {
+        if (context != null) {
+            context.close();
+        }
         context = new AnnotationConfigWebApplicationContext();
         context.setServletContext(new MockServletContext());
-        context.register(App.class);
+        context.register(app);
         context.refresh();
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .addFilters(context.getBean("springSecurityFilterChain", Filter.class))
@@ -101,6 +134,34 @@ class LoginRedirectsTest {
     }
 
     @Test
+    void loginPageListsEveryProvider() throws Exception {
+        String page = mvc.perform(get("/login")).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(page.contains("href=\"/oauth2/authorization/openaire\""), page);
+        assertTrue(page.contains("href=\"/oauth2/authorization/other\""), page);
+        assertTrue(page.contains("Other IdP"), page);
+    }
+
+    @Test
+    void loginPageIsOffUnlessEnabled() throws Exception {
+        start(AppWithoutLoginPage.class);
+        mvc.perform(get("/login")).andExpect(status().isNotFound());
+        assertUnauthenticatedCallsGet401();
+        startLogin(new MockHttpSession(), null, null);
+    }
+
+    @Test
+    void unauthenticatedCallsGet401RatherThanALoginRedirect() throws Exception {
+        assertUnauthenticatedCallsGet401();
+    }
+
+    private void assertUnauthenticatedCallsGet401() throws Exception {
+        mvc.perform(get("/user/info")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/anything")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/anything").header("Accept", "text/html")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void eachLoginReturnsToTheFrontendThatStartedIt() throws Exception {
         MockHttpSession session = new MockHttpSession();
         assertEquals(OA + "/services?tab=1", completeLogin(session, startLogin(session, OA + "/services?tab=1", null)));
@@ -110,13 +171,14 @@ class LoginRedirectsTest {
     }
 
     @Test
-    void logoutReturnsToTheOriginOfTheFrontend() throws Exception {
-        Map<String, String> query = logout("redirectUrl", OA + "/a?b=1&c=%20%7Bx%7D");
+    void logoutReturnsToTheFrontendThatAskedForIt() throws Exception {
+        Map<String, String> query = logout(OA + "/a?b=1&c=%20%7Bx%7D", null);
         assertEquals("https://idp.example/logout", query.get("endpoint"));
-        assertEquals(OA, query.get("post_logout_redirect_uri"));
+        assertEquals(OA + "/a?b=1&c=%20%7Bx%7D", query.get("post_logout_redirect_uri"));
         assertEquals("id-token", query.get("id_token_hint"));
 
-        assertEquals("https://default.example", logout("redirectUrl", "https://evil.org/").get("post_logout_redirect_uri"));
+        assertEquals(NODE, logout(null, NODE + "/providers/x").get("post_logout_redirect_uri"));
+        assertEquals("https://default.example", logout("https://evil.org/", null).get("post_logout_redirect_uri"));
     }
 
     private String startLogin(MockHttpSession session, String redirectUrl, String referer) throws Exception {
@@ -147,13 +209,20 @@ class LoginRedirectsTest {
         return response.getRedirectedUrl();
     }
 
-    private Map<String, String> logout(String parameter, String value) throws Exception {
+    private Map<String, String> logout(String redirectUrl, String referer) throws Exception {
         DefaultOidcUser user = new DefaultOidcUser(AuthorityUtils.createAuthorityList("ROLE_USER"),
                 new OidcIdToken("id-token", Instant.now(), Instant.now().plusSeconds(60), Map.of("sub", "user")));
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 new SecurityContextImpl(new OAuth2AuthenticationToken(user, user.getAuthorities(), "openaire")));
-        String location = mvc.perform(get("/logout").session(session).param(parameter, value))
+        var request = get("/logout").session(session);
+        if (redirectUrl != null) {
+            request.param("redirectUrl", redirectUrl);
+        }
+        if (referer != null) {
+            request.header("Referer", referer);
+        }
+        String location = mvc.perform(request)
                 .andExpect(status().is3xxRedirection()).andReturn().getResponse().getRedirectedUrl();
         var uri = UriComponentsBuilder.fromUriString(location).build();
         return Map.of("endpoint", uri.getScheme() + "://" + uri.getHost() + uri.getPath(),

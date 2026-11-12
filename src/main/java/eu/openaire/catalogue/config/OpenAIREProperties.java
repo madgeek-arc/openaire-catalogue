@@ -37,6 +37,11 @@ public class OpenAIREProperties {
     private String logoutRedirect = "/";
 
     /**
+     * Whether {@code /login} serves a page listing the configured identity providers.
+     */
+    private boolean loginPage = false;
+
+    /**
      * Origins allowed to call the API from a browser. Empty disables cross-origin requests. Login and logout redirect
      * only to these origins.
      */
@@ -104,6 +109,14 @@ public class OpenAIREProperties {
 
     public void setLogoutRedirect(String logoutRedirect) {
         this.logoutRedirect = logoutRedirect;
+    }
+
+    public boolean isLoginPage() {
+        return loginPage;
+    }
+
+    public void setLoginPage(boolean loginPage) {
+        this.loginPage = loginPage;
     }
 
     public List<String> getAllowedOrigins() {

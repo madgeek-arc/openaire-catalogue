@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.DefaultLoginPageConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
@@ -30,10 +31,12 @@ import org.springframework.security.oauth2.server.resource.introspection.OpaqueT
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +48,8 @@ import java.util.Set;
  * logout return the browser to the frontend that started them, as chosen by {@link RedirectTargets}.
  * Every route needs an administrator unless it is listed here, so routes added by libraries are closed by default.
  * The public routes are open at the URL level only. Unauthenticated calls get 401 rather than a login redirect.
+ * With {@code openaire.login-page}, {@code /login} lists the configured providers; the 401 is registered as a default
+ * entry point because an explicit one disables that page.
  */
 @Configuration
 @EnableWebSecurity
@@ -87,9 +92,13 @@ public class SecurityConfig {
                         .requestMatchers(AUTHENTICATED_ROUTES).authenticated()
                         .anyRequest().hasRole("ADMIN"))
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                        .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                AnyRequestMatcher.INSTANCE))
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable);
+        if (!properties.isLoginPage()) {
+            http.removeConfigurer(DefaultLoginPageConfigurer.class);
+        }
 
         ClientRegistrationRepository repository = registrations.getIfAvailable();
         if (repository != null) {
@@ -173,15 +182,15 @@ public class SecurityConfig {
     }
 
     /**
-     * Ends the session at the provider, which then returns the browser to the origin of the frontend that asked for the
-     * logout, or else to {@code openaire.logout-redirect}. Only the origin is passed on, because the provider must
-     * know each return address in advance.
+     * Ends the session at the provider, which then returns the browser to the frontend that asked for the logout, or
+     * else to {@code openaire.logout-redirect}. The provider must accept every URL on an allowed origin as a
+     * post-logout redirect URI, as Keycloak does for {@code <origin>/*}.
      */
     private LogoutSuccessHandler logoutSuccessHandler(ClientRegistrationRepository repository,
                                                       RedirectTargets targets) {
         return (request, response, authentication) -> {
             String target = targets.resolve(request)
-                    .map(RedirectTargets::origin)
+                    .map(URI::toASCIIString)
                     .orElse(properties.getLogoutRedirect());
             OidcClientInitiatedLogoutSuccessHandler handler = new OidcClientInitiatedLogoutSuccessHandler(repository);
             handler.setPostLogoutRedirectUri(target);
