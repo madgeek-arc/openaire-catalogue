@@ -30,13 +30,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Every field of the lot1 domain class of a resource type, nested fields included, has a field in its OpenAIRE model,
- * so that records in lot1 form pass validation.
+ * so that records in lot1 form pass validation. Fields that OpenAIRE deliberately leaves out of its models are listed
+ * in {@link #OMITTED}.
  */
 class OpenAIREModelLot1CoverageTest {
 
     private static final String DOMAIN_PACKAGE = Service.class.getPackageName();
     private static final Map<String, Class<?>> CLASSES = Map.of(
             "service", Service.class, "provider", Provider.class, "datasource", Datasource.class);
+    // Top-level lot1 fields left out of each model, with their nested fields. classTier is empty in every OpenAIRE
+    // service.
+    private static final Map<String, Set<String>> OMITTED = Map.of(
+            "service", Set.of("classTier"), "provider", Set.of(), "datasource", Set.of());
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -46,7 +51,7 @@ class OpenAIREModelLot1CoverageTest {
         Set<String> modelFields = modelFields(type);
         List<String> missing = new ArrayList<>();
         for (String path : lot1Fields(CLASSES.get(type))) {
-            if (!modelFields.contains(path)) {
+            if (!modelFields.contains(path) && !OMITTED.get(type).contains(path.split("\\.")[0])) {
                 missing.add(path);
             }
         }
