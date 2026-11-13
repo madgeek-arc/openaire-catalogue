@@ -58,11 +58,6 @@ public class OpenAIREProperties {
      */
     private String eoscChannel = "node";
 
-    /**
-     * Whether the OpenAIRE models are stored at startup and applied to their resource types.
-     */
-    private boolean loadModels = true;
-
     private RoleSettings roles = new RoleSettings();
 
     private Invitations invitations = new Invitations();
@@ -141,14 +136,6 @@ public class OpenAIREProperties {
 
     public void setEoscChannel(String eoscChannel) {
         this.eoscChannel = eoscChannel;
-    }
-
-    public boolean isLoadModels() {
-        return loadModels;
-    }
-
-    public void setLoadModels(boolean loadModels) {
-        this.loadModels = loadModels;
     }
 
     public RoleSettings getRoles() {
