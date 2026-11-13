@@ -1686,7 +1686,7 @@
                   "parentId": "13",
                   "parent": "categories",
                   "label": {
-                    "text": "Service classification",
+                    "text": "Category",
                     "cssClasses": null,
                     "style": null,
                     "showLess": false
