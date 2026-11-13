@@ -41,9 +41,7 @@ public class OpenAIREModelResourceTypeMapper extends ModelResourceTypeMapper {
         fields.add(additionalIndexField(resourceType, "active", null, "$.active", bool, false));
         fields.add(additionalIndexField(resourceType, "suspended", null, "$.suspended", bool, false));
         fields.add(additionalIndexField(resourceType, "registeredAt", null, "$.metadata.registeredAt", date, false));
-        fields.add(additionalIndexField(resourceType, "registeredBy", null, "$.metadata.registeredBy", string, false));
         fields.add(additionalIndexField(resourceType, "modifiedAt", null, "$.metadata.modifiedAt", date, false));
-        fields.add(additionalIndexField(resourceType, "modifiedBy", null, "$.metadata.modifiedBy", string, false));
         fields.add(additionalIndexField(resourceType, "latestOnboardingDate", null, "$.latestOnboardingInfo.date", date, false));
         fields.add(additionalIndexField(resourceType, "latestOnboardingActionType", null, "$.latestOnboardingInfo.actionType", string, false));
         fields.add(additionalIndexField(resourceType, "latestUpdateDate", null, "$.latestUpdateInfo.date", date, false));
