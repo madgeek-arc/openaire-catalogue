@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpenAIREModelResourceTypeMapperTest {
@@ -66,6 +67,23 @@ class OpenAIREModelResourceTypeMapperTest {
         List<String> paths = mapper.map(model, type).getIndexFields().stream().map(IndexField::getPath).toList();
         assertTrue(paths.contains("$.provider.name"), paths::toString);
         assertTrue(paths.stream().noneMatch(path -> path.startsWith("$.provider.users")), paths::toString);
+    }
+
+    @Test
+    void facetsOnlyTheFieldsTheProviderModelMarksAsFacets() throws IOException {
+        Model model;
+        try (InputStream in = getClass().getResourceAsStream("/openaire/models/m-oa-provider.json")) {
+            model = new ObjectMapper().readValue(in, Model.class);
+        }
+        ResourceType type = new ResourceType();
+        type.setName("provider");
+        List<IndexField> fields = mapper.map(model, type).getIndexFields();
+        IndexField website = fields.stream().filter(f -> "$.provider.website".equals(f.getPath())).findFirst().orElseThrow();
+        IndexField country = fields.stream().filter(f -> "$.provider.location.country".equals(f.getPath())).findFirst()
+                .orElseThrow();
+        assertNull(website.getLabel());
+        assertEquals("Country", country.getLabel());
+        assertNull(fields.getFirst().getLabel());
     }
 
     @Test
