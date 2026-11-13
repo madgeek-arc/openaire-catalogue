@@ -1686,7 +1686,7 @@
                   "parentId": "13",
                   "parent": "categories",
                   "label": {
-                    "text": "Category",
+                    "text": "Service classification",
                     "cssClasses": null,
                     "style": null,
                     "showLess": false
@@ -1700,7 +1700,7 @@
                     "multiplicity": false,
                     "prefill": null,
                     "properties": {
-                      "url": "/api/vocabulary/types/Category",
+                      "url": "/api/vocabulary/types/Service%20classification",
                       "idField": "id",
                       "labelField": "name"
                     }
@@ -1709,22 +1709,16 @@
                   "deprecated": false,
                   "form": {
                     "dependsOn": null,
-                    "affects": [
-                      {
-                        "id": "15",
-                        "name": "subcategory",
-                        "value": null
-                      }
-                    ],
+                    "affects": null,
                     "group": "classification",
                     "description": {
-                      "text": "A named group of Resources that offer access to the same type of Resources.",
+                      "text": "The class of service the Resource offers.",
                       "cssClasses": null,
                       "style": null,
                       "showLess": false
                     },
                     "suggestion": {
-                      "text": "For suggestions in amending the \"Category\" list, please select \"Other\", fill in your entry and press \"Submit\"",
+                      "text": "Select \"Other\" if and only if the Resource matches none of the other classifications.",
                       "cssClasses": null,
                       "style": null,
                       "showLess": false
@@ -1735,81 +1729,6 @@
                     "display": {
                       "placement": null,
                       "order": 1,
-                      "visible": false,
-                      "hasBorder": false,
-                      "cssClasses": null,
-                      "style": null
-                    }
-                  },
-                  "display": {
-                    "placement": null,
-                    "order": 0,
-                    "visible": true,
-                    "hasBorder": false,
-                    "cssClasses": null,
-                    "style": null
-                  },
-                  "subFields": []
-                },
-                {
-                  "id": "15",
-                  "name": "subcategory",
-                  "parentId": "13",
-                  "parent": "categories",
-                  "label": {
-                    "text": "Subcategory",
-                    "cssClasses": null,
-                    "style": null,
-                    "showLess": false
-                  },
-                  "accessPath": null,
-                  "kind": null,
-                  "typeInfo": {
-                    "type": "vocabulary",
-                    "defaultValue": null,
-                    "values": null,
-                    "multiplicity": false,
-                    "prefill": null,
-                    "properties": {
-                      "url": "/api/vocabulary/types/Subcategory?parent_id=parentId",
-                      "idField": "id",
-                      "labelField": "name",
-                      "urlParams": [
-                        {
-                          "placeholder": "parentId",
-                          "valueFromField": "category"
-                        }
-                      ]
-                    }
-                  },
-                  "includedInSnippet": false,
-                  "deprecated": false,
-                  "form": {
-                    "dependsOn": {
-                      "id": "14",
-                      "name": "category",
-                      "value": null
-                    },
-                    "affects": null,
-                    "group": "classification",
-                    "description": {
-                      "text": "A named group of Resources that offer access to the same type of Resources, within the defined Resource category.",
-                      "cssClasses": null,
-                      "style": null,
-                      "showLess": false
-                    },
-                    "suggestion": {
-                      "text": "For suggestions in amending the \"Subcategory\" list, please select \"Other\", fill in your entry and press \"Submit\"",
-                      "cssClasses": null,
-                      "style": null,
-                      "showLess": false
-                    },
-                    "placeholder": null,
-                    "mandatory": true,
-                    "immutable": true,
-                    "display": {
-                      "placement": null,
-                      "order": 2,
                       "visible": false,
                       "hasBorder": false,
                       "cssClasses": null,

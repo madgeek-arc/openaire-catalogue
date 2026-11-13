@@ -38,9 +38,10 @@ class OpenAIREModelLot1CoverageTest {
     private static final String DOMAIN_PACKAGE = Service.class.getPackageName();
     private static final Map<String, Class<?>> CLASSES = Map.of(
             "service", Service.class, "provider", Provider.class, "datasource", Datasource.class);
-    // Top-level lot1 fields left out of each model, with their nested fields. They are empty in every OpenAIRE service.
+    // lot1 fields left out of each model, with their nested fields.
     private static final Map<String, Set<String>> OMITTED = Map.of(
-            "service", Set.of("classTier", "horizontalService", "serviceCategories", "marketplaceLocations"),
+            "service", Set.of("classTier", "horizontalService", "serviceCategories", "marketplaceLocations",
+                    "categories.subcategory"),
             "provider", Set.of(), "datasource", Set.of());
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -51,11 +52,15 @@ class OpenAIREModelLot1CoverageTest {
         Set<String> modelFields = modelFields(type);
         List<String> missing = new ArrayList<>();
         for (String path : lot1Fields(CLASSES.get(type))) {
-            if (!modelFields.contains(path) && !OMITTED.get(type).contains(path.split("\\.")[0])) {
+            if (!modelFields.contains(path) && !omitted(type, path)) {
                 missing.add(path);
             }
         }
         assertEquals(List.of(), missing);
+    }
+
+    private static boolean omitted(String type, String path) {
+        return OMITTED.get(type).stream().anyMatch(field -> path.equals(field) || path.startsWith(field + "."));
     }
 
     @Test
