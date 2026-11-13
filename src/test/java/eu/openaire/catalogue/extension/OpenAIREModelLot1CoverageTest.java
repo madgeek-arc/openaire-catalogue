@@ -38,11 +38,11 @@ class OpenAIREModelLot1CoverageTest {
     private static final String DOMAIN_PACKAGE = Service.class.getPackageName();
     private static final Map<String, Class<?>> CLASSES = Map.of(
             "service", Service.class, "provider", Provider.class, "datasource", Datasource.class);
-    // lot1 fields left out of each model, with their nested fields.
+    // lot1 fields left out of each model, with their nested fields. Contacts are left out as personal data.
     private static final Map<String, Set<String>> OMITTED = Map.of(
             "service", Set.of("classTier", "horizontalService", "serviceCategories", "marketplaceLocations",
-                    "categories.subcategory"),
-            "provider", Set.of(), "datasource", Set.of());
+                    "categories.subcategory", "mainContact", "publicContacts"),
+            "provider", Set.of("mainContact", "publicContacts"), "datasource", Set.of());
 
     private final ObjectMapper mapper = new ObjectMapper();
 
