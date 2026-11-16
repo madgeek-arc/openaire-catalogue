@@ -3,6 +3,7 @@ package eu.openaire.catalogue.api;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import eu.openaire.catalogue.invitations.InvitationService;
 import eu.openaire.catalogue.resource.BundleService;
+import eu.openaire.catalogue.resource.RecordGroups;
 import eu.openaire.catalogue.resource.Channels;
 import eu.openaire.catalogue.security.AccessRules;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "providers (OpenAIRE)", description = "Providers on the oa channel")
 public class OaProviderController extends ProviderController {
 
-    public OaProviderController(BundleService bundles, AccessRules access, InvitationService invitations,
-                                OpenAIREProperties properties) {
-        super(Channels.OA, bundles, access, invitations, properties);
+    public OaProviderController(BundleService bundles, RecordGroups groups, AccessRules access,
+                                InvitationService invitations, OpenAIREProperties properties) {
+        super(Channels.OA, bundles, groups, access, invitations, properties);
     }
 }

@@ -1,6 +1,7 @@
 package eu.openaire.catalogue.api;
 
 import eu.openaire.catalogue.resource.BundleService;
+import eu.openaire.catalogue.resource.RecordGroups;
 import eu.openaire.catalogue.resource.Channels;
 import eu.openaire.catalogue.security.AccessRules;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "services (Node)", description = "Services on the node channel")
 public class NodeServiceController extends ServiceController {
 
-    public NodeServiceController(BundleService bundles, AccessRules access) {
-        super(Channels.NODE, bundles, access);
+    public NodeServiceController(BundleService bundles, RecordGroups groups, AccessRules access) {
+        super(Channels.NODE, bundles, groups, access);
     }
 }

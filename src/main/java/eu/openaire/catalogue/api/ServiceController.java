@@ -1,6 +1,7 @@
 package eu.openaire.catalogue.api;
 
 import eu.openaire.catalogue.resource.BundleService;
+import eu.openaire.catalogue.resource.RecordGroups;
 import eu.openaire.catalogue.resource.Bundles;
 import eu.openaire.catalogue.resource.ResourceKind;
 import eu.openaire.catalogue.security.AccessRules;
@@ -18,8 +19,8 @@ import java.util.Map;
  */
 public abstract class ServiceController extends RecordController {
 
-    protected ServiceController(String channel, BundleService bundles, AccessRules access) {
-        super(ResourceKind.SERVICE, channel, bundles, access);
+    protected ServiceController(String channel, BundleService bundles, RecordGroups groups, AccessRules access) {
+        super(ResourceKind.SERVICE, channel, bundles, groups, access);
     }
 
     /**

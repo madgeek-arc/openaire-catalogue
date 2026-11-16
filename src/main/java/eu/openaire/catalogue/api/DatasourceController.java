@@ -1,6 +1,7 @@
 package eu.openaire.catalogue.api;
 
 import eu.openaire.catalogue.resource.BundleService;
+import eu.openaire.catalogue.resource.RecordGroups;
 import eu.openaire.catalogue.resource.ResourceKind;
 import eu.openaire.catalogue.security.AccessRules;
 
@@ -10,7 +11,7 @@ import eu.openaire.catalogue.security.AccessRules;
  */
 public abstract class DatasourceController extends RecordController {
 
-    protected DatasourceController(String channel, BundleService bundles, AccessRules access) {
-        super(ResourceKind.DATASOURCE, channel, bundles, access);
+    protected DatasourceController(String channel, BundleService bundles, RecordGroups groups, AccessRules access) {
+        super(ResourceKind.DATASOURCE, channel, bundles, groups, access);
     }
 }

@@ -3,6 +3,7 @@ package eu.openaire.catalogue.api;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import eu.openaire.catalogue.invitations.InvitationService;
 import eu.openaire.catalogue.resource.BundleService;
+import eu.openaire.catalogue.resource.RecordGroups;
 import eu.openaire.catalogue.resource.ResourceKind;
 import eu.openaire.catalogue.security.AccessRules;
 import eu.openaire.catalogue.security.Roles;
@@ -70,6 +71,7 @@ class RecordControllerTest {
     private static final String OA_ADMIN = "oa-admin@example.org";
 
     private static final BundleService bundles = mock(BundleService.class);
+    private static final RecordGroups groups = mock(RecordGroups.class);
     private static final InvitationService invitations = mock(InvitationService.class);
     private static final OpenAIREProperties properties = new OpenAIREProperties();
     private static final Roles roles = new Roles(properties);
@@ -87,33 +89,33 @@ class RecordControllerTest {
 
         @Bean
         OaServiceController serviceController(AccessRules access) {
-            return new OaServiceController(bundles, access);
+            return new OaServiceController(bundles, groups, access);
         }
 
         @Bean
         OaProviderController providerController(AccessRules access) {
-            return new OaProviderController(bundles, access, invitations, properties);
+            return new OaProviderController(bundles, groups, access, invitations, properties);
         }
 
         @Bean
         NodeServiceController nodeServiceController(AccessRules access) {
-            return new NodeServiceController(bundles, access);
+            return new NodeServiceController(bundles, groups, access);
         }
 
         @Bean
         NodeProviderController nodeProviderController(AccessRules access) {
-            return new NodeProviderController(bundles, access, invitations, properties);
+            return new NodeProviderController(bundles, groups, access, invitations, properties);
         }
 
         @Bean
         NodeDatasourceController nodeDatasourceController(AccessRules access) {
-            return new NodeDatasourceController(bundles, access);
+            return new NodeDatasourceController(bundles, groups, access);
         }
     }
 
     @BeforeEach
     void setUp() {
-        reset(bundles, invitations);
+        reset(bundles, groups, invitations);
         properties.getRoles().getAdmin().setEmails(List.of(ADMIN));
         OpenAIREProperties.RoleScope oaAdmins = new OpenAIREProperties.RoleScope();
         oaAdmins.setEmails(List.of(OA_ADMIN));
@@ -241,6 +243,76 @@ class RecordControllerTest {
         for (FacetFilter captured : filter.getAllValues()) {
             assertEquals(true, captured.getFilter().get("active"));
             assertEquals("node", captured.getFilter().get("channels"));
+        }
+    }
+
+    @Test
+    void summaryListingsShowSummariesOfActiveRecordsOnTheChannel() throws Exception {
+        Map<String, Object> argos = service("openaire.argos", "approved", true, List.of("oa"));
+        when(bundles.search(eq(ResourceKind.SERVICE), any()))
+                .thenReturn(new Paging<>(1, 0, 1, List.of(argos), List.of()));
+        stubSummaries(ResourceKind.SERVICE);
+
+        mvc.perform(get("/oa/services").param("view", "SUMMARY").param("active", "false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id").value("openaire.argos"))
+                .andExpect(jsonPath("$.results[0].resourceOrganisation").doesNotExist());
+        mvc.perform(get("/oa/services"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].resourceOrganisation").value("openaire"));
+
+        ArgumentCaptor<FacetFilter> filter = ArgumentCaptor.forClass(FacetFilter.class);
+        verify(bundles, times(2)).search(eq(ResourceKind.SERVICE), filter.capture());
+        for (FacetFilter captured : filter.getAllValues()) {
+            assertEquals(Map.of("active", true, "channels", "oa"), captured.getFilter());
+        }
+    }
+
+    @Test
+    void groupedListingsShowActiveRecordsOnTheChannelInEitherView() throws Exception {
+        Map<String, Object> argos = service("openaire.argos", "approved", true, List.of("oa"));
+        when(groups.group(eq(ResourceKind.SERVICE), any(), eq("portfolios")))
+                .thenReturn(Map.of("Research", List.of(argos)));
+        stubSummaries(ResourceKind.SERVICE);
+
+        mvc.perform(get("/oa/services/by/portfolios").param("active", "false").param("channels", "node"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.Research[0].resourceOrganisation").value("openaire"))
+                .andExpect(jsonPath("$.Research[0].status").doesNotExist());
+        mvc.perform(get("/oa/services/by/portfolios").param("view", "summary"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.Research[0].id").value("openaire.argos"))
+                .andExpect(jsonPath("$.Research[0].name").value("openaire.argos"))
+                .andExpect(jsonPath("$.Research[0].resourceOrganisation").doesNotExist());
+
+        ArgumentCaptor<FacetFilter> filter = ArgumentCaptor.forClass(FacetFilter.class);
+        verify(groups, times(2)).group(eq(ResourceKind.SERVICE), filter.capture(), eq("portfolios"));
+        for (FacetFilter captured : filter.getAllValues()) {
+            assertEquals(Map.of("active", true, "channels", "oa"), captured.getFilter());
+        }
+    }
+
+    @Test
+    void anUnknownViewIsRejected() throws Exception {
+        mvc.perform(get("/oa/services").param("view", "compact")).andExpect(status().isBadRequest());
+        mvc.perform(get("/oa/services/by/portfolios").param("view", "compact")).andExpect(status().isBadRequest());
+        verify(bundles, never()).search(any(), any());
+        verify(groups, never()).group(any(), any(), any());
+    }
+
+    @Test
+    void providerSummariesHideTheirUsers() throws Exception {
+        Map<String, Object> provider = bundle(ResourceKind.PROVIDER, "openaire", "approved", true,
+                Map.of("name", "OpenAIRE", "users", List.of(Map.of("email", OWNER))));
+        when(groups.group(eq(ResourceKind.PROVIDER), any(), eq("structureTypes")))
+                .thenReturn(Map.of("Research", List.of(provider)));
+        when(groups.snippets(ResourceKind.PROVIDER)).thenReturn(payload -> payload);
+
+        for (String view : List.of("full", "summary")) {
+            mvc.perform(get("/oa/providers/by/structureTypes").param("view", view))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.Research[0].name").value("OpenAIRE"))
+                    .andExpect(jsonPath("$.Research[0].users").doesNotExist());
         }
     }
 
@@ -494,6 +566,10 @@ class RecordControllerTest {
                         .content("{\"name\":\"New\",\"abbreviation\":\"new\"}"))
                 .andExpect(status().isCreated());
         verify(invitations, never()).verify(any(), any());
+    }
+
+    private void stubSummaries(ResourceKind kind) {
+        when(groups.snippets(kind)).thenReturn(payload -> Map.of("id", payload.get("id"), "name", payload.get("name")));
     }
 
     private void stub(ResourceKind kind, Map<String, Object> bundle) {

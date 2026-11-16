@@ -3,6 +3,7 @@ package eu.openaire.catalogue.api;
 import eu.openaire.catalogue.resource.BundleService;
 import eu.openaire.catalogue.resource.Bundles;
 import eu.openaire.catalogue.resource.Channels;
+import eu.openaire.catalogue.resource.RecordGroups;
 import eu.openaire.catalogue.resource.ResourceKind;
 import eu.openaire.catalogue.security.AccessRules;
 import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
@@ -13,6 +14,7 @@ import gr.uoa.di.madgik.registry.exception.ResourceNotFoundException;
 import gr.uoa.di.madgik.resourcecatalogue.dto.UserInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 /**
  * Routes shared by providers, services and datasources, for one channel. Public reads return payloads of active records
@@ -40,15 +44,24 @@ import java.util.Map;
  */
 public abstract class RecordController {
 
+    private static final String VIEW = "view";
+    private static final String VIEW_FULL = "full";
+    private static final String VIEW_SUMMARY = "summary";
+    private static final String VIEW_DESCRIPTION = "How each record is shown. 'full': the whole payload. 'summary': "
+            + "the id, the name and the fields the model includes in snippets.";
+
     protected final ResourceKind kind;
     protected final String channel;
     protected final BundleService bundles;
+    protected final RecordGroups groups;
     protected final AccessRules access;
 
-    protected RecordController(ResourceKind kind, String channel, BundleService bundles, AccessRules access) {
+    protected RecordController(ResourceKind kind, String channel, BundleService bundles, RecordGroups groups,
+                               AccessRules access) {
         this.kind = kind;
         this.channel = channel;
         this.bundles = bundles;
+        this.groups = groups;
         this.access = access;
     }
 
@@ -70,12 +83,35 @@ public abstract class RecordController {
     @Operation(summary = "Returns the active records on the channel of this API, based on a set of filters.")
     @BrowseParameters
     @GetMapping
-    public Paging<Map<String, Object>> getAll(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
+    public Paging<Map<String, Object>> getAll(
+            @Parameter(description = VIEW_DESCRIPTION, schema = @Schema(allowableValues = {VIEW_FULL, VIEW_SUMMARY}))
+            @RequestParam(defaultValue = VIEW_FULL) String view,
+            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
+        UnaryOperator<Map<String, Object>> representation = listingView(view, params);
         FacetFilter filter = publicFilter(FacetFilter.from(params));
         if (filter.getOrderBy() == null || filter.getOrderBy().isEmpty()) {
             defaultOrder(filter);
         }
-        return bundles.search(kind, filter).map(bundle -> publicView(Bundles.payload(bundle, kind)));
+        return bundles.search(kind, filter).map(bundle -> representation.apply(Bundles.payload(bundle, kind)));
+    }
+
+    @Operation(summary = "Returns the active records on the channel of this API, grouped by each value of a facet and "
+            + "based on a set of filters. Groups are keyed by the label of the value, such as the name of a vocabulary "
+            + "entry. The search index limits the number of groups and of records per group.")
+    @BrowseParameters
+    @GetMapping("by/{field}")
+    public Map<String, List<Map<String, Object>>> getGroupedBy(
+            @PathVariable String field,
+            @Parameter(description = VIEW_DESCRIPTION, schema = @Schema(allowableValues = {VIEW_FULL, VIEW_SUMMARY}))
+            @RequestParam(defaultValue = VIEW_FULL) String view,
+            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
+        UnaryOperator<Map<String, Object>> representation = listingView(view, params);
+        Map<String, List<Map<String, Object>>> grouped = new LinkedHashMap<>();
+        groups.group(kind, publicFilter(FacetFilter.from(params)), field)
+                .forEach((label, records) -> grouped.put(label, records.stream()
+                        .map(bundle -> representation.apply(Bundles.payload(bundle, kind)))
+                        .toList()));
+        return grouped;
     }
 
     @Operation(summary = "Returns the bundle of the record with the given id, with its status and logging.")
@@ -231,6 +267,25 @@ public abstract class RecordController {
             value = value.substring(1, value.length() - 1);
         }
         return value;
+    }
+
+    /**
+     * Removes the view from the request parameters, which are otherwise read as search filters.
+     *
+     * @return how a public listing shows each payload: whole, or reduced to its summary
+     * @throws ResourceException with status 400 for an unknown view
+     */
+    private UnaryOperator<Map<String, Object>> listingView(String view, MultiValueMap<String, Object> params) {
+        params.remove(VIEW);
+        return switch (view.toLowerCase(Locale.ROOT)) {
+            case VIEW_FULL -> this::publicView;
+            case VIEW_SUMMARY -> {
+                UnaryOperator<Map<String, Object>> summary = groups.snippets(kind);
+                yield payload -> summary.apply(publicView(payload));
+            }
+            default -> throw new ResourceException("Unknown view '" + view + "'; expected '" + VIEW_FULL + "' or '"
+                    + VIEW_SUMMARY + "'", HttpStatus.BAD_REQUEST);
+        };
     }
 
     /**

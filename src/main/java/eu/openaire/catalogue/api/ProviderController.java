@@ -3,6 +3,7 @@ package eu.openaire.catalogue.api;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import eu.openaire.catalogue.invitations.InvitationService;
 import eu.openaire.catalogue.resource.BundleService;
+import eu.openaire.catalogue.resource.RecordGroups;
 import eu.openaire.catalogue.resource.Bundles;
 import eu.openaire.catalogue.resource.ResourceKind;
 import eu.openaire.catalogue.security.AccessRules;
@@ -29,9 +30,9 @@ public abstract class ProviderController extends RecordController {
     private final InvitationService invitations;
     private final OpenAIREProperties properties;
 
-    protected ProviderController(String channel, BundleService bundles, AccessRules access,
+    protected ProviderController(String channel, BundleService bundles, RecordGroups groups, AccessRules access,
                                  InvitationService invitations, OpenAIREProperties properties) {
-        super(ResourceKind.PROVIDER, channel, bundles, access);
+        super(ResourceKind.PROVIDER, channel, bundles, groups, access);
         this.invitations = invitations;
         this.properties = properties;
     }
