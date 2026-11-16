@@ -7435,7 +7435,7 @@
                       "labelField": "name"
                     }
                   },
-                  "includedInSnippet": false,
+                  "includedInSnippet": true,
                   "deprecated": false,
                   "form": {
                     "dependsOn": null,
@@ -7500,7 +7500,7 @@
                       "labelField": "name"
                     }
                   },
-                  "includedInSnippet": false,
+                  "includedInSnippet": true,
                   "deprecated": false,
                   "form": {
                     "dependsOn": null,
