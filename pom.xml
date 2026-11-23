@@ -27,18 +27,12 @@
         <log4j2.version>2.26.1</log4j2.version>
         <jackson.version>3.2.3</jackson.version>
         <jackson2.annotations.version>2.22</jackson2.annotations.version>
-        <!-- Also written to springdoc.swagger-ui.version, which locates the Swagger UI files in the webjar -->
-        <swagger-ui.version>5.34.1</swagger-ui.version>
+        <springdoc.version>3.2.1</springdoc.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!-- Overrides of Spring Boot managed versions (CVE fixes and client versions) -->
-            <dependency>
-                <groupId>org.webjars</groupId>
-                <artifactId>swagger-ui</artifactId>
-                <version>${swagger-ui.version}</version>
-            </dependency>
             <dependency>
                 <groupId>co.elastic.clients</groupId>
                 <artifactId>elasticsearch-java</artifactId>
@@ -103,6 +97,23 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>2.3.35</version>
+            </dependency>
+
+            <!-- Keeps every springdoc module on one version; the webmvc-ui module fails at startup against an older common module -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-common</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
 
             <!-- Version management of registry artifacts -->
@@ -220,7 +231,6 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.2.0</version>
         </dependency>
 
         <!-- Notifications -->
