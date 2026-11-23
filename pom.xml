@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <registry.version>5.0.0-SNAPSHOT</registry.version>
         <catalogue.version>10.0.0-SNAPSHOT</catalogue.version>
-        <resource-catalogue-model-lot1.version>6.4.1-SNAPSHOT</resource-catalogue-model-lot1.version>
+        <resource-catalogue-model-lot1.version>6.4.0</resource-catalogue-model-lot1.version>
 
         <!-- Overrides of Spring Boot managed versions -->
         <elasticsearch.version>9.5.5</elasticsearch.version>
