@@ -86,8 +86,9 @@ public abstract class RecordController {
     public Paging<Map<String, Object>> getAll(
             @Parameter(description = VIEW_DESCRIPTION, schema = @Schema(allowableValues = {VIEW_FULL, VIEW_SUMMARY}))
             @RequestParam(defaultValue = VIEW_FULL) String view,
-            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
-        UnaryOperator<Map<String, Object>> representation = listingView(view, params);
+            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params,
+            @Parameter(hidden = true) Authentication auth) {
+        UnaryOperator<Map<String, Object>> representation = listingView(view, params, auth);
         FacetFilter filter = publicFilter(FacetFilter.from(params));
         if (filter.getOrderBy() == null || filter.getOrderBy().isEmpty()) {
             defaultOrder(filter);
@@ -104,8 +105,9 @@ public abstract class RecordController {
             @PathVariable String field,
             @Parameter(description = VIEW_DESCRIPTION, schema = @Schema(allowableValues = {VIEW_FULL, VIEW_SUMMARY}))
             @RequestParam(defaultValue = VIEW_FULL) String view,
-            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
-        UnaryOperator<Map<String, Object>> representation = listingView(view, params);
+            @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params,
+            @Parameter(hidden = true) Authentication auth) {
+        UnaryOperator<Map<String, Object>> representation = listingView(view, params, auth);
         Map<String, List<Map<String, Object>>> grouped = new LinkedHashMap<>();
         groups.group(kind, publicFilter(FacetFilter.from(params)), field)
                 .forEach((label, records) -> grouped.put(label, records.stream()
@@ -272,16 +274,17 @@ public abstract class RecordController {
     /**
      * Removes the view from the request parameters, which are otherwise read as search filters.
      *
-     * @return how a public listing shows each payload: whole, or reduced to its summary
+     * @return how a public listing shows each payload to the user: whole, or reduced to its summary
      * @throws ResourceException with status 400 for an unknown view
      */
-    private UnaryOperator<Map<String, Object>> listingView(String view, MultiValueMap<String, Object> params) {
+    private UnaryOperator<Map<String, Object>> listingView(String view, MultiValueMap<String, Object> params,
+                                                           Authentication auth) {
         params.remove(VIEW);
         return switch (view.toLowerCase(Locale.ROOT)) {
-            case VIEW_FULL -> this::publicView;
+            case VIEW_FULL -> payload -> listedView(payload, auth);
             case VIEW_SUMMARY -> {
                 UnaryOperator<Map<String, Object>> summary = groups.snippets(kind);
-                yield payload -> summary.apply(publicView(payload));
+                yield payload -> summary.apply(listedView(payload, auth));
             }
             default -> throw new ResourceException("Unknown view '" + view + "'; expected '" + VIEW_FULL + "' or '"
                     + VIEW_SUMMARY + "'", HttpStatus.BAD_REQUEST);
@@ -307,6 +310,13 @@ public abstract class RecordController {
      */
     protected Map<String, Object> publicView(Map<String, Object> payload) {
         return payload;
+    }
+
+    /**
+     * The payload as shown to the user in a public listing.
+     */
+    protected Map<String, Object> listedView(Map<String, Object> payload, Authentication auth) {
+        return publicView(payload);
     }
 
     /**

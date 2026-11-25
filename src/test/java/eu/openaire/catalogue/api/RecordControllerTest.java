@@ -378,6 +378,55 @@ class RecordControllerTest {
     }
 
     @Test
+    void theMainContactIsShownToThoseWhoManageTheProviderOnly() throws Exception {
+        Map<String, Object> managed = providerWithContacts("openaire", OWNER);
+        Map<String, Object> other = providerWithContacts("other", "other@example.org");
+        stub(ResourceKind.PROVIDER, managed);
+        stub(ResourceKind.PROVIDER, other);
+        when(bundles.search(eq(ResourceKind.PROVIDER), any()))
+                .thenAnswer(call -> new Paging<>(2, 0, 2, List.of(managed, other), List.of()));
+        when(groups.group(eq(ResourceKind.PROVIDER), any(), eq("structureTypes")))
+                .thenReturn(Map.of("Research", List.of(managed, other)));
+        when(groups.snippets(ResourceKind.PROVIDER)).thenReturn(payload -> payload);
+
+        // null is the anonymous caller
+        for (String email : new String[]{null, STRANGER, OWNER, OA_ADMIN, ADMIN}) {
+            boolean managesFirst = email != null && !email.equals(STRANGER);
+            boolean managesOther = ADMIN.equals(email) || OA_ADMIN.equals(email);
+            expectContacts(get("/oa/providers/openaire"), email, "$", managesFirst);
+            expectContacts(get("/oa/providers/other"), email, "$", managesOther);
+            for (String view : List.of("full", "summary")) {
+                expectContacts(get("/oa/providers").param("view", view), email, "$.results[0]", managesFirst);
+                expectContacts(get("/oa/providers").param("view", view), email, "$.results[1]", managesOther);
+                expectContacts(get("/oa/providers/by/structureTypes").param("view", view), email, "$.Research[0]",
+                        managesFirst);
+                expectContacts(get("/oa/providers/by/structureTypes").param("view", view), email, "$.Research[1]",
+                        managesOther);
+            }
+        }
+    }
+
+    private void expectContacts(MockHttpServletRequestBuilder request, String email, String path,
+                                boolean mainContact) throws Exception {
+        mvc.perform(email == null ? request : as(request, email))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(path + ".publicContacts[0].email").value("public@example.org"))
+                .andExpect(mainContact
+                        ? jsonPath(path + ".mainContact.email").value("main@example.org")
+                        : jsonPath(path + ".mainContact").doesNotExist());
+    }
+
+    private static Map<String, Object> providerWithContacts(String id, String user) {
+        Map<String, Object> provider = bundle(ResourceKind.PROVIDER, id, "approved", true, Map.of(
+                "name", id,
+                "users", List.of(Map.of("email", user)),
+                "mainContact", Map.of("firstName", "A", "email", "main@example.org"),
+                "publicContacts", List.of(Map.of("email", "public@example.org"))));
+        provider.put("properties", Map.of("channels", List.of("oa")));
+        return provider;
+    }
+
+    @Test
     void addingNeedsASignedInUser() throws Exception {
         mvc.perform(post("/oa/services").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"New\",\"resourceOrganisation\":\"openaire\"}"))

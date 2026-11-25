@@ -27,6 +27,9 @@ import java.util.Map;
  */
 public abstract class ProviderController extends RecordController {
 
+    private static final String USERS = "users";
+    private static final String MAIN_CONTACT = "mainContact";
+
     private final InvitationService invitations;
     private final OpenAIREProperties properties;
 
@@ -57,12 +60,25 @@ public abstract class ProviderController extends RecordController {
     }
 
     /**
-     * Leaves out the provider users, whose emails are personal data.
+     * Leaves out the provider users and the main contact, which are personal data.
      */
     @Override
     protected Map<String, Object> publicView(Map<String, Object> payload) {
         Map<String, Object> view = new LinkedHashMap<>(payload);
-        view.remove("users");
+        view.remove(USERS);
+        view.remove(MAIN_CONTACT);
+        return view;
+    }
+
+    /**
+     * Leaves out the provider users, and keeps the main contact for those who manage the provider only.
+     */
+    @Override
+    protected Map<String, Object> listedView(Map<String, Object> payload, Authentication auth) {
+        Map<String, Object> view = publicView(payload);
+        if (payload.containsKey(MAIN_CONTACT) && access.canManage(auth, kind, payload.get(Bundles.ID))) {
+            view.put(MAIN_CONTACT, payload.get(MAIN_CONTACT));
+        }
         return view;
     }
 

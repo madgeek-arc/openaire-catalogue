@@ -5,6 +5,7 @@ import eu.openaire.catalogue.resource.BundleService;
 import eu.openaire.catalogue.resource.Bundles;
 import eu.openaire.catalogue.resource.Channels;
 import eu.openaire.catalogue.resource.ResourceKind;
+import eu.openaire.catalogue.security.AccessRules;
 import gr.uoa.di.madgik.registry.annotation.BrowseParameters;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,9 +45,9 @@ import java.util.stream.Collectors;
  * Read-only routes in the lot1 format, for harvesting: each payload is read into the lot1 {@link Provider},
  * {@link Service} or {@link Datasource} and written from it, so fields outside those classes are left out. Only the
  * active records on the channel set by {@code openaire.eosc-channel} are shown. Providers are shown without their
- * users, whose emails are personal data. Search facets are limited to the index fields whose path is a lot1 field.
- * The output follows the lot1 classes on the classpath, so a new lot1 version changes version 1 of this API unless it
- * is pinned.
+ * users, whose emails are personal data, and their main contact is shown to those who manage them only. Search facets
+ * are limited to the index fields whose path is a lot1 field. The output follows the lot1 classes on the classpath, so
+ * a new lot1 version changes version 1 of this API unless it is pinned.
  */
 @RestController
 @RequestMapping(path = "eosc/v1", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,6 +58,7 @@ public class EoscController {
 
     private final BundleService bundles;
     private final ResourceTypeService resourceTypes;
+    private final AccessRules access;
     private final ObjectMapper mapper;
     private final String channel;
     private final ObjectReader services;
@@ -63,10 +66,11 @@ public class EoscController {
     private final ObjectReader datasources;
     private final Map<ResourceKind, Map<String, String>> lot1Fields = new EnumMap<>(ResourceKind.class);
 
-    public EoscController(BundleService bundles, ResourceTypeService resourceTypes, ObjectMapper mapper,
-                          OpenAIREProperties properties) {
+    public EoscController(BundleService bundles, ResourceTypeService resourceTypes, AccessRules access,
+                          ObjectMapper mapper, OpenAIREProperties properties) {
         this.bundles = bundles;
         this.resourceTypes = resourceTypes;
+        this.access = access;
         this.mapper = mapper;
         this.channel = properties.getEoscChannel();
         this.services = reader(Service.class);
@@ -81,15 +85,16 @@ public class EoscController {
 
     @Operation(summary = "Returns the provider with the given id.")
     @GetMapping({"providers/{id}", "organisations/{id}"})
-    public Provider getProvider(@PathVariable String id) {
-        return toProvider(published(ResourceKind.PROVIDER, id));
+    public Provider getProvider(@PathVariable String id, @Parameter(hidden = true) Authentication auth) {
+        return toProvider(published(ResourceKind.PROVIDER, id), auth);
     }
 
     @Operation(summary = "Returns the providers, based on a set of filters.")
     @BrowseParameters
     @GetMapping({"providers", "organisations"})
-    public Paging<Provider> getProviders(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
-        return search(ResourceKind.PROVIDER, params).map(this::toProvider);
+    public Paging<Provider> getProviders(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params,
+                                         @Parameter(hidden = true) Authentication auth) {
+        return search(ResourceKind.PROVIDER, params).map(bundle -> toProvider(bundle, auth));
     }
 
     @Operation(summary = "Returns the service with the given id.")
@@ -119,9 +124,12 @@ public class EoscController {
         return search(ResourceKind.DATASOURCE, params).map(this::toDatasource);
     }
 
-    Provider toProvider(Map<String, Object> bundle) {
+    Provider toProvider(Map<String, Object> bundle, Authentication auth) {
         Provider provider = read(providers, bundle, ResourceKind.PROVIDER);
         provider.setUsers(null);
+        if (provider.getMainContact() != null && !access.canManage(auth, ResourceKind.PROVIDER, provider.getId())) {
+            provider.setMainContact(null);
+        }
         return provider;
     }
 

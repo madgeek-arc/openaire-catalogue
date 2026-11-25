@@ -57,7 +57,7 @@ class OpenAIREModelResourceTypeMapperTest {
     }
 
     @Test
-    void leavesTheProviderUsersOutOfTheIndex() throws IOException {
+    void leavesTheProviderUsersAndContactsOutOfTheIndex() throws IOException {
         Model model;
         try (InputStream in = getClass().getResourceAsStream("/openaire/models/m-oa-provider.json")) {
             model = new ObjectMapper().readValue(in, Model.class);
@@ -66,7 +66,9 @@ class OpenAIREModelResourceTypeMapperTest {
         type.setName("provider");
         List<String> paths = mapper.map(model, type).getIndexFields().stream().map(IndexField::getPath).toList();
         assertTrue(paths.contains("$.provider.name"), paths::toString);
-        assertTrue(paths.stream().noneMatch(path -> path.startsWith("$.provider.users")), paths::toString);
+        for (String field : List.of("users", "mainContact", "publicContacts")) {
+            assertTrue(paths.stream().noneMatch(path -> path.startsWith("$.provider." + field)), paths::toString);
+        }
     }
 
     @Test

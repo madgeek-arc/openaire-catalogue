@@ -3,6 +3,7 @@ package eu.openaire.catalogue.api;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import eu.openaire.catalogue.resource.BundleService;
 import eu.openaire.catalogue.resource.ResourceKind;
+import eu.openaire.catalogue.security.AccessRules;
 import gr.uoa.di.madgik.registry.domain.Facet;
 import gr.uoa.di.madgik.registry.domain.FacetFilter;
 import gr.uoa.di.madgik.registry.domain.Paging;
@@ -15,6 +16,7 @@ import gr.uoa.di.madgik.resourcecatalogue.domain.Provider;
 import gr.uoa.di.madgik.resourcecatalogue.domain.Service;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.LinkedMultiValueMap;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -26,6 +28,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,8 +43,10 @@ import static org.mockito.Mockito.when;
 class EoscControllerTest {
 
     private final ObjectMapper mapper = JsonMapper.builder().build();
+    private final AccessRules access = mock(AccessRules.class);
+    private final Authentication auth = mock(Authentication.class);
     private final EoscController controller = new EoscController(mock(BundleService.class),
-            mock(ResourceTypeService.class), mapper, new OpenAIREProperties());
+            mock(ResourceTypeService.class), access, mapper, new OpenAIREProperties());
 
     @Test
     void aServiceKeepsItsLot1FieldsAndLosesTheRest() {
@@ -83,7 +88,7 @@ class EoscControllerTest {
         providerBundle.put("provider", Map.of("id", "openaire", "name", "OpenAIRE"));
 
         for (JsonNode json : List.<JsonNode>of(mapper.valueToTree(controller.toService(bundle)),
-                mapper.valueToTree(controller.toProvider(providerBundle)))) {
+                mapper.valueToTree(controller.toProvider(providerBundle, null)))) {
             for (String key : List.of("status", "active", "suspended", "metadata", "loggingInfo",
                     "latestOnboardingInfo", "properties", "service", "provider")) {
                 assertFalse(json.has(key), key);
@@ -100,12 +105,51 @@ class EoscControllerTest {
         provider.put("users", List.of(Map.of("email", "owner@example.org", "name", "O", "surname", "U")));
         provider.put("unknown", "dropped");
 
-        Provider lot1 = controller.toProvider(Map.of("provider", provider));
+        Provider lot1 = controller.toProvider(Map.of("provider", provider), null);
         JsonNode json = mapper.valueToTree(lot1);
 
         assertEquals("OpenAIRE", lot1.getAbbreviation());
         assertTrue(json.get("users") == null || json.get("users").isNull());
         assertFalse(json.has("unknown"));
+    }
+
+    @Test
+    void theMainContactOfAProviderIsShownToThoseWhoManageItOnly() {
+        BundleService bundles = mock(BundleService.class);
+        EoscController eosc = new EoscController(bundles, mock(ResourceTypeService.class), access, mapper,
+                new OpenAIREProperties());
+        Map<String, Object> managed = provider("managed");
+        Map<String, Object> other = provider("other");
+        when(bundles.get(ResourceKind.PROVIDER, "managed")).thenReturn(managed);
+        when(bundles.get(ResourceKind.PROVIDER, "other")).thenReturn(other);
+        when(bundles.search(eq(ResourceKind.PROVIDER), any()))
+                .thenAnswer(call -> new Paging<>(2, 0, 2, List.of(managed, other), List.of()));
+        when(access.canManage(auth, ResourceKind.PROVIDER, "managed")).thenReturn(true);
+
+        assertEquals("main@example.org", eosc.getProvider("managed", auth).getMainContact().getEmail());
+        assertNull(eosc.getProvider("other", auth).getMainContact());
+        assertNull(eosc.getProvider("managed", null).getMainContact());
+
+        List<Provider> listed = eosc.getProviders(new LinkedMultiValueMap<>(), auth).getResults();
+        assertEquals("main@example.org", listed.get(0).getMainContact().getEmail());
+        assertNull(listed.get(1).getMainContact());
+        for (Provider provider : eosc.getProviders(new LinkedMultiValueMap<>(), null).getResults()) {
+            assertNull(provider.getMainContact());
+            assertNull(provider.getUsers());
+            assertEquals("public@example.org", provider.getPublicContacts().getFirst().getEmail());
+        }
+    }
+
+    private static Map<String, Object> provider(String id) {
+        Map<String, Object> bundle = new LinkedHashMap<>();
+        bundle.put("id", id);
+        bundle.put("active", true);
+        bundle.put("properties", Map.of("channels", List.of("node")));
+        bundle.put("provider", Map.of("id", id, "name", id,
+                "users", List.of(Map.of("email", "owner@example.org")),
+                "mainContact", Map.of("firstName", "A", "email", "main@example.org"),
+                "publicContacts", List.of(Map.of("email", "public@example.org"))));
+        return bundle;
     }
 
     @Test
@@ -131,7 +175,8 @@ class EoscControllerTest {
         BundleService bundles = mock(BundleService.class);
         OpenAIREProperties properties = new OpenAIREProperties();
         properties.setEoscChannel("eosc");
-        EoscController eosc = new EoscController(bundles, mock(ResourceTypeService.class), mapper, properties);
+        EoscController eosc = new EoscController(bundles, mock(ResourceTypeService.class), access, mapper,
+                properties);
         when(bundles.search(any(), any())).thenReturn(new Paging<>(0, 0, 0, List.of(), List.of()));
         when(bundles.get(ResourceKind.DATASOURCE, "on.node")).thenReturn(datasource("on.node", true, "node"));
         when(bundles.get(ResourceKind.DATASOURCE, "inactive")).thenReturn(datasource("inactive", false, "eosc"));
@@ -164,11 +209,11 @@ class EoscControllerTest {
         when(bundles.search(eq(ResourceKind.SERVICE), any())).thenReturn(page(
                 "tags", "scientificSubdomain", "mainContact_email", "oaOnly", "status"));
         when(bundles.search(eq(ResourceKind.PROVIDER), any())).thenReturn(page("abbreviation", "users_email"));
-        EoscController eosc = new EoscController(bundles, resourceTypes, mapper, new OpenAIREProperties());
+        EoscController eosc = new EoscController(bundles, resourceTypes, access, mapper, new OpenAIREProperties());
 
         assertEquals(List.of("tags", "scientificSubdomain", "mainContact_email"),
                 fields(eosc.getServices(new LinkedMultiValueMap<>())));
-        assertEquals(List.of("abbreviation"), fields(eosc.getProviders(new LinkedMultiValueMap<>())));
+        assertEquals(List.of("abbreviation"), fields(eosc.getProviders(new LinkedMultiValueMap<>(), null)));
     }
 
     private static ResourceType resourceType(String name, Map<String, String> paths) {

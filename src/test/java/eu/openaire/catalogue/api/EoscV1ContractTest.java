@@ -3,6 +3,7 @@ package eu.openaire.catalogue.api;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import eu.openaire.catalogue.resource.BundleService;
 import eu.openaire.catalogue.resource.ResourceKind;
+import eu.openaire.catalogue.security.AccessRules;
 import gr.uoa.di.madgik.registry.service.ResourceTypeService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -28,7 +29,8 @@ class EoscV1ContractTest {
     private static final Path FIXTURES = Path.of("src/test/resources/eosc/v1");
 
     private final EoscController controller = new EoscController(mock(BundleService.class),
-            mock(ResourceTypeService.class), JsonMapper.builder().build(), new OpenAIREProperties());
+            mock(ResourceTypeService.class), mock(AccessRules.class), JsonMapper.builder().build(),
+            new OpenAIREProperties());
 
     @ParameterizedTest
     @EnumSource(ResourceKind.class)
