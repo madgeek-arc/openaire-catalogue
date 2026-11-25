@@ -74,6 +74,11 @@ public class SecurityConfig {
      */
     static final String[] PUBLIC_READ_ROUTES = {"/forms/**", "/models/**"};
 
+    /**
+     * Administrator only, ahead of the broader rules: the actuator log file holds personal data.
+     */
+    static final String[] ADMIN_ROUTES = {"/actuator/**"};
+
     private final OpenAIREProperties properties;
     private final Roles roles;
 
@@ -88,6 +93,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(PUBLIC_ROUTES).permitAll()
+                        .requestMatchers(ADMIN_ROUTES).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, PUBLIC_READ_ROUTES).permitAll()
                         .requestMatchers(AUTHENTICATED_ROUTES).authenticated()
                         .anyRequest().hasRole("ADMIN"))

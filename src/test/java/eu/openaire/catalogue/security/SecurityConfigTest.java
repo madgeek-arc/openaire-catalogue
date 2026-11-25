@@ -89,7 +89,16 @@ class SecurityConfigTest {
                 get("/node/services"), get("/node/datasources/x"), post("/node/providers"),
                 get("/eosc/v1/services"), get("/vocabularies/byType"), get("/vocabulary/types/Provider"),
                 get("/dsm/datasources"), get("/forms/models"), get("/models/m-oa-service"),
-                get("/v3/api-docs"), get("/actuator/health"));
+                get("/v3/api-docs"), get("/actuator/health"), get("/actuator/health/liveness"));
+    }
+
+    @Test
+    void actuatorEndpointsOtherThanHealthNeedAnAdministrator() throws Exception {
+        MockHttpServletRequestBuilder[] adminOnly = {get("/actuator"), get("/actuator/logfile"),
+                get("/actuator/loggers"), get("/actuator/env")};
+        expect(status().isUnauthorized(), adminOnly);
+        expect(status().isForbidden(), signedIn(false, adminOnly));
+        expect(status().isOk(), signedIn(true, adminOnly));
     }
 
     @Test
