@@ -190,6 +190,18 @@ class RecordControllerTest {
     }
 
     @Test
+    void invalidPagingIsABadRequest() throws Exception {
+        for (String path : List.of("/oa/services", "/oa/services/by/portfolios", "/node/datasources")) {
+            mvc.perform(get(path).param("from", "abc"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail").value("Parameter 'from' must be a non-negative integer."));
+            mvc.perform(get(path).param("quantity", "-1"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail").value("Parameter 'quantity' must be a non-negative integer."));
+        }
+    }
+
+    @Test
     void providersAndServicesAreListedByNameUnlessTheClientSetsAnOrder() throws Exception {
         when(bundles.search(any(), any())).thenReturn(new Paging<>(0, 0, 0, List.of(), List.of()));
 

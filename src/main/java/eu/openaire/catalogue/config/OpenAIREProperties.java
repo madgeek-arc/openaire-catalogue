@@ -416,6 +416,16 @@ public class OpenAIREProperties {
          */
         private String provideUrl = "";
 
+        /**
+         * How long to wait for a connection to these APIs, whether a new one or a free one of the pool.
+         */
+        private Duration connectTimeout = Duration.ofSeconds(5);
+
+        /**
+         * Longest silence to accept from these APIs while waiting for data. Does not limit the whole call.
+         */
+        private Duration readTimeout = Duration.ofSeconds(30);
+
         public String getUrl() {
             return url;
         }
@@ -430,6 +440,22 @@ public class OpenAIREProperties {
 
         public void setProvideUrl(String provideUrl) {
             this.provideUrl = provideUrl;
+        }
+
+        public Duration getConnectTimeout() {
+            return connectTimeout;
+        }
+
+        public void setConnectTimeout(Duration connectTimeout) {
+            this.connectTimeout = connectTimeout;
+        }
+
+        public Duration getReadTimeout() {
+            return readTimeout;
+        }
+
+        public void setReadTimeout(Duration readTimeout) {
+            this.readTimeout = readTimeout;
         }
     }
 }

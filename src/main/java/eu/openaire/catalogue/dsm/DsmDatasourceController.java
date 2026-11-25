@@ -6,8 +6,15 @@ import gr.uoa.di.madgik.registry.exception.ResourceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +23,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +40,17 @@ public class DsmDatasourceController {
 
     private static final Set<String> RESERVED = Set.of("from", "quantity", "sort", "order", "keyword");
 
+    private static final int MAX_CONNECTIONS_PER_HOST = 20;
+
     private final OpenAIREProperties properties;
     private final RestClient client;
 
     public DsmDatasourceController(OpenAIREProperties properties) {
         this.properties = properties;
-        this.client = RestClient.create();
+        this.client = RestClient.builder()
+                .requestFactory(requestFactory(properties.getDsm().getConnectTimeout(),
+                        properties.getDsm().getReadTimeout()))
+                .build();
     }
 
     @Operation(summary = "Returns the datasources registered in OpenAIRE. Any parameter other than from, quantity and "
@@ -46,6 +59,9 @@ public class DsmDatasourceController {
     public Paging<Object> search(@Parameter(hidden = true) @RequestParam Map<String, String> params) {
         int from = intParam(params, "from", 0);
         int quantity = Math.max(1, intParam(params, "quantity", 10));
+        if (from < 0) {
+            throw new ResourceException("'from' must not be negative", HttpStatus.BAD_REQUEST);
+        }
         if (from % quantity != 0) {
             throw new ResourceException("'from' must be a multiple of 'quantity'", HttpStatus.BAD_REQUEST);
         }
@@ -112,11 +128,38 @@ public class DsmDatasourceController {
         return paging;
     }
 
+    /**
+     * The connect timeout also limits the wait for a free pooled connection. Requests are not retried: a retry waits
+     * as long as the {@code Retry-After} header of the response says, whatever the timeouts.
+     */
+    private static HttpComponentsClientHttpRequestFactory requestFactory(Duration connectTimeout,
+                                                                         Duration readTimeout) {
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .useSystemProperties()
+                .disableAutomaticRetries()
+                .setConnectionManager(PoolingHttpClientConnectionManagerBuilder.create()
+                        .useSystemProperties()
+                        .setMaxConnPerRoute(MAX_CONNECTIONS_PER_HOST)
+                        .setMaxConnTotal(2 * MAX_CONNECTIONS_PER_HOST)
+                        .setDefaultConnectionConfig(ConnectionConfig.custom()
+                                .setConnectTimeout(Timeout.of(connectTimeout))
+                                .build())
+                        .build())
+                .build();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        factory.setConnectionRequestTimeout(connectTimeout);
+        factory.setReadTimeout(readTimeout);
+        return factory;
+    }
+
     private static <T> T call(Supplier<T> request) {
         try {
             return request.get();
-        } catch (RestClientException e) {
-            throw new ResourceException("The OpenAIRE datasource API failed: " + e.getMessage(), HttpStatus.BAD_GATEWAY);
+        } catch (RestClientException | HttpMessageConversionException e) {
+            ResourceException failure = new ResourceException("The OpenAIRE datasource API failed",
+                    HttpStatus.BAD_GATEWAY);
+            failure.initCause(e);
+            throw failure;
         }
     }
 

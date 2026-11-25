@@ -19,6 +19,7 @@ COPY --from=maven /build/target/*.jar /app/openaire-catalogue.jar
 
 RUN groupadd -g 10001 catalogue && \
        useradd -u 10000 -g catalogue catalogue \
+       && mkdir /app/logs \
        && chown -R catalogue:catalogue /app
 
 USER catalogue
