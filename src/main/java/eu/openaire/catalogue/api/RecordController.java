@@ -38,7 +38,8 @@ import java.util.function.UnaryOperator;
 
 /**
  * Routes shared by providers, services and datasources, for one channel. Public reads return payloads of active records
- * on the channel; owners and reviewers also read pending records and records on other channels, and their bundles. New
+ * on the channel; owners and reviewers also read pending records and records on other channels, and their bundles, as do
+ * the users of the resource providers of a service, without changing it. New
  * records are listed on the channel of the API they are added through. Access is checked with {@code @PreAuthorize}
  * against {@link AccessRules}, except for single-record reads, which depend on the stored record.
  */
@@ -76,9 +77,9 @@ public abstract class RecordController {
             + "who manage them and, for a service, to the users of its resource providers.")
     @GetMapping("{id}")
     public Map<String, Object> get(@PathVariable String id, @Parameter(hidden = true) Authentication auth) {
-        Map<String, Object> bundle = readable(id, auth);
-        Map<String, Object> payload = Bundles.payload(bundle, kind);
-        return access.canViewBundle(auth, kind, bundle) ? payload : publicView(payload);
+        Readable record = readable(id, auth);
+        Map<String, Object> payload = Bundles.payload(record.bundle(), kind);
+        return record.viewable() ? payload : publicView(payload);
     }
 
     @Operation(summary = "Returns the active records on the channel of this API, based on a set of filters.")
@@ -328,14 +329,23 @@ public abstract class RecordController {
     }
 
     /**
-     * @throws ResourceNotFoundException if the record does not exist, or the user may not read it: a record outside the
-     *                                   channel is read only by those who may view it whatever its channels
+     * A record the user may read, and whether they may view it whatever its status or channels.
      */
-    protected Map<String, Object> readable(String id, Authentication auth) {
+    private record Readable(Map<String, Object> bundle, boolean viewable) {
+    }
+
+    /**
+     * @throws ResourceNotFoundException if the record does not exist, or the user may not read it: others than those
+     *                                   who may view it read only an active record on the channel
+     */
+    private Readable readable(String id, Authentication auth) {
         Map<String, Object> bundle = bundles.get(kind, id);
-        if (!access.canRead(auth, kind, bundle)) {
+        if (access.canViewBundle(auth, kind, bundle)) {
+            return new Readable(bundle, true);
+        }
+        if (!Bundles.active(bundle)) {
             throw new ResourceNotFoundException(id, kind.type());
         }
-        return access.canViewBundle(auth, kind, bundle) ? bundle : Channels.require(bundle, kind, channel);
+        return new Readable(Channels.require(bundle, kind, channel), false);
     }
 }

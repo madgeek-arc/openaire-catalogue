@@ -26,7 +26,8 @@ Setting `openaire.roles.admin.idp-roles` replaces the `Super Administrator` defa
 compared ignoring case and surrounding spaces.
 
 Besides roles, a provider is managed by the users listed in it, a service by the users of its provider, and a datasource
-by those who manage its service. These are matched by email, not by role.
+by those who manage its service. These are matched by email, not by role. The users of a provider listed among the
+`resourceProviders` of a service view that service and its bundle, whatever its status or channels, without changing it.
 
 ## Identity provider roles
 

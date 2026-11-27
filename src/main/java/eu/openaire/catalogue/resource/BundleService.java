@@ -40,6 +40,11 @@ import java.util.Objects;
 @Service
 public class BundleService {
 
+    /**
+     * The service field listing the providers that contribute to a service. It may also list the owner.
+     */
+    public static final String RESOURCE_PROVIDERS = "resourceProviders";
+
     private static final Logger logger = LoggerFactory.getLogger(BundleService.class);
     private static final int MAX_QUANTITY = 10_000;
     private static final TypeReference<Map<String, Object>> MAP = new TypeReference<>() {

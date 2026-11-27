@@ -29,11 +29,6 @@ import java.util.Set;
 @Component("access")
 public class AccessRules {
 
-    /**
-     * The service field listing the providers that contribute to a service, besides the one that owns it.
-     */
-    static final String RESOURCE_PROVIDERS = "resourceProviders";
-
     private final BundleService bundles;
     private final Roles roles;
 
@@ -124,12 +119,15 @@ public class AccessRules {
     }
 
     /**
-     * Whether the user may view the record with the given id, whatever its status or channels. False if the record
-     * does not exist.
+     * Whether the user may view the record with the given id, whatever its status or channels. Global reviewers may
+     * view any id, so that a missing record is reported as missing; for others, false if the record does not exist.
      *
      * @see #canViewBundle
      */
     public boolean canView(Authentication auth, ResourceKind kind, Object id) {
+        if (isGlobalReviewer(auth)) {
+            return true;
+        }
         if (id == null || !isSignedIn(auth)) {
             return false;
         }
@@ -163,7 +161,7 @@ public class AccessRules {
         if (owner != null && isManager(auth, ownerKind(kind), owner.toString())) {
             return true;
         }
-        return kind == ResourceKind.SERVICE && values(payload.get(RESOURCE_PROVIDERS)).stream()
+        return kind == ResourceKind.SERVICE && values(payload.get(BundleService.RESOURCE_PROVIDERS)).stream()
                 .anyMatch(provider -> isProviderUser(auth, provider));
     }
 
@@ -238,13 +236,6 @@ public class AccessRules {
         return kind == ResourceKind.SERVICE
                 ? isProviderUser(auth, owner.toString())
                 : isManager(auth, ResourceKind.SERVICE, owner.toString());
-    }
-
-    /**
-     * Whether the user may read the record: an active record is public, others need {@link #canViewBundle}.
-     */
-    public boolean canRead(Authentication auth, ResourceKind kind, Map<String, Object> bundle) {
-        return Bundles.active(bundle) || canViewBundle(auth, kind, bundle);
     }
 
     /**

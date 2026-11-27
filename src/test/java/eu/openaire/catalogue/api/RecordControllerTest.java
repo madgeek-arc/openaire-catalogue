@@ -388,6 +388,8 @@ class RecordControllerTest {
                 .andExpect(jsonPath("$.users").doesNotExist());
         mvc.perform(as(get("/oa/providers/openaire"), OWNER))
                 .andExpect(jsonPath("$.users[0].email").value(OWNER));
+        mvc.perform(as(get("/oa/providers/openaire"), OA_ADMIN))
+                .andExpect(jsonPath("$.users[0].email").value(OWNER));
     }
 
     @Test
@@ -579,9 +581,11 @@ class RecordControllerTest {
                 .andExpect(status().isOk());
         mvc.perform(as(get("/oa/services/bundles/byProvider/openaire").param("sort", "modifiedAt")
                 .param("order", "desc"), OWNER)).andExpect(status().isOk());
+        mvc.perform(as(get("/oa/services/bundles/byProvider/openaire").param("resourceProviders", "nodeprov")
+                .param("fixedFields", "resourceProviders"), OWNER)).andExpect(status().isOk());
 
         ArgumentCaptor<FacetFilter> filter = ArgumentCaptor.forClass(FacetFilter.class);
-        verify(bundles, times(2)).search(eq(ResourceKind.SERVICE), filter.capture());
+        verify(bundles, times(3)).search(eq(ResourceKind.SERVICE), filter.capture());
         FacetFilter owned = filter.getAllValues().get(0);
         assertEquals("openaire", owned.getFilter().get("resourceOrganisation"));
         assertFalse(owned.getSelectionFields().contains("resourceOrganisation"));
@@ -593,6 +597,10 @@ class RecordControllerTest {
         assertEquals("openaire", contributed.getFilter().get("resourceProviders"));
         assertFalse(contributed.getSelectionFields().contains("resourceProviders"));
         assertEquals(Map.of("modifiedAt", Map.of("order", "desc")), contributed.getOrderBy());
+        FacetFilter overridden = filter.getAllValues().get(2);
+        assertEquals("openaire", overridden.getFilter().get("resourceProviders"));
+        assertFalse(overridden.getSelectionFields().contains("resourceProviders"));
+        assertEquals(Map.of("name", Map.of("order", "asc")), overridden.getOrderBy());
     }
 
     @Test
@@ -626,6 +634,8 @@ class RecordControllerTest {
         mvc.perform(as(get("/oa/services/nodeprov.tool"), OWNER)).andExpect(status().isOk());
         mvc.perform(as(get("/node/services/nodeprov.tool"), STRANGER)).andExpect(status().isNotFound());
         mvc.perform(as(get("/node/services/bundles/missing"), OWNER)).andExpect(status().isForbidden());
+        mvc.perform(as(get("/node/services/bundles/missing"), ADMIN)).andExpect(status().isNotFound());
+        mvc.perform(as(get("/oa/services/byProvider/openaire"), ADMIN)).andExpect(status().isNotFound());
 
         mvc.perform(as(get("/node/services/bundles/nodeprov.tool"), OWNER))
                 .andExpect(status().isOk())

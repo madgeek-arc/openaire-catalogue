@@ -10,8 +10,8 @@ import gr.uoa.di.madgik.registry.domain.Paging;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -22,8 +22,7 @@ import java.util.Map;
  */
 public abstract class ServiceController extends RecordController {
 
-    private static final String RESOURCE_ORGANISATION = "resourceOrganisation";
-    private static final String RESOURCE_PROVIDERS = "resourceProviders";
+    private static final String RESOURCE_ORGANISATION = BundleService.ownerField(ResourceKind.SERVICE);
     /**
      * Global reviewers, or the users of the provider; reviewing a provider on one channel does not reveal its services
      * on other channels.
@@ -55,15 +54,15 @@ public abstract class ServiceController extends RecordController {
     }
 
     @Operation(summary = "Returns the bundles of the services that list a provider among their 'resourceProviders', "
-            + "whatever their status or channels, based on a set of filters. A service that also lists its owner there "
-            + "is returned by 'bundles/byOrganisation' too. For reviewers and the users of the provider.")
+            + "whatever their status or channels, based on a set of filters. A service may also list its owner among its "
+            + "resource providers. For reviewers and the users of the provider.")
     @BrowseParameters
     @GetMapping("bundles/byProvider/{providerId}")
     @PreAuthorize(PROVIDER_USER_OR_REVIEWER)
     public Paging<Map<String, Object>> getBundlesByProvider(
             @PathVariable String providerId,
             @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
-        return providerBundles(RESOURCE_PROVIDERS, providerId, params);
+        return providerBundles(BundleService.RESOURCE_PROVIDERS, providerId, params);
     }
 
     /**
