@@ -21,6 +21,7 @@
         <registry.version>5.0.0-SNAPSHOT</registry.version>
         <catalogue.version>10.0.0-SNAPSHOT</catalogue.version>
         <resource-catalogue-model-lot1.version>6.4.0</resource-catalogue-model-lot1.version>
+        <request-logging.version>2.0.0-SNAPSHOT</request-logging.version>
 
         <!-- Overrides of Spring Boot managed versions -->
         <elasticsearch.version>9.5.5</elasticsearch.version>
@@ -207,6 +208,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>gr.uoa.di.madgik</groupId>
+            <artifactId>request-logging-starter</artifactId>
+            <version>${request-logging.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
