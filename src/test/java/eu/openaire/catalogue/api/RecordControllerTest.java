@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -497,7 +498,6 @@ class RecordControllerTest {
                 .andExpect(jsonPath("$.status").value("approved"));
         mvc.perform(as(delete("/oa/services/openaire.argos"), STRANGER)).andExpect(status().isForbidden());
         mvc.perform(as(get("/oa/services/bundles"), OWNER)).andExpect(status().isForbidden());
-        mvc.perform(as(get("/oa/services/byProvider/openaire"), STRANGER)).andExpect(status().isForbidden());
     }
 
     @Test
@@ -568,6 +568,75 @@ class RecordControllerTest {
         assertEquals(List.of("oa"), filter.getAllValues().get(0).getFilter().get("channels"));
         assertNull(filter.getAllValues().get(0).getFilter().get("active"));
         assertNull(filter.getAllValues().get(1).getFilter().get("channels"));
+    }
+
+    @Test
+    void theUsersOfAProviderListTheBundlesOfTheServicesItOwnsOrContributesTo() throws Exception {
+        when(bundles.search(eq(ResourceKind.SERVICE), any())).thenReturn(new Paging<>(0, 0, 0, List.of(), List.of()));
+
+        mvc.perform(as(get("/node/services/bundles/byOrganisation/openaire")
+                .param("resourceOrganisation", "nodeprov").param("status", "pending"), OWNER))
+                .andExpect(status().isOk());
+        mvc.perform(as(get("/oa/services/bundles/byProvider/openaire").param("sort", "modifiedAt")
+                .param("order", "desc"), OWNER)).andExpect(status().isOk());
+
+        ArgumentCaptor<FacetFilter> filter = ArgumentCaptor.forClass(FacetFilter.class);
+        verify(bundles, times(2)).search(eq(ResourceKind.SERVICE), filter.capture());
+        FacetFilter owned = filter.getAllValues().get(0);
+        assertEquals("openaire", owned.getFilter().get("resourceOrganisation"));
+        assertFalse(owned.getSelectionFields().contains("resourceOrganisation"));
+        assertEquals(List.of("pending"), owned.getFilter().get("status"));
+        assertNull(owned.getFilter().get("active"));
+        assertNull(owned.getFilter().get("channels"));
+        assertEquals(Map.of("name", Map.of("order", "asc")), owned.getOrderBy());
+        FacetFilter contributed = filter.getAllValues().get(1);
+        assertEquals("openaire", contributed.getFilter().get("resourceProviders"));
+        assertFalse(contributed.getSelectionFields().contains("resourceProviders"));
+        assertEquals(Map.of("modifiedAt", Map.of("order", "desc")), contributed.getOrderBy());
+    }
+
+    @Test
+    void theServicesOfAProviderAreForItsUsersAndGlobalReviewers() throws Exception {
+        when(bundles.search(eq(ResourceKind.SERVICE), any())).thenReturn(new Paging<>(0, 0, 0, List.of(), List.of()));
+
+        List<String> paths = List.of("/oa/services/bundles/byOrganisation/", "/oa/services/bundles/byProvider/");
+        for (String path : paths) {
+            mvc.perform(get(path + "openaire")).andExpect(status().isUnauthorized());
+        }
+        for (String path : paths) {
+            mvc.perform(as(get(path + "openaire"), STRANGER)).andExpect(status().isForbidden());
+            mvc.perform(as(get(path + "openaire"), OA_ADMIN)).andExpect(status().isForbidden());
+            mvc.perform(as(get(path + "nodeprov"), OWNER)).andExpect(status().isForbidden());
+            mvc.perform(as(get(path + "missing"), OWNER)).andExpect(status().isForbidden());
+            mvc.perform(as(get(path + "openaire"), ADMIN)).andExpect(status().isOk());
+        }
+        verify(bundles, times(2)).search(eq(ResourceKind.SERVICE), any());
+    }
+
+    @Test
+    void theUsersOfAResourceProviderViewTheBundleOfTheServiceWithoutManagingIt() throws Exception {
+        Map<String, Object> partner = bundle(ResourceKind.SERVICE, "nodeprov.tool", "pending", false,
+                Map.of("name", "Tool", "resourceOrganisation", "nodeprov", "resourceProviders", List.of("openaire")));
+        partner.put("properties", Map.of("channels", List.of("node")));
+        stub(ResourceKind.SERVICE, partner);
+
+        mvc.perform(as(get("/node/services/nodeprov.tool"), OWNER))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resourceProviders[0]").value("openaire"));
+        mvc.perform(as(get("/oa/services/nodeprov.tool"), OWNER)).andExpect(status().isOk());
+        mvc.perform(as(get("/node/services/nodeprov.tool"), STRANGER)).andExpect(status().isNotFound());
+        mvc.perform(as(get("/node/services/bundles/missing"), OWNER)).andExpect(status().isForbidden());
+
+        mvc.perform(as(get("/node/services/bundles/nodeprov.tool"), OWNER))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("pending"));
+        mvc.perform(as(get("/node/services/bundles/nodeprov.tool"), STRANGER)).andExpect(status().isForbidden());
+        mvc.perform(as(put("/node/services/nodeprov.tool").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Tool\"}"), OWNER)).andExpect(status().isForbidden());
+        mvc.perform(as(delete("/node/services/nodeprov.tool"), OWNER)).andExpect(status().isForbidden());
+        mvc.perform(as(post("/node/services/bundles/nodeprov.tool/approve"), OWNER)).andExpect(status().isForbidden());
+        verify(bundles, never()).update(any(), any(), any(), any(), anyBoolean(), any());
+        verify(bundles, never()).delete(any(), any(), any());
     }
 
     @Test

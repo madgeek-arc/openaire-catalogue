@@ -72,12 +72,13 @@ public abstract class RecordController {
         return kind;
     }
 
-    @Operation(summary = "Returns the record with the given id. Records that are not active are visible to those who "
-            + "manage them only.")
+    @Operation(summary = "Returns the record with the given id. Records that are not active are visible only to those "
+            + "who manage them and, for a service, to the users of its resource providers.")
     @GetMapping("{id}")
     public Map<String, Object> get(@PathVariable String id, @Parameter(hidden = true) Authentication auth) {
-        Map<String, Object> payload = Bundles.payload(readable(id, auth), kind);
-        return access.canManage(auth, kind, id) ? payload : publicView(payload);
+        Map<String, Object> bundle = readable(id, auth);
+        Map<String, Object> payload = Bundles.payload(bundle, kind);
+        return access.canViewBundle(auth, kind, bundle) ? payload : publicView(payload);
     }
 
     @Operation(summary = "Returns the active records on the channel of this API, based on a set of filters.")
@@ -116,9 +117,10 @@ public abstract class RecordController {
         return grouped;
     }
 
-    @Operation(summary = "Returns the bundle of the record with the given id, with its status and logging.")
+    @Operation(summary = "Returns the bundle of the record with the given id, with its status and logging, to those "
+            + "who manage the record and, for a service, to the users of its resource providers.")
     @GetMapping("bundles/{id}")
-    @PreAuthorize("@access.canManage(authentication, #root.this.kind, #id)")
+    @PreAuthorize("@access.canView(authentication, #root.this.kind, #id)")
     public ResponseEntity<Map<String, Object>> getBundle(@PathVariable String id) {
         Map<String, Object> bundle = bundles.get(kind, id);
         return withVersion(ResponseEntity.ok(), bundle).body(bundle);
@@ -327,13 +329,13 @@ public abstract class RecordController {
 
     /**
      * @throws ResourceNotFoundException if the record does not exist, or the user may not read it: a record outside the
-     *                                   channel is read by those who manage it only
+     *                                   channel is read only by those who may view it whatever its channels
      */
     protected Map<String, Object> readable(String id, Authentication auth) {
         Map<String, Object> bundle = bundles.get(kind, id);
         if (!access.canRead(auth, kind, bundle)) {
             throw new ResourceNotFoundException(id, kind.type());
         }
-        return access.canManage(auth, kind, id) ? bundle : Channels.require(bundle, kind, channel);
+        return access.canViewBundle(auth, kind, bundle) ? bundle : Channels.require(bundle, kind, channel);
     }
 }
