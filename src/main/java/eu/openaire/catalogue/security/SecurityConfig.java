@@ -70,9 +70,10 @@ public class SecurityConfig {
     static final String[] AUTHENTICATED_ROUTES = {"/user/**", "/invitations/**", "/request/**"};
 
     /**
-     * Readable by everyone, because forms are rendered from the models.
+     * Readable by everyone: forms are rendered from the models, and the retired {@code /catalogue-resources} routes
+     * redirect to public routes or answer 404.
      */
-    static final String[] PUBLIC_READ_ROUTES = {"/forms/**", "/models/**"};
+    static final String[] PUBLIC_READ_ROUTES = {"/forms/**", "/models/**", "/catalogue-resources/**"};
 
     /**
      * Administrator only, ahead of the broader rules: the actuator log file holds personal data.

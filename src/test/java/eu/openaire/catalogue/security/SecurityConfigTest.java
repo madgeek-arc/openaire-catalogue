@@ -88,7 +88,8 @@ class SecurityConfigTest {
         expect(status().isOk(), get("/oa/services"), get("/oa/providers/openaire"), post("/oa/services"),
                 get("/node/services"), get("/node/datasources/x"), post("/node/providers"),
                 get("/eosc/v1/services"), get("/vocabularies/byType"), get("/vocabulary/types/Provider"),
-                get("/dsm/datasources"), get("/forms/models"), get("/models/m-oa-service"),
+                get("/dsm/datasources"), get("/forms/models"), get("/models/m-oa-service"), get("/catalogue-resources"),
+                get("/catalogue-resources/by/x"),
                 get("/v3/api-docs"), get("/actuator/health"), get("/actuator/health/liveness"));
     }
 
@@ -105,7 +106,8 @@ class SecurityConfigTest {
     void unlistedRoutesNeedASignedInAdministrator() throws Exception {
         MockHttpServletRequestBuilder[] adminOnly = {get("/items"), post("/items"), get("/version"),
                 get("/version/service"), get("/versions"), get("/records/service"), post("/resourceTypes"),
-                post("/forms/models"), delete("/models"), get("/resourcesync/x"), get("/schemaService/x"),
+                post("/forms/models"), delete("/models"), post("/catalogue-resources"),
+                get("/resourcesync/x"), get("/schemaService/x"),
                 get("/dump"), get("/anything/new")};
         expect(status().isUnauthorized(), adminOnly);
         expect(status().isForbidden(), signedIn(false, adminOnly));
