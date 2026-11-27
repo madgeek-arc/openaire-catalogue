@@ -25,6 +25,7 @@ import tools.jackson.databind.json.JsonMapper;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -97,6 +98,29 @@ class EoscControllerTest {
     }
 
     @Test
+    void aServiceIsWrittenWithItsIdAtTheTopLevel() {
+        BundleService bundles = mock(BundleService.class);
+        EoscController eosc = new EoscController(bundles, mock(ResourceTypeService.class), access, mapper,
+                new OpenAIREProperties());
+        Map<String, Object> bundle = new LinkedHashMap<>();
+        bundle.put("id", "openaire.argos");
+        bundle.put("active", true);
+        bundle.put("properties", Map.of("channels", List.of("node")));
+        bundle.put("service", Map.of("id", "openaire.argos", "name", "Argos"));
+        when(bundles.get(ResourceKind.SERVICE, "openaire.argos")).thenReturn(bundle);
+        when(bundles.search(eq(ResourceKind.SERVICE), any()))
+                .thenReturn(new Paging<>(1, 0, 1, List.of(bundle), List.of()));
+
+        for (JsonNode json : List.<JsonNode>of(mapper.valueToTree(eosc.getService("openaire.argos")),
+                mapper.valueToTree(eosc.getServices(new LinkedMultiValueMap<>()).getResults().getFirst()))) {
+            assertEquals(List.of("id", "service"), List.copyOf(json.propertyNames()));
+            assertEquals("openaire.argos", json.get("id").asString());
+            assertEquals("openaire.argos", json.get("service").get("id").asString());
+            assertEquals("Argos", json.get("service").get("name").asString());
+        }
+    }
+
+    @Test
     void aProviderIsReadThroughTheLot1ClassWithoutItsUsers() {
         Map<String, Object> provider = new LinkedHashMap<>();
         provider.put("id", "openaire");
@@ -114,30 +138,32 @@ class EoscControllerTest {
     }
 
     @Test
-    void theMainContactOfAProviderIsShownToThoseWhoManageItOnly() {
-        BundleService bundles = mock(BundleService.class);
-        EoscController eosc = new EoscController(bundles, mock(ResourceTypeService.class), access, mapper,
-                new OpenAIREProperties());
+    void theMainContactOfAProviderIsWrittenForThoseWhoManageItOnly() {
         Map<String, Object> managed = provider("managed");
         Map<String, Object> other = provider("other");
-        when(bundles.get(ResourceKind.PROVIDER, "managed")).thenReturn(managed);
-        when(bundles.get(ResourceKind.PROVIDER, "other")).thenReturn(other);
-        when(bundles.search(eq(ResourceKind.PROVIDER), any()))
-                .thenAnswer(call -> new Paging<>(2, 0, 2, List.of(managed, other), List.of()));
         when(access.canManage(auth, ResourceKind.PROVIDER, "managed")).thenReturn(true);
 
-        assertEquals("main@example.org", eosc.getProvider("managed", auth).getMainContact().getEmail());
-        assertNull(eosc.getProvider("other", auth).getMainContact());
-        assertNull(eosc.getProvider("managed", null).getMainContact());
-
-        List<Provider> listed = eosc.getProviders(new LinkedMultiValueMap<>(), auth).getResults();
-        assertEquals("main@example.org", listed.get(0).getMainContact().getEmail());
-        assertNull(listed.get(1).getMainContact());
-        for (Provider provider : eosc.getProviders(new LinkedMultiValueMap<>(), null).getResults()) {
+        assertEquals("main@example.org", controller.toProvider(managed, auth).getMainContact().getEmail());
+        assertNull(controller.toProvider(other, auth).getMainContact());
+        for (Provider provider : List.of(controller.toProvider(managed, null), controller.toProvider(other, null))) {
             assertNull(provider.getMainContact());
             assertNull(provider.getUsers());
             assertEquals("public@example.org", provider.getPublicContacts().getFirst().getEmail());
         }
+    }
+
+    @Test
+    void providersAndDatasourcesAreWrittenWithTheirIdAtTheTopLevel() {
+        JsonNode provider = mapper.valueToTree(EoscProvider.of(controller.toProvider(provider("openaire"), null)));
+        JsonNode datasource = mapper.valueToTree(
+                EoscDatasource.of(controller.toDatasource(datasource("openaire.zenodo", true, "node"))));
+
+        assertEquals(List.of("id", "provider"), List.copyOf(provider.propertyNames()));
+        assertEquals("openaire", provider.get("id").asString());
+        assertEquals("openaire", provider.get("provider").get("id").asString());
+        assertEquals(List.of("id", "datasource"), List.copyOf(datasource.propertyNames()));
+        assertEquals("openaire.zenodo", datasource.get("id").asString());
+        assertEquals("openaire.zenodo", datasource.get("datasource").get("serviceId").asString());
     }
 
     private static Map<String, Object> provider(String id) {
@@ -178,19 +204,19 @@ class EoscControllerTest {
         EoscController eosc = new EoscController(bundles, mock(ResourceTypeService.class), access, mapper,
                 properties);
         when(bundles.search(any(), any())).thenReturn(new Paging<>(0, 0, 0, List.of(), List.of()));
-        when(bundles.get(ResourceKind.DATASOURCE, "on.node")).thenReturn(datasource("on.node", true, "node"));
-        when(bundles.get(ResourceKind.DATASOURCE, "inactive")).thenReturn(datasource("inactive", false, "eosc"));
-        when(bundles.get(ResourceKind.DATASOURCE, "on.eosc")).thenReturn(datasource("on.eosc", true, "eosc"));
+        when(bundles.get(ResourceKind.SERVICE, "on.node")).thenReturn(service("on.node", true, "node"));
+        when(bundles.get(ResourceKind.SERVICE, "inactive")).thenReturn(service("inactive", false, "eosc"));
+        when(bundles.get(ResourceKind.SERVICE, "on.eosc")).thenReturn(service("on.eosc", true, "eosc"));
 
-        eosc.getDatasources(new LinkedMultiValueMap<>(Map.of("channels", List.of("node"))));
+        eosc.getServices(new LinkedMultiValueMap<>(Map.of("channels", List.of("node"))));
 
         ArgumentCaptor<FacetFilter> filter = ArgumentCaptor.forClass(FacetFilter.class);
-        verify(bundles).search(eq(ResourceKind.DATASOURCE), filter.capture());
+        verify(bundles).search(eq(ResourceKind.SERVICE), filter.capture());
         assertEquals("eosc", filter.getValue().getFilter().get("channels"));
         assertEquals(true, filter.getValue().getFilter().get("active"));
-        assertThrows(ResourceNotFoundException.class, () -> eosc.getDatasource("on.node"));
-        assertThrows(ResourceNotFoundException.class, () -> eosc.getDatasource("inactive"));
-        assertEquals("on.eosc", eosc.getDatasource("on.eosc").getId());
+        assertThrows(ResourceNotFoundException.class, () -> eosc.getService("on.node"));
+        assertThrows(ResourceNotFoundException.class, () -> eosc.getService("inactive"));
+        assertEquals("on.eosc", eosc.getService("on.eosc").id());
     }
 
     @Test
@@ -208,12 +234,11 @@ class EoscControllerTest {
                 "users_email", "$.provider.users[*].email")));
         when(bundles.search(eq(ResourceKind.SERVICE), any())).thenReturn(page(
                 "tags", "scientificSubdomain", "mainContact_email", "oaOnly", "status"));
-        when(bundles.search(eq(ResourceKind.PROVIDER), any())).thenReturn(page("abbreviation", "users_email"));
         EoscController eosc = new EoscController(bundles, resourceTypes, access, mapper, new OpenAIREProperties());
 
         assertEquals(List.of("tags", "scientificSubdomain", "mainContact_email"),
                 fields(eosc.getServices(new LinkedMultiValueMap<>())));
-        assertEquals(List.of("abbreviation"), fields(eosc.getProviders(new LinkedMultiValueMap<>(), null)));
+        assertEquals(Set.of("abbreviation"), eosc.lot1IndexFields(ResourceKind.PROVIDER));
     }
 
     private static ResourceType resourceType(String name, Map<String, String> paths) {
@@ -235,6 +260,15 @@ class EoscControllerTest {
 
     private static List<String> fields(Paging<?> page) {
         return page.getFacets().stream().map(Facet::getField).toList();
+    }
+
+    private static Map<String, Object> service(String id, boolean active, String channel) {
+        Map<String, Object> bundle = new LinkedHashMap<>();
+        bundle.put("id", id);
+        bundle.put("active", active);
+        bundle.put("properties", Map.of("channels", List.of(channel)));
+        bundle.put("service", Map.of("id", id, "name", id));
+        return bundle;
     }
 
     private static Map<String, Object> datasource(String id, boolean active, String channel) {

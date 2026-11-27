@@ -65,6 +65,6 @@ Besides the fields of the model, each record type is indexed on:
 
 ## lot1 classes
 
-The lot1 classes are used only to write the read-only `/eosc/v1` routes: each payload is read into the lot1 `Provider`,
+The lot1 classes are used only to write the read-only `/eosc/v1` routes (services only for now): each payload is read into the lot1 `Provider`,
 `Service` or `Datasource` and written from it, so fields outside those classes, such as `extras`, are left out of that
 output. They are never used to store records.

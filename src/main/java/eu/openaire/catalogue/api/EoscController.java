@@ -43,15 +43,17 @@ import java.util.stream.Collectors;
 
 /**
  * Read-only routes in the lot1 format, for harvesting: each payload is read into the lot1 {@link Provider},
- * {@link Service} or {@link Datasource} and written from it, so fields outside those classes are left out. Only the
- * active records on the channel set by {@code openaire.eosc-channel} are shown. Providers are shown without their
- * users, whose emails are personal data, and their main contact is shown to those who manage them only. Search facets
- * are limited to the index fields whose path is a lot1 field. The output follows the lot1 classes on the classpath, so
+ * {@link Service} or {@link Datasource} and written from it, so fields outside those classes are left out. Each record
+ * is wrapped in an {@link EoscService}, {@link EoscProvider} or {@link EoscDatasource}, which repeats its id at the
+ * top level. Only services have routes for now. Only the active records on the channel set by
+ * {@code openaire.eosc-channel} are shown. Providers are written without their users, whose emails are personal data,
+ * and their main contact is written for those who manage them only. Search facets are limited to the index fields whose
+ * path is a lot1 field. The output follows the lot1 classes on the classpath, so
  * a new lot1 version changes version 1 of this API unless it is pinned.
  */
 @RestController
 @RequestMapping(path = "eosc/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-@Tag(name = "EOSC", description = "Active providers, services and datasources in the lot1 format, version 1")
+@Tag(name = "EOSC", description = "Active services in the lot1 format, version 1")
 public class EoscController {
 
     private static final String LOT1_PACKAGE = Service.class.getPackageName();
@@ -83,45 +85,18 @@ public class EoscController {
         lot1Fields.put(ResourceKind.DATASOURCE, fields(Datasource.class));
     }
 
-    @Operation(summary = "Returns the provider with the given id.")
-    @GetMapping({"providers/{id}", "organisations/{id}"})
-    public Provider getProvider(@PathVariable String id, @Parameter(hidden = true) Authentication auth) {
-        return toProvider(published(ResourceKind.PROVIDER, id), auth);
-    }
-
-    @Operation(summary = "Returns the providers, based on a set of filters.")
-    @BrowseParameters
-    @GetMapping({"providers", "organisations"})
-    public Paging<Provider> getProviders(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params,
-                                         @Parameter(hidden = true) Authentication auth) {
-        return search(ResourceKind.PROVIDER, params).map(bundle -> toProvider(bundle, auth));
-    }
-
     @Operation(summary = "Returns the service with the given id.")
     @GetMapping("services/{id}")
-    public Service getService(@PathVariable String id) {
-        return toService(published(ResourceKind.SERVICE, id));
+    public EoscService getService(@PathVariable String id) {
+        return EoscService.of(toService(published(ResourceKind.SERVICE, id)));
     }
 
     @Operation(summary = "Returns the services, based on a set of filters.")
     @BrowseParameters
     @GetMapping("services")
-    public Paging<Service> getServices(@Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
-        return search(ResourceKind.SERVICE, params).map(this::toService);
-    }
-
-    @Operation(summary = "Returns the datasource with the given id.")
-    @GetMapping("datasources/{id}")
-    public Datasource getDatasource(@PathVariable String id) {
-        return toDatasource(published(ResourceKind.DATASOURCE, id));
-    }
-
-    @Operation(summary = "Returns the datasources, based on a set of filters.")
-    @BrowseParameters
-    @GetMapping("datasources")
-    public Paging<Datasource> getDatasources(
+    public Paging<EoscService> getServices(
             @Parameter(hidden = true) @RequestParam MultiValueMap<String, Object> params) {
-        return search(ResourceKind.DATASOURCE, params).map(this::toDatasource);
+        return search(ResourceKind.SERVICE, params).map(bundle -> EoscService.of(toService(bundle)));
     }
 
     Provider toProvider(Map<String, Object> bundle, Authentication auth) {
