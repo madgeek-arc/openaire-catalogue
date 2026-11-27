@@ -33,6 +33,5 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
-        <Logger name="org.springframework" level="warn"/>
     </Loggers>
 </Configuration>
