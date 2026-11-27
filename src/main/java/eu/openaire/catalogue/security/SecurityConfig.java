@@ -3,6 +3,7 @@ package eu.openaire.catalogue.security;
 import eu.openaire.catalogue.config.OpenAIREProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -62,7 +63,7 @@ public class SecurityConfig {
     static final String[] PUBLIC_ROUTES = {
             "/oa/**", "/node/**", "/eosc/**", "/vocabulary/**", "/vocabularies/**", "/dsm/**", "/provide/**",
             "/oauth2/**", "/login/**", "/logout", "/error",
-            "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/health/**"};
+            "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 
     /**
      * Open to signed-in users; {@code /request/**} is an outbound HTTP proxy.
@@ -76,9 +77,10 @@ public class SecurityConfig {
     static final String[] PUBLIC_READ_ROUTES = {"/forms/**", "/models/**", "/catalogue-resources/**"};
 
     /**
-     * Administrator only, ahead of the broader rules: the actuator log file holds personal data.
+     * Actuator endpoints open to everyone: health for probes, prometheus for scraping. The actuator matchers follow the
+     * configured base path and match only on the port that serves the endpoints.
      */
-    static final String[] ADMIN_ROUTES = {"/actuator/**"};
+    static final String[] PUBLIC_ENDPOINTS = {"health", "prometheus"};
 
     private final OpenAIREProperties properties;
     private final Roles roles;
@@ -94,7 +96,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(PUBLIC_ROUTES).permitAll()
-                        .requestMatchers(ADMIN_ROUTES).hasRole("ADMIN")
+                        .requestMatchers(EndpointRequest.to(PUBLIC_ENDPOINTS)).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_READ_ROUTES).permitAll()
                         .requestMatchers(AUTHENTICATED_ROUTES).authenticated()
                         .anyRequest().hasRole("ADMIN"))

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Map;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Runs the real security filter chain in front of a controller that answers every path, so that each status comes
- * from the URL rules alone.
+ * from the URL rules alone. As in production, the actuator endpoints are on a separate management port, so the
+ * actuator rules do not apply here; {@link ActuatorSecurityIntegrationTest} covers them.
  */
 class SecurityConfigTest {
 
@@ -71,6 +75,8 @@ class SecurityConfigTest {
     void setUp() {
         context = new AnnotationConfigWebApplicationContext();
         context.setServletContext(new MockServletContext());
+        context.getEnvironment().getPropertySources().addFirst(
+                new MapPropertySource("test", Map.of("management.server.port", "9091")));
         context.register(App.class);
         context.refresh();
         mvc = MockMvcBuilders.webAppContextSetup(context)
@@ -90,16 +96,7 @@ class SecurityConfigTest {
                 get("/eosc/v1/services"), get("/vocabularies/byType"), get("/vocabulary/types/Provider"),
                 get("/dsm/datasources"), get("/forms/models"), get("/models/m-oa-service"), get("/catalogue-resources"),
                 get("/catalogue-resources/by/x"),
-                get("/v3/api-docs"), get("/actuator/health"), get("/actuator/health/liveness"));
-    }
-
-    @Test
-    void actuatorEndpointsOtherThanHealthNeedAnAdministrator() throws Exception {
-        MockHttpServletRequestBuilder[] adminOnly = {get("/actuator"), get("/actuator/logfile"),
-                get("/actuator/loggers"), get("/actuator/env")};
-        expect(status().isUnauthorized(), adminOnly);
-        expect(status().isForbidden(), signedIn(false, adminOnly));
-        expect(status().isOk(), signedIn(true, adminOnly));
+                get("/v3/api-docs"));
     }
 
     @Test
@@ -108,7 +105,7 @@ class SecurityConfigTest {
                 get("/version/service"), get("/versions"), get("/records/service"), post("/resourceTypes"),
                 post("/forms/models"), delete("/models"), post("/catalogue-resources"),
                 get("/resourcesync/x"), get("/schemaService/x"),
-                get("/dump"), get("/anything/new")};
+                get("/dump"), get("/anything/new"), get("/actuator/health"), get("/actuator/prometheus")};
         expect(status().isUnauthorized(), adminOnly);
         expect(status().isForbidden(), signedIn(false, adminOnly));
         expect(status().isOk(), signedIn(true, adminOnly));
